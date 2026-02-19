@@ -15,6 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="https://use.typekit.net/ryi5mzw.css" />
+      </head>
       <body className="font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-500">
         <ThemeProvider>
           <Navbar />

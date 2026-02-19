@@ -170,11 +170,10 @@ export default function Navbar() {
   const getLinkClass = (href: string) => {
     const isActive = pathname === href;
     const isHovered = hoveredHref === href;
-    // Aktif veya hover olan: koyu magenta, diğerleri: beyaz → hover'da koyu magenta
     if (isActive || isHovered) {
-      return isDark ? "text-indigo-200" : "text-[#A01550]";
+      return isDark ? "text-white" : "text-[#A01550]";
     }
-    return "text-white/90 hover:text-white";
+    return isDark ? "text-white/60" : "text-white/90";
   };
 
   return (
@@ -220,10 +219,10 @@ export default function Navbar() {
         className="relative flex items-center justify-between rounded-full px-3 py-2.5 transition-all duration-500"
         style={{
           background: isDark
-            ? "linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #3730a3 100%)"
+            ? "linear-gradient(135deg, #9D174D 0%, #BE185D 40%, #DB2777 100%)"
             : "linear-gradient(135deg, #F472B6 0%, #EC4899 40%, #DB2777 100%)",
           boxShadow: isDark
-            ? "0 8px 32px rgba(99, 102, 241, 0.25), 0 2px 8px rgba(0,0,0,0.3)"
+            ? "0 8px 32px rgba(190, 24, 93, 0.35), 0 2px 8px rgba(0,0,0,0.4)"
             : "0 8px 32px rgba(219, 39, 119, 0.3), 0 2px 8px rgba(0,0,0,0.1)",
         }}
       >
@@ -251,13 +250,13 @@ export default function Navbar() {
           <div
             className="absolute inset-0 rounded-full border overflow-hidden transition-all duration-500"
             style={{
-              borderColor: isDark ? "rgba(129,140,248,0.3)" : "rgba(255,255,255,0.5)",
+              borderColor: isDark ? "rgba(251,113,133,0.3)" : "rgba(255,255,255,0.5)",
               background: isDark
-                ? "linear-gradient(145deg, rgba(129,140,248,0.25) 0%, rgba(99,102,241,0.15) 30%, rgba(67,56,202,0.1) 100%)"
+                ? "linear-gradient(145deg, rgba(251,113,133,0.2) 0%, rgba(244,63,94,0.12) 30%, rgba(190,24,93,0.08) 100%)"
                 : "linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 30%, rgba(255,240,245,0.35) 70%, rgba(255,228,238,0.3) 100%)",
               backdropFilter: "blur(14px) saturate(1.6)",
               boxShadow: isDark
-                ? "inset 0 2px 4px rgba(129,140,248,0.3), inset 0 -1px 3px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1)"
+                ? "inset 0 2px 4px rgba(251,113,133,0.25), inset 0 -1px 3px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1)"
                 : "inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06)",
             }}
           >
