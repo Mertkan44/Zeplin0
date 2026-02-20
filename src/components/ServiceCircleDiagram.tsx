@@ -7,18 +7,29 @@ import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 
 const FONT = '"kuhlman-vf", "futura-100", "futura-100-book", sans-serif';
 
-const BASE_W = 800;
+const BASE_W = 1000; // widened from 800 to give labels room
 const ASPECT = 1912 / 2940;
-const BASE_H = Math.round(BASE_W * ASPECT); // ≈ 520
+const BASE_H = Math.round(BASE_W * ASPECT); // ≈ 651
+
+/* Circle visual area within the wider container (centered) */
+const CIRCLE_AREA_W = 800; // circles still render at 800px scale
+const CIRCLE_OFFSET = (BASE_W - CIRCLE_AREA_W) / 2; // 100px each side
 
 /* ── RichText: **bold** markup ─────────────────────────────────────────── */
 
-function RichText({ text }: { text: string }) {
+function RichText({ text, brightBold }: { text: string; brightBold?: boolean }) {
   return (
     <>
       {text.split(/\*\*(.*?)\*\*/g).map((part, i) =>
         i % 2 === 1 ? (
-          <strong key={i} style={{ fontWeight: 700, color: "rgba(255,255,255,0.95)" }}>
+          <strong
+            key={i}
+            style={{
+              fontWeight: 700,
+              color: brightBold ? "#fff" : "rgba(255,255,255,0.95)",
+              transition: "color 0.4s ease",
+            }}
+          >
             {part}
           </strong>
         ) : (
@@ -40,8 +51,8 @@ interface LayerProps {
   transformOrigin: string;
   zIndex: number;
   hovered: boolean;
-  hoverTranslateX?: number; // px offset on hover (negative = pull left, positive = pull right)
-  hoverScale?: number; // scale on hover
+  hoverTranslateX?: number;
+  hoverScale?: number;
 }
 
 function AnimatedLayer({
@@ -68,7 +79,6 @@ function AnimatedLayer({
   const hs = hovered ? hoverScale : 1;
 
   return (
-    /* Outer: hover translate + scale (CSS transition, doesn't conflict with Framer) */
     <div
       style={{
         position: "absolute",
@@ -80,13 +90,8 @@ function AnimatedLayer({
         pointerEvents: "none",
       }}
     >
-      {/* Inner: entrance spring + breathing (Framer Motion) */}
       <motion.div
-        style={{
-          position: "absolute",
-          inset: 0,
-          transformOrigin,
-        }}
+        style={{ position: "absolute", inset: 0, transformOrigin }}
         initial={{ scale: 0.2, opacity: 0 }}
         animate={
           breathing
@@ -123,7 +128,6 @@ function AnimatedLayer({
           }}
         />
       </motion.div>
-      {/* Hover glow overlay */}
       <div
         style={{
           position: "absolute",
@@ -172,7 +176,7 @@ function OrbitalParticle({
   );
 }
 
-/* ── Typing Dots (Chatbot indicator) — scaled up ──────────────────────── */
+/* ── Typing Dots (Chatbot indicator) ───────────────────────────────────── */
 
 function TypingDots({ bright }: { bright: boolean }) {
   const dotColor = bright
@@ -185,7 +189,7 @@ function TypingDots({ bright }: { bright: boolean }) {
           key={i}
           animate={{ scale: [0.6, 1, 0.6] }}
           transition={{
-            duration: 1,
+            duration: bright ? 0.7 : 1,
             repeat: Infinity,
             ease: "easeInOut",
             delay: d,
@@ -203,7 +207,7 @@ function TypingDots({ bright }: { bright: boolean }) {
   );
 }
 
-/* ── Audio Waveform Bars (Sesli Asistan indicator) — scaled up ─────────── */
+/* ── Audio Waveform Bars (Sesli Asistan indicator) ─────────────────────── */
 
 const WAVE_BARS = [
   { heights: [8, 24, 10, 18, 8], dur: 1.2 },
@@ -277,12 +281,15 @@ function MergeIcon({ bright }: { bright: boolean }) {
   );
 }
 
-/* ── SVG line endpoints (base 800 × 520 space) ────────────────────────── */
+/* ── SVG line endpoints (in 1000-wide space, circles centered at 100-900) */
 
 const SVG_LINES = [
-  { id: "chatbot", x1: 195, y1: 120, x2: 298, y2: 182 },
-  { id: "sesli", x1: 640, y1: 195, x2: 538, y2: 232 },
-  { id: "yazilim", x1: 195, y1: 430, x2: 296, y2: 385 },
+  // chatbot: from label (left side) → left circle edge
+  { id: "chatbot", x1: 270, y1: 130, x2: 370, y2: 185 },
+  // sesli: from label (right side) → right circle edge
+  { id: "sesli", x1: 730, y1: 200, x2: 640, y2: 235 },
+  // yazilim: from label (left side) → center circle bottom-left edge
+  { id: "yazilim", x1: 270, y1: 490, x2: 395, y2: 420 },
 ];
 
 /* ── Bottom tabs ───────────────────────────────────────────────────────── */
@@ -292,14 +299,6 @@ const TABS = [
   { label: "Özel\nYazılım", nodeId: "yazilim" },
   { label: "Sesli\nAsistan", nodeId: "sesli" },
 ] as const;
-
-/* ── Hover zones (percentage-based within diagram) ─────────────────────── */
-
-const CIRCLE_ZONES = [
-  { id: "chatbot", top: "18%", left: "10%", width: "35%", height: "65%" },
-  { id: "sesli", top: "13%", left: "55%", width: "35%", height: "65%" },
-  { id: "yazilim", top: "12%", left: "25%", width: "50%", height: "76%" },
-];
 
 /* ── Component ──────────────────────────────────────────────────────────── */
 
@@ -331,6 +330,50 @@ export default function ServiceCircleDiagram() {
     [mouseX, mouseY]
   );
 
+  /* ── Mouse-position hover detection (FIX 2) ─────────────────── */
+  const handleDiagramMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const el = e.currentTarget;
+      const rect = el.getBoundingClientRect();
+      const mx = e.clientX - rect.left; // mouse X relative to container
+      const my = e.clientY - rect.top;  // mouse Y relative to container
+      const w = rect.width;
+      const h = rect.height;
+
+      // Normalize to -1..1 from center
+      const nx = (mx / w) * 2 - 1; // -1 = left edge, 1 = right edge
+      const ny = (my / h) * 2 - 1; // -1 = top, 1 = bottom
+
+      // Check if mouse is roughly within the circles area (elliptical bounds)
+      // Circles occupy roughly the center 80% width, 80% height
+      const circleAreaX = nx / 0.8;
+      const circleAreaY = ny / 0.8;
+      const inCircleArea = circleAreaX * circleAreaX + circleAreaY * circleAreaY < 1.2;
+
+      if (!inCircleArea) {
+        setHoveredCircle(null);
+        return;
+      }
+
+      // Determine which circle based on X position
+      // Left crescent: nx < -0.08 (left of center)
+      // Right crescent: nx > 0.08 (right of center)
+      // Center: in between
+      if (nx < -0.08) {
+        setHoveredCircle("chatbot");
+      } else if (nx > 0.08) {
+        setHoveredCircle("sesli");
+      } else {
+        setHoveredCircle("yazilim");
+      }
+    },
+    []
+  );
+
+  const handleDiagramMouseLeave = useCallback(() => {
+    setHoveredCircle(null);
+  }, []);
+
   /* ── ResizeObserver ─────────────────────────────────────────── */
   useEffect(() => {
     if (!containerRef.current) return;
@@ -345,7 +388,7 @@ export default function ServiceCircleDiagram() {
   const sf = cw / BASE_W;
   const cH = cw * ASPECT;
 
-  /* ── Derived hover ──────────────────────────────────────────── */
+  /* ── Derived hover — either circle or label triggers both ───── */
   const activeHover = hoveredCircle || hoveredLabel;
 
   function isHighlighted(id: string) {
@@ -450,6 +493,8 @@ export default function ServiceCircleDiagram() {
       {/* ── Diagram area with parallax ────────────────────────────── */}
       <motion.div
         ref={containerRef}
+        onMouseMove={handleDiagramMouseMove}
+        onMouseLeave={handleDiagramMouseLeave}
         style={{
           position: "relative",
           width: "100%",
@@ -459,6 +504,7 @@ export default function ServiceCircleDiagram() {
           overflow: "visible",
           x: parallaxX,
           y: parallaxY,
+          cursor: "default",
         }}
       >
         {/* ── SVG connecting lines ─────────────────────────────────── */}
@@ -484,7 +530,7 @@ export default function ServiceCircleDiagram() {
                 fill="none"
                 style={{
                   stroke: lit
-                    ? "rgba(255,45,120,0.6)"
+                    ? "rgba(255,45,120,0.5)"
                     : "rgba(255,255,255,0.15)",
                   strokeWidth: lit ? 1.5 : 0.8,
                   transition: "stroke 0.4s ease, stroke-width 0.4s ease",
@@ -542,24 +588,6 @@ export default function ServiceCircleDiagram() {
           hoverScale={1.05}
         />
 
-        {/* ── Invisible hover zones ───────────────────────────────── */}
-        {CIRCLE_ZONES.map((zone) => (
-          <div
-            key={zone.id}
-            onMouseEnter={() => setHoveredCircle(zone.id)}
-            onMouseLeave={() => setHoveredCircle(null)}
-            style={{
-              position: "absolute",
-              top: zone.top,
-              left: zone.left,
-              width: zone.width,
-              height: zone.height,
-              zIndex: zone.id === "yazilim" ? 20 : 18,
-              cursor: "pointer",
-            }}
-          />
-        ))}
-
         {/* ── CENTER LABEL — Özel Yazılım ─────────────────────────── */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -578,12 +606,14 @@ export default function ServiceCircleDiagram() {
             fontSize: 22,
             fontWeight: 500,
             color: isHighlighted("yazilim")
-              ? "rgba(255,255,255,1)"
+              ? "#fff"
               : "rgba(255,255,255,0.9)",
             letterSpacing: "0.1em",
             lineHeight: 1.6,
-            textShadow: "0 0 20px rgba(255, 45, 120, 0.15)",
-            transition: "color 0.4s ease",
+            textShadow: isHighlighted("yazilim")
+              ? "0 0 15px rgba(255, 45, 120, 0.3)"
+              : "0 0 20px rgba(255, 45, 120, 0.15)",
+            transition: "color 0.4s ease, text-shadow 0.4s ease",
           }}
         >
           {"Özel\nYazılım"}
@@ -596,7 +626,7 @@ export default function ServiceCircleDiagram() {
         <OrbitalParticle animName="svc-orbit-3" duration={16} delay={3.0} />
         <OrbitalParticle animName="svc-orbit-4" duration={25} delay={3.3} />
 
-        {/* ── Floating label 1 — top left (Chatbot) ───────────────── */}
+        {/* ── Floating label 1 — far left (Akıllı Chatbot) ─────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{
@@ -612,13 +642,11 @@ export default function ServiceCircleDiagram() {
           onMouseLeave={() => setHoveredLabel(null)}
           style={{
             position: "absolute",
-            top: "10%",
-            left: "0%",
+            top: "12%",
+            left: "-28%",
             maxWidth: 270,
             zIndex: 20,
             cursor: "default",
-            filter: isHighlighted("chatbot") ? "brightness(1.3)" : "none",
-            transition: "filter 0.4s ease",
           }}
         >
           <p
@@ -626,13 +654,14 @@ export default function ServiceCircleDiagram() {
               fontFamily: FONT,
               fontSize: 20,
               fontWeight: 700,
-              color: isHighlighted("chatbot")
-                ? "#FF7EB3"
-                : "rgba(255,255,255,0.95)",
+              color: isHighlighted("chatbot") ? "#fff" : "rgba(255,255,255,0.95)",
               letterSpacing: "0.01em",
               lineHeight: 1.4,
               marginBottom: 0,
-              transition: "color 0.4s ease",
+              textShadow: isHighlighted("chatbot")
+                ? "0 0 15px rgba(255, 45, 120, 0.3)"
+                : "none",
+              transition: "color 0.4s ease, text-shadow 0.4s ease",
             }}
           >
             Akıllı Chatbot
@@ -642,15 +671,21 @@ export default function ServiceCircleDiagram() {
             style={{
               fontFamily: FONT,
               fontSize: 14.5,
-              color: "rgba(255,255,255,0.55)",
+              color: isHighlighted("chatbot")
+                ? "rgba(255,255,255,0.75)"
+                : "rgba(255,255,255,0.55)",
               lineHeight: 1.7,
+              transition: "color 0.4s ease",
             }}
           >
-            <RichText text="**WhatsApp** hesabınıza entegre edilir, müşterilerinizle **7/24** iletişim kurar ve işletmenizin tüm yazışmalarını **profesyonelce** yönetir." />
+            <RichText
+              text="**WhatsApp** hesabınıza entegre edilir, müşterilerinizle **7/24** iletişim kurar ve işletmenizin tüm yazışmalarını **profesyonelce** yönetir."
+              brightBold={isHighlighted("chatbot")}
+            />
           </p>
         </motion.div>
 
-        {/* ── Floating label 2 — right (Sesli Asistan) ────────────── */}
+        {/* ── Floating label 2 — far right (Sesli Asistan) ──────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{
@@ -667,13 +702,11 @@ export default function ServiceCircleDiagram() {
           style={{
             position: "absolute",
             top: "22%",
-            right: "-2%",
+            right: "-28%",
             maxWidth: 270,
             textAlign: "right",
             zIndex: 20,
             cursor: "default",
-            filter: isHighlighted("sesli") ? "brightness(1.3)" : "none",
-            transition: "filter 0.4s ease",
           }}
         >
           <p
@@ -681,13 +714,14 @@ export default function ServiceCircleDiagram() {
               fontFamily: FONT,
               fontSize: 20,
               fontWeight: 700,
-              color: isHighlighted("sesli")
-                ? "#FF7EB3"
-                : "rgba(255,255,255,0.95)",
+              color: isHighlighted("sesli") ? "#fff" : "rgba(255,255,255,0.95)",
               letterSpacing: "0.01em",
               lineHeight: 1.4,
               marginBottom: 0,
-              transition: "color 0.4s ease",
+              textShadow: isHighlighted("sesli")
+                ? "0 0 15px rgba(255, 45, 120, 0.3)"
+                : "none",
+              transition: "color 0.4s ease, text-shadow 0.4s ease",
             }}
           >
             Sesli Asistan
@@ -699,15 +733,21 @@ export default function ServiceCircleDiagram() {
             style={{
               fontFamily: FONT,
               fontSize: 14.5,
-              color: "rgba(255,255,255,0.55)",
+              color: isHighlighted("sesli")
+                ? "rgba(255,255,255,0.75)"
+                : "rgba(255,255,255,0.55)",
               lineHeight: 1.7,
+              transition: "color 0.4s ease",
             }}
           >
-            <RichText text="**Restoranlar, klinikler** ve işletmeler için telefon üzerinden **rezervasyon** alır, müşterilerinizle doğal bir şekilde konuşur ve size **anlık geri bildirim** sağlar." />
+            <RichText
+              text="**Restoranlar, klinikler** ve işletmeler için telefon üzerinden **rezervasyon** alır, müşterilerinizle doğal bir şekilde konuşur ve size **anlık geri bildirim** sağlar."
+              brightBold={isHighlighted("sesli")}
+            />
           </p>
         </motion.div>
 
-        {/* ── Floating label 3 — bottom left (Özel Yazılım) ───────── */}
+        {/* ── Floating label 3 — far bottom-left (Özel Yazılım) ─────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{
@@ -724,12 +764,10 @@ export default function ServiceCircleDiagram() {
           style={{
             position: "absolute",
             bottom: "5%",
-            left: "0%",
+            left: "-28%",
             maxWidth: 270,
             zIndex: 20,
             cursor: "default",
-            filter: isHighlighted("yazilim") ? "brightness(1.3)" : "none",
-            transition: "filter 0.4s ease",
           }}
         >
           <p
@@ -737,13 +775,14 @@ export default function ServiceCircleDiagram() {
               fontFamily: FONT,
               fontSize: 20,
               fontWeight: 700,
-              color: isHighlighted("yazilim")
-                ? "#FF7EB3"
-                : "rgba(255,255,255,0.95)",
+              color: isHighlighted("yazilim") ? "#fff" : "rgba(255,255,255,0.95)",
               letterSpacing: "0.01em",
               lineHeight: 1.4,
               marginBottom: 8,
-              transition: "color 0.4s ease",
+              textShadow: isHighlighted("yazilim")
+                ? "0 0 15px rgba(255, 45, 120, 0.3)"
+                : "none",
+              transition: "color 0.4s ease, text-shadow 0.4s ease",
             }}
           >
             Özel Yazılım
@@ -752,11 +791,17 @@ export default function ServiceCircleDiagram() {
             style={{
               fontFamily: FONT,
               fontSize: 14.5,
-              color: "rgba(255,255,255,0.55)",
+              color: isHighlighted("yazilim")
+                ? "rgba(255,255,255,0.75)"
+                : "rgba(255,255,255,0.55)",
               lineHeight: 1.7,
+              transition: "color 0.4s ease",
             }}
           >
-            <RichText text="**Chatbot ve sesli asistanın birleşimi** — işletmenizin tüm iletişim süreçlerini **tek bir akıllı sistem**de toplar, size sadece **sonuçları** sunar." />
+            <RichText
+              text="**Chatbot ve sesli asistanın birleşimi** — işletmenizin tüm iletişim süreçlerini **tek bir akıllı sistem**de toplar, size sadece **sonuçları** sunar."
+              brightBold={isHighlighted("yazilim")}
+            />
           </p>
         </motion.div>
       </motion.div>
