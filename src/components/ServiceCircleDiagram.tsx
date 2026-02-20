@@ -39,8 +39,6 @@ interface LayerProps {
   breatheDelay?: number;
   transformOrigin: string;
   zIndex: number;
-  hovered: boolean;
-  dimmed: boolean;
 }
 
 function AnimatedLayer({
@@ -51,8 +49,6 @@ function AnimatedLayer({
   breatheDelay = 0,
   transformOrigin,
   zIndex,
-  hovered,
-  dimmed,
 }: LayerProps) {
   const [breathing, setBreathing] = useState(false);
 
@@ -62,9 +58,6 @@ function AnimatedLayer({
     return () => clearTimeout(id);
   }, [entranceDelay]);
 
-  const hoverScale = hovered ? 1.06 : 1;
-  const dimOpacity = dimmed ? 0.7 : 1;
-
   return (
     <motion.div
       style={{
@@ -73,20 +66,12 @@ function AnimatedLayer({
         zIndex,
         transformOrigin,
         pointerEvents: "none",
-        transition: "opacity 0.5s cubic-bezier(0.25,0.1,0.25,1), filter 0.5s ease",
-        opacity: dimOpacity,
-        filter: hovered
-          ? "brightness(1.15) saturate(1.2)"
-          : "none",
       }}
       initial={{ scale: 0.2, opacity: 0 }}
       animate={
         breathing
-          ? {
-              scale: breatheScale.map((s) => s * hoverScale),
-              opacity: dimOpacity,
-            }
-          : { scale: 1 * hoverScale, opacity: dimOpacity }
+          ? { scale: breatheScale, opacity: 1 }
+          : { scale: 1, opacity: 1 }
       }
       transition={
         breathing
@@ -97,7 +82,6 @@ function AnimatedLayer({
                 ease: "easeInOut",
                 delay: breatheDelay,
               },
-              opacity: { duration: 0.5 },
             }
           : {
               type: "spring",
@@ -116,23 +100,6 @@ function AnimatedLayer({
           height: "100%",
           objectFit: "contain",
           display: "block",
-        }}
-      />
-      {/* Hover glow + subtle border overlay */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          borderRadius: "50%",
-          border: hovered
-            ? "1px solid rgba(255, 80, 140, 0.2)"
-            : "1px solid rgba(255, 80, 140, 0.08)",
-          boxShadow: hovered
-            ? "0 0 40px rgba(255,45,120,0.15), 0 0 80px rgba(255,45,120,0.08)"
-            : "none",
-          transition:
-            "box-shadow 0.5s cubic-bezier(0.25,0.1,0.25,1), border-color 0.5s ease",
-          pointerEvents: "none",
         }}
       />
     </motion.div>
@@ -285,9 +252,9 @@ function MergeIcon({ bright }: { bright: boolean }) {
 /* ── SVG line endpoints (base 800 × 520 space) ────────────────────────── */
 
 const SVG_LINES = [
-  { id: "chatbot", x1: 218, y1: 140, x2: 298, y2: 182 },
-  { id: "sesli", x1: 612, y1: 208, x2: 538, y2: 232 },
-  { id: "yazilim", x1: 218, y1: 408, x2: 296, y2: 375 },
+  { id: "chatbot", x1: 195, y1: 120, x2: 298, y2: 182 },
+  { id: "sesli", x1: 640, y1: 195, x2: 538, y2: 232 },
+  { id: "yazilim", x1: 195, y1: 430, x2: 296, y2: 385 },
 ];
 
 /* ── Bottom tabs ───────────────────────────────────────────────────────── */
@@ -355,9 +322,6 @@ export default function ServiceCircleDiagram() {
 
   function isHighlighted(id: string) {
     return activeHover === id || pulsingLabel === id;
-  }
-  function isDimmed(id: string) {
-    return activeHover !== null && activeHover !== id;
   }
 
   function handleTabClick(i: number, nodeId: string) {
@@ -517,8 +481,6 @@ export default function ServiceCircleDiagram() {
           breatheDuration={3.5}
           transformOrigin="50% 44%"
           zIndex={1}
-          hovered={activeHover === "yazilim"}
-          dimmed={isDimmed("yazilim")}
         />
 
         <AnimatedLayer
@@ -529,8 +491,6 @@ export default function ServiceCircleDiagram() {
           breatheDelay={1.3}
           transformOrigin="62% 38%"
           zIndex={2}
-          hovered={activeHover === "sesli"}
-          dimmed={isDimmed("sesli")}
         />
 
         <AnimatedLayer
@@ -541,8 +501,6 @@ export default function ServiceCircleDiagram() {
           breatheDelay={0.8}
           transformOrigin="38% 50%"
           zIndex={3}
-          hovered={activeHover === "chatbot"}
-          dimmed={isDimmed("chatbot")}
         />
 
         {/* ── Invisible hover zones ───────────────────────────────── */}
@@ -615,8 +573,8 @@ export default function ServiceCircleDiagram() {
           onMouseLeave={() => setHoveredLabel(null)}
           style={{
             position: "absolute",
-            top: "14%",
-            left: "3%",
+            top: "10%",
+            left: "0%",
             maxWidth: 240,
             zIndex: 20,
             cursor: "default",
@@ -668,8 +626,8 @@ export default function ServiceCircleDiagram() {
           onMouseLeave={() => setHoveredLabel(null)}
           style={{
             position: "absolute",
-            top: "24%",
-            right: "0%",
+            top: "22%",
+            right: "-2%",
             maxWidth: 230,
             textAlign: "right",
             zIndex: 20,
@@ -724,8 +682,8 @@ export default function ServiceCircleDiagram() {
           onMouseLeave={() => setHoveredLabel(null)}
           style={{
             position: "absolute",
-            bottom: "12%",
-            left: "3%",
+            bottom: "5%",
+            left: "0%",
             maxWidth: 250,
             zIndex: 20,
             cursor: "default",
