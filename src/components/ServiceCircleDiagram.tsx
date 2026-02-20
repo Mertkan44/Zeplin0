@@ -18,7 +18,7 @@ function RichText({ text }: { text: string }) {
     <>
       {text.split(/\*\*(.*?)\*\*/g).map((part, i) =>
         i % 2 === 1 ? (
-          <strong key={i} style={{ fontWeight: 700, color: "rgba(255,255,255,0.88)" }}>
+          <strong key={i} style={{ fontWeight: 700, color: "rgba(255,255,255,0.95)" }}>
             {part}
           </strong>
         ) : (
@@ -29,7 +29,7 @@ function RichText({ text }: { text: string }) {
   );
 }
 
-/* ── AnimatedLayer — two-phase PNG layer ───────────────────────────────── */
+/* ── AnimatedLayer — two-phase PNG layer with hover offset ─────────────── */
 
 interface LayerProps {
   src: string;
@@ -39,6 +39,9 @@ interface LayerProps {
   breatheDelay?: number;
   transformOrigin: string;
   zIndex: number;
+  hovered: boolean;
+  hoverTranslateX?: number; // px offset on hover (negative = pull left, positive = pull right)
+  hoverScale?: number; // scale on hover
 }
 
 function AnimatedLayer({
@@ -49,6 +52,9 @@ function AnimatedLayer({
   breatheDelay = 0,
   transformOrigin,
   zIndex,
+  hovered,
+  hoverTranslateX = 0,
+  hoverScale = 1,
 }: LayerProps) {
   const [breathing, setBreathing] = useState(false);
 
@@ -58,51 +64,79 @@ function AnimatedLayer({
     return () => clearTimeout(id);
   }, [entranceDelay]);
 
+  const tx = hovered ? hoverTranslateX : 0;
+  const hs = hovered ? hoverScale : 1;
+
   return (
-    <motion.div
+    /* Outer: hover translate + scale (CSS transition, doesn't conflict with Framer) */
+    <div
       style={{
         position: "absolute",
         inset: 0,
         zIndex,
+        transform: `translateX(${tx}px) scale(${hs})`,
         transformOrigin,
+        transition: "transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)",
         pointerEvents: "none",
       }}
-      initial={{ scale: 0.2, opacity: 0 }}
-      animate={
-        breathing
-          ? { scale: breatheScale, opacity: 1 }
-          : { scale: 1, opacity: 1 }
-      }
-      transition={
-        breathing
-          ? {
-              scale: {
-                duration: breatheDuration,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: breatheDelay,
-              },
-            }
-          : {
-              type: "spring",
-              stiffness: 55,
-              damping: 14,
-              delay: entranceDelay,
-            }
-      }
     >
-      <img
-        src={src}
-        alt=""
-        draggable={false}
+      {/* Inner: entrance spring + breathing (Framer Motion) */}
+      <motion.div
         style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          display: "block",
+          position: "absolute",
+          inset: 0,
+          transformOrigin,
+        }}
+        initial={{ scale: 0.2, opacity: 0 }}
+        animate={
+          breathing
+            ? { scale: breatheScale, opacity: 1 }
+            : { scale: 1, opacity: 1 }
+        }
+        transition={
+          breathing
+            ? {
+                scale: {
+                  duration: breatheDuration,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: breatheDelay,
+                },
+              }
+            : {
+                type: "spring",
+                stiffness: 55,
+                damping: 14,
+                delay: entranceDelay,
+              }
+        }
+      >
+        <img
+          src={src}
+          alt=""
+          draggable={false}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            display: "block",
+          }}
+        />
+      </motion.div>
+      {/* Hover glow overlay */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          borderRadius: "50%",
+          boxShadow: hovered
+            ? "0 0 50px rgba(255,45,120,0.12)"
+            : "none",
+          transition: "box-shadow 0.6s cubic-bezier(0.25,0.1,0.25,1)",
+          pointerEvents: "none",
         }}
       />
-    </motion.div>
+    </div>
   );
 }
 
@@ -138,14 +172,14 @@ function OrbitalParticle({
   );
 }
 
-/* ── Typing Dots (Chatbot indicator) ───────────────────────────────────── */
+/* ── Typing Dots (Chatbot indicator) — scaled up ──────────────────────── */
 
 function TypingDots({ bright }: { bright: boolean }) {
   const dotColor = bright
     ? "rgba(255, 45, 120, 0.7)"
     : "rgba(255, 45, 120, 0.4)";
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 4, margin: "6px 0" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 5, margin: "10px 0" }}>
       {[0, 0.15, 0.3].map((d, i) => (
         <motion.div
           key={i}
@@ -157,8 +191,8 @@ function TypingDots({ bright }: { bright: boolean }) {
             delay: d,
           }}
           style={{
-            width: 5,
-            height: 5,
+            width: 7,
+            height: 7,
             borderRadius: "50%",
             background: dotColor,
             transition: "background 0.4s ease",
@@ -169,14 +203,14 @@ function TypingDots({ bright }: { bright: boolean }) {
   );
 }
 
-/* ── Audio Waveform Bars (Sesli Asistan indicator) ─────────────────────── */
+/* ── Audio Waveform Bars (Sesli Asistan indicator) — scaled up ─────────── */
 
 const WAVE_BARS = [
-  { heights: [6, 18, 8, 14, 6], dur: 1.2 },
-  { heights: [14, 6, 20, 8, 14], dur: 1.0 },
-  { heights: [8, 22, 10, 18, 8], dur: 1.4 },
-  { heights: [18, 8, 14, 6, 18], dur: 1.1 },
-  { heights: [10, 16, 6, 20, 10], dur: 1.3 },
+  { heights: [8, 24, 10, 18, 8], dur: 1.2 },
+  { heights: [18, 8, 26, 10, 18], dur: 1.0 },
+  { heights: [10, 28, 12, 22, 10], dur: 1.4 },
+  { heights: [22, 10, 18, 8, 22], dur: 1.1 },
+  { heights: [12, 20, 8, 26, 12], dur: 1.3 },
 ];
 
 function WaveformBars({ bright }: { bright: boolean }) {
@@ -188,9 +222,9 @@ function WaveformBars({ bright }: { bright: boolean }) {
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 3,
-        height: 24,
-        margin: "8px 0",
+        gap: 4,
+        height: 30,
+        margin: "10px 0",
         justifyContent: "flex-end",
       }}
     >
@@ -204,7 +238,7 @@ function WaveformBars({ bright }: { bright: boolean }) {
             ease: "easeInOut",
           }}
           style={{
-            width: 3,
+            width: 4,
             borderRadius: 2,
             background: barColor,
             transition: "background 0.4s ease",
@@ -220,27 +254,21 @@ function WaveformBars({ bright }: { bright: boolean }) {
 function MergeIcon({ bright }: { bright: boolean }) {
   return (
     <motion.svg
-      width={40}
-      height={20}
-      viewBox="0 0 40 20"
-      style={{ display: "block", margin: "12px auto 0" }}
+      width={44}
+      height={22}
+      viewBox="0 0 44 22"
+      style={{ display: "block", margin: "14px auto 0" }}
       animate={{ opacity: bright ? [0.4, 0.6, 0.4] : [0.15, 0.4, 0.15] }}
       transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
     >
       <motion.line
-        x1={4}
-        y1={2}
-        x2={20}
-        y2={18}
+        x1={4} y1={2} x2={22} y2={20}
         stroke="rgba(255,255,255,0.5)"
         strokeWidth={1.5}
         strokeLinecap="round"
       />
       <motion.line
-        x1={36}
-        y1={2}
-        x2={20}
-        y2={18}
+        x1={40} y1={2} x2={22} y2={20}
         stroke="rgba(255,255,255,0.5)"
         strokeWidth={1.5}
         strokeLinecap="round"
@@ -472,8 +500,9 @@ export default function ServiceCircleDiagram() {
           })}
         </svg>
 
-        {/* ── PNG circle layers (positions/sizes UNTOUCHED) ────────── */}
+        {/* ── PNG circle layers ────────────────────────────────────── */}
 
+        {/* Elips 3 — center circle, BACK layer */}
         <AnimatedLayer
           src="/circles/elips3.png"
           entranceDelay={0.5}
@@ -481,8 +510,11 @@ export default function ServiceCircleDiagram() {
           breatheDuration={3.5}
           transformOrigin="50% 44%"
           zIndex={1}
+          hovered={activeHover === "yazilim"}
+          hoverScale={1.04}
         />
 
+        {/* Elips 2 — right crescent, MIDDLE layer */}
         <AnimatedLayer
           src="/circles/elips2.png"
           entranceDelay={0.8}
@@ -491,8 +523,12 @@ export default function ServiceCircleDiagram() {
           breatheDelay={1.3}
           transformOrigin="62% 38%"
           zIndex={2}
+          hovered={activeHover === "sesli"}
+          hoverTranslateX={30}
+          hoverScale={1.05}
         />
 
+        {/* Elips 1 — left crescent, FRONT layer */}
         <AnimatedLayer
           src="/circles/elips1.png"
           entranceDelay={0.7}
@@ -501,6 +537,9 @@ export default function ServiceCircleDiagram() {
           breatheDelay={0.8}
           transformOrigin="38% 50%"
           zIndex={3}
+          hovered={activeHover === "chatbot"}
+          hoverTranslateX={-30}
+          hoverScale={1.05}
         />
 
         {/* ── Invisible hover zones ───────────────────────────────── */}
@@ -521,7 +560,7 @@ export default function ServiceCircleDiagram() {
           />
         ))}
 
-        {/* ── CENTER LABEL — Özel Yazılım (only on-circle text kept) ── */}
+        {/* ── CENTER LABEL — Özel Yazılım ─────────────────────────── */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -536,11 +575,11 @@ export default function ServiceCircleDiagram() {
             zIndex: 16,
             pointerEvents: "none",
             fontFamily: FONT,
-            fontSize: 17,
-            fontWeight: 400,
+            fontSize: 22,
+            fontWeight: 500,
             color: isHighlighted("yazilim")
               ? "rgba(255,255,255,1)"
-              : "rgba(255,255,255,0.85)",
+              : "rgba(255,255,255,0.9)",
             letterSpacing: "0.1em",
             lineHeight: 1.6,
             textShadow: "0 0 20px rgba(255, 45, 120, 0.15)",
@@ -575,7 +614,7 @@ export default function ServiceCircleDiagram() {
             position: "absolute",
             top: "10%",
             left: "0%",
-            maxWidth: 240,
+            maxWidth: 270,
             zIndex: 20,
             cursor: "default",
             filter: isHighlighted("chatbot") ? "brightness(1.3)" : "none",
@@ -585,11 +624,12 @@ export default function ServiceCircleDiagram() {
           <p
             style={{
               fontFamily: FONT,
-              fontSize: 14,
+              fontSize: 20,
               fontWeight: 700,
               color: isHighlighted("chatbot")
                 ? "#FF7EB3"
-                : "rgba(255,255,255,0.92)",
+                : "rgba(255,255,255,0.95)",
+              letterSpacing: "0.01em",
               lineHeight: 1.4,
               marginBottom: 0,
               transition: "color 0.4s ease",
@@ -601,9 +641,9 @@ export default function ServiceCircleDiagram() {
           <p
             style={{
               fontFamily: FONT,
-              fontSize: 12,
-              color: "rgba(255,255,255,0.45)",
-              lineHeight: 1.6,
+              fontSize: 14.5,
+              color: "rgba(255,255,255,0.55)",
+              lineHeight: 1.7,
             }}
           >
             <RichText text="**WhatsApp** hesabınıza entegre edilir, müşterilerinizle **7/24** iletişim kurar ve işletmenizin tüm yazışmalarını **profesyonelce** yönetir." />
@@ -628,7 +668,7 @@ export default function ServiceCircleDiagram() {
             position: "absolute",
             top: "22%",
             right: "-2%",
-            maxWidth: 230,
+            maxWidth: 270,
             textAlign: "right",
             zIndex: 20,
             cursor: "default",
@@ -639,11 +679,12 @@ export default function ServiceCircleDiagram() {
           <p
             style={{
               fontFamily: FONT,
-              fontSize: 14,
+              fontSize: 20,
               fontWeight: 700,
               color: isHighlighted("sesli")
                 ? "#FF7EB3"
-                : "rgba(255,255,255,0.92)",
+                : "rgba(255,255,255,0.95)",
+              letterSpacing: "0.01em",
               lineHeight: 1.4,
               marginBottom: 0,
               transition: "color 0.4s ease",
@@ -657,9 +698,9 @@ export default function ServiceCircleDiagram() {
           <p
             style={{
               fontFamily: FONT,
-              fontSize: 12,
-              color: "rgba(255,255,255,0.45)",
-              lineHeight: 1.6,
+              fontSize: 14.5,
+              color: "rgba(255,255,255,0.55)",
+              lineHeight: 1.7,
             }}
           >
             <RichText text="**Restoranlar, klinikler** ve işletmeler için telefon üzerinden **rezervasyon** alır, müşterilerinizle doğal bir şekilde konuşur ve size **anlık geri bildirim** sağlar." />
@@ -684,7 +725,7 @@ export default function ServiceCircleDiagram() {
             position: "absolute",
             bottom: "5%",
             left: "0%",
-            maxWidth: 250,
+            maxWidth: 270,
             zIndex: 20,
             cursor: "default",
             filter: isHighlighted("yazilim") ? "brightness(1.3)" : "none",
@@ -694,13 +735,14 @@ export default function ServiceCircleDiagram() {
           <p
             style={{
               fontFamily: FONT,
-              fontSize: 14,
+              fontSize: 20,
               fontWeight: 700,
               color: isHighlighted("yazilim")
                 ? "#FF7EB3"
-                : "rgba(255,255,255,0.92)",
+                : "rgba(255,255,255,0.95)",
+              letterSpacing: "0.01em",
               lineHeight: 1.4,
-              marginBottom: 4,
+              marginBottom: 8,
               transition: "color 0.4s ease",
             }}
           >
@@ -709,9 +751,9 @@ export default function ServiceCircleDiagram() {
           <p
             style={{
               fontFamily: FONT,
-              fontSize: 12,
-              color: "rgba(255,255,255,0.45)",
-              lineHeight: 1.6,
+              fontSize: 14.5,
+              color: "rgba(255,255,255,0.55)",
+              lineHeight: 1.7,
             }}
           >
             <RichText text="**Chatbot ve sesli asistanın birleşimi** — işletmenizin tüm iletişim süreçlerini **tek bir akıllı sistem**de toplar, size sadece **sonuçları** sunar." />
@@ -786,7 +828,7 @@ export default function ServiceCircleDiagram() {
                 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 style={{
-                  fontSize: 12.5,
+                  fontSize: 14,
                   fontWeight: 700,
                   lineHeight: 1.35,
                   whiteSpace: "pre-line",
