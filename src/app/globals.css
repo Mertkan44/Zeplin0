@@ -5,6 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --halftone-dot-color: rgba(0, 0, 0, 0.15);
 }
 
 @theme inline {
@@ -16,25 +17,39 @@
 :root.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --halftone-dot-color: rgba(255, 255, 255, 0.1);
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: "futura-pt", sans-serif;
-  background-image: radial-gradient(circle, rgba(0, 0, 0, 0.15) 1.2px, transparent 1.2px);
+  background-image: radial-gradient(circle, var(--halftone-dot-color) 1.2px, transparent 1.2px);
   background-size: 28px 28px;
   transition: none;
 }
 
 body.theme-ready {
-  transition: background-color 500ms ease, color 500ms ease;
+  transition: none;
 }
 
 .dark body,
 body:where(.dark *) {
   background-color: #0a0a0a;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1.2px, transparent 1.2px);
+  background-image: radial-gradient(circle, var(--halftone-dot-color) 1.2px, transparent 1.2px);
 }
 
 @keyframes shimmer {
@@ -263,4 +278,3 @@ body:where(.dark *) {
   50%  { transform: translate(-50%,-50%) rotate(490deg) translateX(215px) rotate(-490deg); opacity: 0.35; }
   100% { transform: translate(-50%,-50%) rotate(670deg) translateX(240px) rotate(-670deg); opacity: 0.3; }
 }
-

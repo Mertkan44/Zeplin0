@@ -81,160 +81,41 @@ function SocialIcon({ name }: { name: string }) {
   }
 }
 
-/* ── Fan-out sosyal medya kartları ── */
-const CARD_ROTATIONS = [-12, 0, 12];
-const CARD_OFFSETS_Y = [-12, 0, -7];
-const CARD_OFFSETS_X = [-46, 0, 46];
-const CARD_Z_INDEX = [21, 23, 22];
-const SOCIAL_CARD_WIDTH = "clamp(74px, 22vw, 84px)";
-const SOCIAL_CARD_HEIGHT = "clamp(108px, 32vw, 122px)";
-
-function SocialFanCards({
+/* ── Mobil sosyal medya kartları ── */
+function SocialRowCards({
   block,
   refCb,
 }: {
   block: Block;
   refCb: (el: HTMLDivElement | null) => void;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [swingOffset, setSwingOffset] = useState(0);
-  const [hasRevealed, setHasRevealed] = useState(false);
-  const lastScrollY = useRef(0);
-  const rafId = useRef(0);
-  const decayTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  // Scroll ile sallanma + reveal tetikleme
-  useEffect(() => {
-    const handleScroll = () => {
-      cancelAnimationFrame(rafId.current);
-      rafId.current = requestAnimationFrame(() => {
-        const el = containerRef.current;
-        if (!el) return;
-
-        const rect = el.getBoundingClientRect();
-        const inView = rect.bottom > 0 && rect.top < window.innerHeight;
-        if (!inView) return;
-
-        // İlk kez görünür olduğunda reveal
-        if (!hasRevealed && rect.top < window.innerHeight * 0.85) {
-          setHasRevealed(true);
-        }
-
-        const currentY = window.scrollY;
-        const delta = currentY - lastScrollY.current;
-        lastScrollY.current = currentY;
-
-        const raw = Math.max(-14, Math.min(14, delta * 0.9));
-        setSwingOffset(raw);
-
-        clearTimeout(decayTimer.current);
-        decayTimer.current = setTimeout(() => setSwingOffset(0), 80);
-      });
-    };
-
-    // İlk yüklemede de kontrol et
-    lastScrollY.current = window.scrollY;
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(rafId.current);
-      clearTimeout(decayTimer.current);
-    };
-  }, [hasRevealed]);
-
-  const socials = block.socials ?? [];
+  const socials = (block.socials ?? []).slice(0, 3);
 
   return (
     <div
-      ref={(el) => {
-        containerRef.current = el;
-        refCb(el);
-      }}
-      className="relative"
-      style={{ minHeight: "190px", overflow: "visible" }}
+      ref={refCb}
+      className="rounded-2xl bg-foreground/[0.04] p-3.5"
     >
-      {/* Sol: hakkımızda kartı */}
-      <div
-        className="relative rounded-2xl overflow-hidden"
-        style={{
-          width: "43%",
-          height: "186px",
-          zIndex: 1,
-          opacity: hasRevealed ? 1 : 0,
-          transform: hasRevealed ? "translateY(0)" : "translateY(20px)",
-          transition: "opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 500ms cubic-bezier(0.22,1,0.36,1)",
-        }}
-      >
-        {block.backgroundImage && (
-          <div
-            className="absolute inset-0"
+      <div className="grid grid-cols-3 gap-3">
+        {socials.map((social) => (
+          <a
+            key={social.name}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-[112px] items-center justify-center rounded-2xl"
             style={{
-              backgroundImage: `url(${block.backgroundImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              background:
+                "linear-gradient(160deg, #F0679E 0%, #DB2777 40%, #A21D56 100%)",
+              boxShadow:
+                "0 6px 20px rgba(157, 23, 77, 0.25), 0 2px 6px rgba(0,0,0,0.1)",
             }}
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-        <div className="relative z-10 h-full flex flex-col justify-end p-4">
-          <h3 className="text-base font-bold text-white leading-snug">
-            {block.title}
-          </h3>
-          {block.description && (
-            <p className="text-[11px] text-white/60 mt-1 leading-tight">
-              {block.description}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Sağ: Fan-out kartlar — parent'a absolute, sol kartın üstünde */}
-      <div
-        className="absolute inset-y-0 right-0 pointer-events-none"
-        style={{ left: "56%", minWidth: "168px" }}
-      >
-        {socials.map((social, i) => {
-          const baseRotate = CARD_ROTATIONS[i] ?? 0;
-          const offsetX = CARD_OFFSETS_X[i] ?? 0;
-          const offsetY = CARD_OFFSETS_Y[i] ?? 0;
-          const stackZ = CARD_Z_INDEX[i] ?? 20 + i;
-          const finalRotate = baseRotate + swingOffset;
-
-          return (
-            <a
-              key={social.name}
-              href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute rounded-2xl flex items-center justify-center pointer-events-auto"
-              style={{
-                width: SOCIAL_CARD_WIDTH,
-                height: SOCIAL_CARD_HEIGHT,
-                background:
-                  "linear-gradient(160deg, #F0679E 0%, #DB2777 40%, #A21D56 100%)",
-                left: "50%",
-                top: "50%",
-                zIndex: stackZ,
-                transformOrigin: "50% 84%",
-                opacity: hasRevealed ? 1 : 0,
-                transform: hasRevealed
-                  ? `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(${finalRotate}deg) scale(1)`
-                  : `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) rotate(0deg) scale(0.7)`,
-                transition: hasRevealed
-                  ? `opacity 500ms cubic-bezier(0.22,1,0.36,1) ${150 + i * 100}ms, transform 400ms cubic-bezier(0.22,1,0.36,1)`
-                  : "none",
-                boxShadow:
-                  "0 6px 20px rgba(157, 23, 77, 0.25), 0 2px 6px rgba(0,0,0,0.1)",
-                borderRadius: "18px",
-              }}
-            >
-              <div className="w-12 h-12 rounded-full bg-pink-900/30 flex items-center justify-center">
-                <SocialIcon name={social.name} />
-              </div>
-            </a>
-          );
-        })}
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-900/30">
+              <SocialIcon name={social.name} />
+            </div>
+          </a>
+        ))}
       </div>
     </div>
   );
@@ -330,19 +211,21 @@ function ProjectSlider({
     <div ref={(el) => { containerRef.current = el; refCb(el); }}
       className="rounded-2xl bg-foreground/[0.04] p-4"
     >
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-2xl font-bold text-foreground tracking-tight">{title}</h3>
-        <div className="flex gap-1">
+      <div className="mb-4 flex flex-nowrap items-center gap-2.5">
+        <h3 className="min-w-0 flex-1 text-[clamp(1.65rem,6.2vw,1.95rem)] font-bold text-foreground tracking-tight">
+          {title}
+        </h3>
+        <div className="ml-auto flex shrink-0 flex-nowrap items-center gap-1 whitespace-nowrap">
           {projects.map((_, i) => (
             <button
               key={i}
               type="button"
               aria-label={`Proje ${i + 1}`}
               onClick={() => { scrollTo(i); setActiveIdx(i); handleInteraction(); }}
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="flex h-6 w-6 items-center justify-center rounded-full sm:h-8 sm:w-8"
             >
               <span className={`block h-2 rounded-full transition-all duration-300 ${
-                activeIdx === i ? "w-6 bg-pink-400" : "w-2 bg-foreground/20"
+                activeIdx === i ? "w-4 bg-pink-400 sm:w-5" : "w-1.5 bg-foreground/20 sm:w-2"
               }`} />
             </button>
           ))}
@@ -473,7 +356,7 @@ export default function BentoGrid({ blocks }: BentoGridProps) {
 
   return (
     <MotionConfig reducedMotion="user">
-      <section ref={sectionRef} className="px-4 pt-14 pb-10 md:px-12 md:pt-20 md:pb-16">
+      <section ref={sectionRef} className="px-4 pt-8 pb-10 md:px-12 md:pt-20 md:pb-16">
         <div className="mx-auto max-w-6xl">
           {/* ── MOBILE ── */}
           <div className="md:hidden flex flex-col gap-3" style={{ overflow: "visible" }}>
@@ -501,8 +384,7 @@ export default function BentoGrid({ blocks }: BentoGridProps) {
               </motion.div>
             )}
 
-            {/* hakkımızda + sosyal medya fan kartları */}
-            <SocialFanCards block={blocks[2]} refCb={(el) => setMobileCardRef(2, el)} />
+            <SocialRowCards block={blocks[2]} refCb={(el) => setMobileCardRef(2, el)} />
           </div>
 
           {/* ── DESKTOP ── */}

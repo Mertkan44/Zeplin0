@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const slides = [
   {
@@ -37,24 +37,66 @@ const slides = [
 
 export default function HeroBanner() {
   const [activeSlide, setActiveSlide] = useState(1);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchDeltaXRef = useRef(0);
+
+  const goToNextSlide = useCallback(() => {
+    setActiveSlide((prev) => (prev + 1) % slides.length);
+  }, []);
+
+  const goToPrevSlide = useCallback(() => {
+    setActiveSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % 2);
+      goToNextSlide();
     }, 5500);
     return () => clearInterval(timer);
-  }, []);
+  }, [goToNextSlide]);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLElement>) => {
+    touchStartXRef.current = e.touches[0]?.clientX ?? null;
+    touchDeltaXRef.current = 0;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLElement>) => {
+    if (touchStartXRef.current === null) return;
+    const currentX = e.touches[0]?.clientX;
+    if (typeof currentX !== "number") return;
+    touchDeltaXRef.current = currentX - touchStartXRef.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartXRef.current === null) return;
+    const threshold = 42;
+    if (Math.abs(touchDeltaXRef.current) > threshold) {
+      if (touchDeltaXRef.current < 0) {
+        goToNextSlide();
+      } else {
+        goToPrevSlide();
+      }
+    }
+    touchStartXRef.current = null;
+    touchDeltaXRef.current = 0;
+  };
 
   return (
-    <section className="relative w-full -mb-px">
+    <section className="relative w-full">
 
       {/* ══════════════════════════════════════════════
           MOBİL: Split layout — üst görsel, alt içerik
           ══════════════════════════════════════════════ */}
-      <div className="relative md:hidden">
+      <div
+        className="relative md:hidden"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+      >
 
         {/* ── ÜST YARI: Görsel / Video ── */}
-        <div className="relative h-[50svh] min-h-[280px] w-full overflow-hidden">
+        <div className="relative h-[50svh] min-h-[280px] w-full overflow-hidden" style={{ touchAction: "pan-y" }}>
           {/* Slayt 0: Video */}
           <div className={`absolute inset-0 transition-opacity duration-700 ${activeSlide === 0 ? "opacity-100" : "opacity-0"}`}>
             <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover object-center">
@@ -84,14 +126,14 @@ export default function HeroBanner() {
           />
 
           {/* Slide indicator'lar — görselin alt kısmında */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          <div className="absolute bottom-7 left-1/2 -translate-x-1/2 z-20 flex gap-2">
             {slides.map((slide) => (
               <button
                 key={`dot-m-${slide.id}`}
                 type="button"
                 aria-label={`Slayt ${slide.id + 1}`}
                 onClick={() => setActiveSlide(slide.id)}
-                className={`h-2 rounded-full transition-all duration-300 ${
+                className={`h-2 rounded-full border-0 transition-all duration-300 ${
                   activeSlide === slide.id
                     ? "w-7 bg-pink-400"
                     : "w-2 bg-white/40"
@@ -99,11 +141,14 @@ export default function HeroBanner() {
               />
             ))}
           </div>
+
+          {/* İnce ayırıcı çizgiyi maskele */}
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-[2px] bg-[#18181b]" />
         </div>
 
         {/* ── ALT YARI: Koyu zemin + tipografi ── */}
         <div
-          className="relative px-6 pb-12 pt-4"
+          className="relative -mt-[1px] px-6 pb-12 pt-4"
           style={{ background: "#18181b" }}
         >
           {/* İçerik — her slaytın kendi bloğu */}
@@ -131,7 +176,7 @@ export default function HeroBanner() {
 
         {/* Alt dalga — koyu zeminden site arka planına geçiş */}
         <div className="relative z-10 -mt-px -mb-px pointer-events-none" style={{ background: "#18181b" }}>
-          <svg viewBox="0 0 1440 140" preserveAspectRatio="none" className="block h-16 w-full translate-y-px" aria-hidden="true">
+          <svg viewBox="0 0 1440 140" preserveAspectRatio="none" className="block h-12 w-full" aria-hidden="true">
             <path
               d="M0 38 C220 16 360 82 560 70 C740 58 870 108 1080 88 C1240 72 1320 42 1440 26 V140 H0 Z"
               fill="var(--background)"
