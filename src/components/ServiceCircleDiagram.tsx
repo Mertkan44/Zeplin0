@@ -5,15 +5,10 @@ import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 
-const FONT = '"kuhlman-vf", "futura-100", "futura-100-book", sans-serif';
+const FONT = '"futura-pt", sans-serif';
 
-const BASE_W = 1000; // widened from 800 to give labels room
+const CIRCLE_W = 680; // center column width for circles
 const ASPECT = 1912 / 2940;
-const BASE_H = Math.round(BASE_W * ASPECT); // ≈ 651
-
-/* Circle visual area within the wider container (centered) */
-const CIRCLE_AREA_W = 800; // circles still render at 800px scale
-const CIRCLE_OFFSET = (BASE_W - CIRCLE_AREA_W) / 2; // 100px each side
 
 /* ── RichText: **bold** markup ─────────────────────────────────────────── */
 
@@ -44,8 +39,10 @@ function RichText({ text, brightBold }: { text: string; brightBold?: boolean }) 
 
 interface LayerProps {
   src: string;
+  start: boolean;
   entranceDelay: number;
   breatheScale: [number, number, number];
+  breatheOpacity?: [number, number, number];
   breatheDuration: number;
   breatheDelay?: number;
   transformOrigin: string;
@@ -57,8 +54,10 @@ interface LayerProps {
 
 function AnimatedLayer({
   src,
+  start,
   entranceDelay,
   breatheScale,
+  breatheOpacity,
   breatheDuration,
   breatheDelay = 0,
   transformOrigin,
@@ -70,13 +69,51 @@ function AnimatedLayer({
   const [breathing, setBreathing] = useState(false);
 
   useEffect(() => {
+    if (!start) return;
     const ms = (entranceDelay + 2.5) * 1000;
     const id = setTimeout(() => setBreathing(true), ms);
     return () => clearTimeout(id);
-  }, [entranceDelay]);
+  }, [start, entranceDelay]);
 
   const tx = hovered ? hoverTranslateX : 0;
   const hs = hovered ? hoverScale : 1;
+
+  const breatheAnimate = !start
+    ? { scale: 0.2, opacity: 0 }
+    : breathing
+    ? {
+      scale: breatheScale,
+      opacity: breatheOpacity || 1,
+    }
+    : { scale: 1, opacity: 1 };
+
+  const breatheTransition = !start
+    ? { duration: 0 }
+    : breathing
+    ? {
+      scale: {
+        duration: breatheDuration,
+        repeat: Infinity,
+        ease: "easeInOut" as const,
+        delay: breatheDelay,
+      },
+      ...(breatheOpacity
+        ? {
+          opacity: {
+            duration: breatheDuration,
+            repeat: Infinity,
+            ease: "easeInOut" as const,
+            delay: breatheDelay,
+          },
+        }
+        : {}),
+    }
+    : {
+      type: "spring" as const,
+      stiffness: 55,
+      damping: 14,
+      delay: entranceDelay,
+    };
 
   return (
     <div
@@ -93,28 +130,8 @@ function AnimatedLayer({
       <motion.div
         style={{ position: "absolute", inset: 0, transformOrigin }}
         initial={{ scale: 0.2, opacity: 0 }}
-        animate={
-          breathing
-            ? { scale: breatheScale, opacity: 1 }
-            : { scale: 1, opacity: 1 }
-        }
-        transition={
-          breathing
-            ? {
-                scale: {
-                  duration: breatheDuration,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: breatheDelay,
-                },
-              }
-            : {
-                type: "spring",
-                stiffness: 55,
-                damping: 14,
-                delay: entranceDelay,
-              }
-        }
+        animate={breatheAnimate}
+        transition={breatheTransition}
       >
         <img
           src={src}
@@ -147,10 +164,12 @@ function AnimatedLayer({
 /* ── Orbital Particle ──────────────────────────────────────────────────── */
 
 function OrbitalParticle({
+  start,
   animName,
   duration,
   delay,
 }: {
+  start: boolean;
   animName: string;
   duration: number;
   delay: number;
@@ -168,9 +187,8 @@ function OrbitalParticle({
         boxShadow: "0 0 6px rgba(255, 45, 120, 0.3)",
         pointerEvents: "none",
         zIndex: 12,
-        animation: `${animName} ${duration}s linear ${delay}s infinite`,
+        animation: start ? `${animName} ${duration}s linear ${delay}s infinite forwards` : "none",
         opacity: 0,
-        animationFillMode: "forwards",
       }}
     />
   );
@@ -281,17 +299,6 @@ function MergeIcon({ bright }: { bright: boolean }) {
   );
 }
 
-/* ── SVG line endpoints (in 1000-wide space, circles centered at 100-900) */
-
-const SVG_LINES = [
-  // chatbot: from label (left side) → left circle edge
-  { id: "chatbot", x1: 270, y1: 130, x2: 370, y2: 185 },
-  // sesli: from label (right side) → right circle edge
-  { id: "sesli", x1: 730, y1: 200, x2: 640, y2: 235 },
-  // yazilim: from label (left side) → center circle bottom-left edge
-  { id: "yazilim", x1: 270, y1: 490, x2: 395, y2: 420 },
-];
-
 /* ── Bottom tabs ───────────────────────────────────────────────────────── */
 
 const TABS = [
@@ -303,14 +310,24 @@ const TABS = [
 /* ── Component ──────────────────────────────────────────────────────────── */
 
 export default function ServiceCircleDiagram() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const circleRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const [cw, setCw] = useState(BASE_W);
+  const [circleCw, setCircleCw] = useState(CIRCLE_W);
+  const [gridW, setGridW] = useState(1200);
   const [activeTab, setActiveTab] = useState(0);
   const [pulsingLabel, setPulsingLabel] = useState<string | null>(null);
   const [hoveredCircle, setHoveredCircle] = useState<string | null>(null);
   const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [startAnimations, setStartAnimations] = useState(false);
+  const [viewportW, setViewportW] = useState(1280);
+
+  useEffect(() => {
+    const updateViewport = () => setViewportW(window.innerWidth);
+    updateViewport();
+    window.addEventListener("resize", updateViewport);
+    return () => window.removeEventListener("resize", updateViewport);
+  }, []);
 
   /* ── Parallax ───────────────────────────────────────────────── */
   const mouseX = useMotionValue(0);
@@ -330,22 +347,19 @@ export default function ServiceCircleDiagram() {
     [mouseX, mouseY]
   );
 
-  /* ── Mouse-position hover detection (FIX 2) ─────────────────── */
+  /* ── Mouse-position hover detection ──────────────────────────── */
   const handleDiagramMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       const el = e.currentTarget;
       const rect = el.getBoundingClientRect();
-      const mx = e.clientX - rect.left; // mouse X relative to container
-      const my = e.clientY - rect.top;  // mouse Y relative to container
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
       const w = rect.width;
       const h = rect.height;
 
-      // Normalize to -1..1 from center
-      const nx = (mx / w) * 2 - 1; // -1 = left edge, 1 = right edge
-      const ny = (my / h) * 2 - 1; // -1 = top, 1 = bottom
+      const nx = (mx / w) * 2 - 1;
+      const ny = (my / h) * 2 - 1;
 
-      // Check if mouse is roughly within the circles area (elliptical bounds)
-      // Circles occupy roughly the center 80% width, 80% height
       const circleAreaX = nx / 0.8;
       const circleAreaY = ny / 0.8;
       const inCircleArea = circleAreaX * circleAreaX + circleAreaY * circleAreaY < 1.2;
@@ -355,10 +369,6 @@ export default function ServiceCircleDiagram() {
         return;
       }
 
-      // Determine which circle based on X position
-      // Left crescent: nx < -0.08 (left of center)
-      // Right crescent: nx > 0.08 (right of center)
-      // Center: in between
       if (nx < -0.08) {
         setHoveredCircle("chatbot");
       } else if (nx > 0.08) {
@@ -374,19 +384,57 @@ export default function ServiceCircleDiagram() {
     setHoveredCircle(null);
   }, []);
 
-  /* ── ResizeObserver ─────────────────────────────────────────── */
+  /* ── ResizeObservers ─────────────────────────────────────────── */
   useEffect(() => {
-    if (!containerRef.current) return;
-    const ro = new ResizeObserver(([e]) => setCw(e.contentRect.width));
-    ro.observe(containerRef.current);
-    return () => ro.disconnect();
+    const observers: ResizeObserver[] = [];
+    if (circleRef.current) {
+      const ro = new ResizeObserver(([e]) => setCircleCw(e.contentRect.width));
+      ro.observe(circleRef.current);
+      observers.push(ro);
+    }
+    if (gridRef.current) {
+      const ro = new ResizeObserver(([e]) => setGridW(e.contentRect.width));
+      ro.observe(gridRef.current);
+      observers.push(ro);
+    }
+    return () => observers.forEach((r) => r.disconnect());
   }, []);
 
-  /* ── Mount ──────────────────────────────────────────────────── */
-  useEffect(() => { setMounted(true); }, []);
+  /* ── Viewport trigger ───────────────────────────────────────── */
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    if (startAnimations) return;
 
-  const sf = cw / BASE_W;
-  const cH = cw * ASPECT;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setStartAnimations(true);
+          observer.disconnect();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "0px 0px -18% 0px",
+        threshold: 0.22,
+      }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [startAnimations]);
+
+  const circleH = circleCw * ASPECT;
+  const isMobile = viewportW < 768;
+  const isCompact = viewportW < 1100;
+  const sectionPad = isMobile ? 16 : 24;
+  const labelTitleSize = isMobile ? 18 : 20;
+  const labelBodySize = isMobile ? 13.5 : 14.5;
+  const centerLabelSize = isMobile ? 18 : isCompact ? 20 : 22;
+  const activeTabBarW = isMobile ? 86 : 110;
+  const idleTabBarW = isMobile ? 52 : 65;
+  const hoverTabBarW = isMobile ? 78 : 100;
+  const colW = isCompact ? 220 : 260;
 
   /* ── Derived hover — either circle or label triggers both ───── */
   const activeHover = hoveredCircle || hoveredLabel;
@@ -401,6 +449,40 @@ export default function ServiceCircleDiagram() {
     setTimeout(() => setPulsingLabel(null), 750);
   }
 
+  /* ── SVG line coordinates (in grid-wide pixel space) ────────── */
+  // Left column = 260px, center column starts at 260px
+  // Lines go from right edge of left column → left edge of circles
+  // and from left edge of right column → right edge of circles
+  const centerStart = colW; // where center column begins in grid
+  const centerEnd = gridW - colW;
+
+  const svgLines = [
+    // chatbot: from right edge of left column area → left circle edge
+    {
+      id: "chatbot",
+      x1: colW - 10,
+      y1: circleH * 0.22,
+      x2: centerStart + circleCw * 0.22,
+      y2: circleH * 0.32,
+    },
+    // sesli: from left edge of right column area → right circle edge
+    {
+      id: "sesli",
+      x1: centerEnd + 10,
+      y1: circleH * 0.38,
+      x2: centerEnd - circleCw * 0.22,
+      y2: circleH * 0.38,
+    },
+    // yazilim: from right edge of left column area → center circle bottom-left
+    {
+      id: "yazilim",
+      x1: colW - 10,
+      y1: circleH * 0.78,
+      x2: centerStart + circleCw * 0.35,
+      y2: circleH * 0.72,
+    },
+  ];
+
   return (
     <section
       ref={sectionRef}
@@ -408,12 +490,12 @@ export default function ServiceCircleDiagram() {
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "100vh",
+        minHeight: isCompact ? "auto" : "100vh",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        paddingTop: 50,
-        paddingBottom: 80,
+        paddingTop: isMobile ? 30 : 44,
+        paddingBottom: isMobile ? 64 : 80,
         background: `
           radial-gradient(ellipse 50% 45% at 50% 50%, rgba(255,45,120,0.06) 0%, transparent 70%),
           radial-gradient(ellipse 70% 60% at 50% 45%, rgba(90,20,55,0.35) 0%, transparent 70%),
@@ -437,10 +519,10 @@ export default function ServiceCircleDiagram() {
           zIndex: 0,
         }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: mounted ? [0.3, 0.5, 0.3] : 0 }}
+        animate={{ opacity: startAnimations ? [0.3, 0.5, 0.3] : 0 }}
         transition={
-          mounted
-            ? { duration: 5, repeat: Infinity, ease: "easeInOut" }
+          startAnimations
+            ? { duration: 4, repeat: Infinity, ease: "easeInOut" }
             : { duration: 0.8 }
         }
       />
@@ -451,360 +533,419 @@ export default function ServiceCircleDiagram() {
           position: "relative",
           zIndex: 1,
           textAlign: "center",
-          paddingLeft: 24,
-          paddingRight: 24,
+          paddingLeft: sectionPad,
+          paddingRight: sectionPad,
         }}
       >
-        <motion.h2
-          className="tk-kuhlman-vf"
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        <h2
+          className="tk-futura-pt"
           style={{
-            fontFamily: '"kuhlman-vf", sans-serif',
+            fontFamily: '"futura-pt", sans-serif',
             fontStyle: "normal",
             fontWeight: 400,
-            fontSize: "clamp(28px, 4vw, 48px)",
+            fontSize: isMobile ? "clamp(24px, 7.2vw, 34px)" : "clamp(28px, 4vw, 48px)",
             color: "rgba(255,255,255,0.85)",
             letterSpacing: "0.01em",
             lineHeight: 1.15,
             marginBottom: 12,
             marginTop: 0,
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "0 0.3em",
           }}
         >
           Yapay Zeka Hizmetlerimize Göz Atın
-        </motion.h2>
+        </h2>
 
         <motion.p
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          animate={{ opacity: startAnimations ? 1 : 0 }}
+          transition={{ duration: 0.5, delay: startAnimations ? 0.25 : 0, ease: "easeOut" }}
           style={{
-            fontSize: "clamp(14px, 1.6vw, 18px)",
+            fontSize: isMobile ? "14px" : "clamp(14px, 1.6vw, 18px)",
             fontWeight: 400,
             color: "rgba(255,255,255,0.45)",
-            marginBottom: 50,
+            marginBottom: isMobile ? 28 : 42,
           }}
         >
-          İşletmenizi geleceğe taşıyan yapay zeka çözümleri.
+          İşletmenize özel, yaşayan araçlar geliştiriyoruz.
         </motion.p>
       </div>
 
-      {/* ── Diagram area with parallax ────────────────────────────── */}
-      <motion.div
-        ref={containerRef}
-        onMouseMove={handleDiagramMouseMove}
-        onMouseLeave={handleDiagramMouseLeave}
+      {/* ── 3-Column Grid: Labels | Circles | Label ───────────────── */}
+      <div
+        ref={gridRef}
         style={{
           position: "relative",
-          width: "100%",
-          maxWidth: BASE_W,
-          height: cH,
           zIndex: 1,
-          overflow: "visible",
-          x: parallaxX,
-          y: parallaxY,
-          cursor: "default",
+          display: "grid",
+          gridTemplateColumns: isCompact
+            ? isMobile
+              ? "1fr"
+              : "minmax(0, 1fr) minmax(0, 1fr)"
+            : "260px 1fr 260px",
+          gridTemplateAreas: isCompact
+            ? isMobile
+              ? '"center" "left" "right"'
+              : '"center center" "left right"'
+            : '"left center right"',
+          maxWidth: isCompact ? 980 : 1200,
+          width: "100%",
+          alignItems: "stretch",
+          rowGap: isCompact ? (isMobile ? 24 : 28) : 0,
+          columnGap: isCompact ? 22 : 0,
+          paddingLeft: sectionPad,
+          paddingRight: sectionPad,
         }}
       >
-        {/* ── SVG connecting lines ─────────────────────────────────── */}
-        <svg
+        {/* ── SVG connecting lines (overlay spanning full grid) ───── */}
+        {!isCompact && (
+          <svg
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: circleH,
+              pointerEvents: "none",
+              zIndex: 15,
+              overflow: "visible",
+            }}
+          >
+            {svgLines.map((line) => {
+              const lit = isHighlighted(line.id);
+              return (
+                <motion.path
+                  key={line.id}
+                  d={`M ${line.x1},${line.y1} L ${line.x2},${line.y2}`}
+                  fill="none"
+                  style={{
+                    stroke: lit
+                      ? "rgba(255,45,120,0.5)"
+                      : "rgba(255,255,255,0.15)",
+                    strokeWidth: lit ? 1.5 : 0.8,
+                    transition: "stroke 0.4s ease, stroke-width 0.4s ease",
+                  }}
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  animate={{
+                    pathLength: startAnimations ? 1 : 0,
+                    opacity: startAnimations ? 1 : 0,
+                  }}
+                  transition={{
+                    pathLength: { duration: 0.5, delay: startAnimations ? 0.45 : 0, ease: "easeOut" },
+                    opacity: { duration: 0.3, delay: startAnimations ? 0.45 : 0 },
+                  }}
+                />
+              );
+            })}
+          </svg>
+        )}
+
+        {/* ── LEFT COLUMN — Labels 1 & 3 ─────────────────────────── */}
+        <div
           style={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            overflow: "visible",
-            zIndex: 15,
-          }}
-          width="100%"
-          height={cH}
-          viewBox={`0 0 ${cw} ${cH}`}
-          overflow="visible"
-        >
-          {SVG_LINES.map((line) => {
-            const lit = isHighlighted(line.id);
-            return (
-              <motion.path
-                key={line.id}
-                d={`M ${line.x1 * sf},${line.y1 * sf} L ${line.x2 * sf},${line.y2 * sf}`}
-                fill="none"
-                style={{
-                  stroke: lit
-                    ? "rgba(255,45,120,0.5)"
-                    : "rgba(255,255,255,0.15)",
-                  strokeWidth: lit ? 1.5 : 0.8,
-                  transition: "stroke 0.4s ease, stroke-width 0.4s ease",
-                }}
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={{ pathLength: 1, opacity: 1 }}
-                transition={{
-                  pathLength: { duration: 0.5, delay: 1.0, ease: "easeOut" },
-                  opacity: { duration: 0.3, delay: 1.0 },
-                }}
-              />
-            );
-          })}
-        </svg>
-
-        {/* ── PNG circle layers ────────────────────────────────────── */}
-
-        {/* Elips 3 — center circle, BACK layer */}
-        <AnimatedLayer
-          src="/circles/elips3.png"
-          entranceDelay={0.5}
-          breatheScale={[1, 1.035, 1]}
-          breatheDuration={3.5}
-          transformOrigin="50% 44%"
-          zIndex={1}
-          hovered={activeHover === "yazilim"}
-          hoverScale={1.04}
-        />
-
-        {/* Elips 2 — right crescent, MIDDLE layer */}
-        <AnimatedLayer
-          src="/circles/elips2.png"
-          entranceDelay={0.8}
-          breatheScale={[1, 1.02, 1]}
-          breatheDuration={5}
-          breatheDelay={1.3}
-          transformOrigin="62% 38%"
-          zIndex={2}
-          hovered={activeHover === "sesli"}
-          hoverTranslateX={30}
-          hoverScale={1.05}
-        />
-
-        {/* Elips 1 — left crescent, FRONT layer */}
-        <AnimatedLayer
-          src="/circles/elips1.png"
-          entranceDelay={0.7}
-          breatheScale={[1, 1.02, 1]}
-          breatheDuration={5}
-          breatheDelay={0.8}
-          transformOrigin="38% 50%"
-          zIndex={3}
-          hovered={activeHover === "chatbot"}
-          hoverTranslateX={-30}
-          hoverScale={1.05}
-        />
-
-        {/* ── CENTER LABEL — Özel Yazılım ─────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.5 }}
-          style={{
-            position: "absolute",
-            top: "46%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            textAlign: "center",
-            whiteSpace: "pre-line",
+            gridArea: "left",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: isCompact ? "flex-start" : "space-between",
+            gap: isCompact ? 18 : 0,
+            paddingRight: isCompact ? 0 : 30,
+            height: isCompact ? "auto" : circleH,
             zIndex: 16,
-            pointerEvents: "none",
-            fontFamily: FONT,
-            fontSize: 22,
-            fontWeight: 500,
-            color: isHighlighted("yazilim")
-              ? "#fff"
-              : "rgba(255,255,255,0.9)",
-            letterSpacing: "0.1em",
-            lineHeight: 1.6,
-            textShadow: isHighlighted("yazilim")
-              ? "0 0 15px rgba(255, 45, 120, 0.3)"
-              : "0 0 20px rgba(255, 45, 120, 0.15)",
-            transition: "color 0.4s ease, text-shadow 0.4s ease",
           }}
         >
-          {"Özel\nYazılım"}
-          <MergeIcon bright={isHighlighted("yazilim")} />
-        </motion.div>
+          {/* Label 1: Akıllı Chatbot (top) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+              opacity: !startAnimations ? 0 : pulsingLabel === "chatbot" ? [1, 0.4, 1] : 1,
+              y: startAnimations ? 0 : 20,
+            }}
+            transition={
+              !startAnimations
+                ? { duration: 0.2 }
+                : pulsingLabel === "chatbot"
+                ? { opacity: { duration: 0.7, ease: "easeInOut" } }
+                : { duration: 0.5, delay: 0.6, ease: "easeOut" }
+            }
+            onMouseEnter={() => setHoveredLabel("chatbot")}
+            onMouseLeave={() => setHoveredLabel(null)}
+            style={{
+              maxWidth: isCompact ? "100%" : 260,
+              cursor: "default",
+              paddingTop: isCompact ? 0 : 20,
+            }}
+          >
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: labelTitleSize,
+                fontWeight: 700,
+                color: isHighlighted("chatbot") ? "#fff" : "rgba(255,255,255,0.95)",
+                letterSpacing: "0.01em",
+                lineHeight: 1.4,
+                marginBottom: 0,
+                textShadow: isHighlighted("chatbot")
+                  ? "0 0 15px rgba(255, 45, 120, 0.3)"
+                  : "none",
+                transition: "color 0.4s ease, text-shadow 0.4s ease",
+              }}
+            >
+              Akıllı Chatbot
+            </p>
+            <TypingDots bright={isHighlighted("chatbot")} />
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: labelBodySize,
+                color: isHighlighted("chatbot")
+                  ? "rgba(255,255,255,0.75)"
+                  : "rgba(255,255,255,0.55)",
+                lineHeight: 1.7,
+                transition: "color 0.4s ease",
+              }}
+            >
+              <RichText
+                text="**WhatsApp** hesabınıza entegre edilir, müşterilerinizle **7/24** iletişim kurar ve işletmenizin tüm yazışmalarını **profesyonelce** yönetir."
+                brightBold={isHighlighted("chatbot")}
+              />
+            </p>
+          </motion.div>
 
-        {/* ── Orbital particles ────────────────────────────────────── */}
-        <OrbitalParticle animName="svc-orbit-1" duration={18} delay={2.5} />
-        <OrbitalParticle animName="svc-orbit-2" duration={22} delay={2.8} />
-        <OrbitalParticle animName="svc-orbit-3" duration={16} delay={3.0} />
-        <OrbitalParticle animName="svc-orbit-4" duration={25} delay={3.3} />
+          {/* Label 3: Özel Yazılım (bottom) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+              opacity: !startAnimations ? 0 : pulsingLabel === "yazilim" ? [1, 0.4, 1] : 1,
+              y: startAnimations ? 0 : 20,
+            }}
+            transition={
+              !startAnimations
+                ? { duration: 0.2 }
+                : pulsingLabel === "yazilim"
+                ? { opacity: { duration: 0.7, ease: "easeInOut" } }
+                : { duration: 0.5, delay: 0.8, ease: "easeOut" }
+            }
+            onMouseEnter={() => setHoveredLabel("yazilim")}
+            onMouseLeave={() => setHoveredLabel(null)}
+            style={{
+              maxWidth: isCompact ? "100%" : 260,
+              cursor: "default",
+              paddingBottom: isCompact ? 0 : 20,
+            }}
+          >
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: labelTitleSize,
+                fontWeight: 700,
+                color: isHighlighted("yazilim") ? "#fff" : "rgba(255,255,255,0.95)",
+                letterSpacing: "0.01em",
+                lineHeight: 1.4,
+                marginBottom: 8,
+                textShadow: isHighlighted("yazilim")
+                  ? "0 0 15px rgba(255, 45, 120, 0.3)"
+                  : "none",
+                transition: "color 0.4s ease, text-shadow 0.4s ease",
+              }}
+            >
+              Özel Yazılım
+            </p>
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: labelBodySize,
+                color: isHighlighted("yazilim")
+                  ? "rgba(255,255,255,0.75)"
+                  : "rgba(255,255,255,0.55)",
+                lineHeight: 1.7,
+                transition: "color 0.4s ease",
+              }}
+            >
+              <RichText
+                text="**Chatbot ve sesli asistanın birleşimi** — işletmenizin tüm iletişim süreçlerini **tek bir akıllı sistem**de toplar, size sadece **sonuçları** sunar."
+                brightBold={isHighlighted("yazilim")}
+              />
+            </p>
+          </motion.div>
+        </div>
 
-        {/* ── Floating label 1 — far left (Akıllı Chatbot) ─────────── */}
+        {/* ── CENTER COLUMN — Circles ─────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{
-            opacity: pulsingLabel === "chatbot" ? [1, 0.4, 1] : 1,
-            y: 0,
-          }}
-          transition={
-            pulsingLabel === "chatbot"
-              ? { opacity: { duration: 0.7, ease: "easeInOut" } }
-              : { duration: 0.6, delay: 1.2, ease: "easeOut" }
-          }
-          onMouseEnter={() => setHoveredLabel("chatbot")}
-          onMouseLeave={() => setHoveredLabel(null)}
+          ref={circleRef}
+          onMouseMove={handleDiagramMouseMove}
+          onMouseLeave={handleDiagramMouseLeave}
           style={{
-            position: "absolute",
-            top: "12%",
-            left: "-28%",
-            maxWidth: 270,
-            zIndex: 20,
+            gridArea: "center",
+            position: "relative",
+            width: "100%",
+            minWidth: isCompact ? 0 : 400,
+            maxWidth: isCompact ? (isMobile ? 640 : 760) : "none",
+            margin: isCompact ? "0 auto" : 0,
+            height: circleH,
+            overflow: "visible",
+            x: isCompact ? 0 : parallaxX,
+            y: isCompact ? 0 : parallaxY,
             cursor: "default",
           }}
         >
-          <p
-            style={{
-              fontFamily: FONT,
-              fontSize: 20,
-              fontWeight: 700,
-              color: isHighlighted("chatbot") ? "#fff" : "rgba(255,255,255,0.95)",
-              letterSpacing: "0.01em",
-              lineHeight: 1.4,
-              marginBottom: 0,
-              textShadow: isHighlighted("chatbot")
-                ? "0 0 15px rgba(255, 45, 120, 0.3)"
-                : "none",
-              transition: "color 0.4s ease, text-shadow 0.4s ease",
-            }}
-          >
-            Akıllı Chatbot
-          </p>
-          <TypingDots bright={isHighlighted("chatbot")} />
-          <p
-            style={{
-              fontFamily: FONT,
-              fontSize: 14.5,
-              color: isHighlighted("chatbot")
-                ? "rgba(255,255,255,0.75)"
-                : "rgba(255,255,255,0.55)",
-              lineHeight: 1.7,
-              transition: "color 0.4s ease",
-            }}
-          >
-            <RichText
-              text="**WhatsApp** hesabınıza entegre edilir, müşterilerinizle **7/24** iletişim kurar ve işletmenizin tüm yazışmalarını **profesyonelce** yönetir."
-              brightBold={isHighlighted("chatbot")}
-            />
-          </p>
-        </motion.div>
+          {/* Elips 3 — center circle, BACK layer */}
+          <AnimatedLayer
+            src="/circles/elips3.png"
+            start={startAnimations}
+            entranceDelay={0.5}
+            breatheScale={[1, 1.06, 1]}
+            breatheOpacity={[0.92, 1, 0.92]}
+            breatheDuration={3}
+            transformOrigin="50% 44%"
+            zIndex={1}
+            hovered={activeHover === "yazilim"}
+            hoverScale={1.04}
+          />
 
-        {/* ── Floating label 2 — far right (Sesli Asistan) ──────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{
-            opacity: pulsingLabel === "sesli" ? [1, 0.4, 1] : 1,
-            y: 0,
-          }}
-          transition={
-            pulsingLabel === "sesli"
-              ? { opacity: { duration: 0.7, ease: "easeInOut" } }
-              : { duration: 0.6, delay: 1.4, ease: "easeOut" }
-          }
-          onMouseEnter={() => setHoveredLabel("sesli")}
-          onMouseLeave={() => setHoveredLabel(null)}
-          style={{
-            position: "absolute",
-            top: "22%",
-            right: "-28%",
-            maxWidth: 270,
-            textAlign: "right",
-            zIndex: 20,
-            cursor: "default",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: FONT,
-              fontSize: 20,
-              fontWeight: 700,
-              color: isHighlighted("sesli") ? "#fff" : "rgba(255,255,255,0.95)",
-              letterSpacing: "0.01em",
-              lineHeight: 1.4,
-              marginBottom: 0,
-              textShadow: isHighlighted("sesli")
-                ? "0 0 15px rgba(255, 45, 120, 0.3)"
-                : "none",
-              transition: "color 0.4s ease, text-shadow 0.4s ease",
-            }}
-          >
-            Sesli Asistan
-          </p>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <WaveformBars bright={isHighlighted("sesli")} />
-          </div>
-          <p
-            style={{
-              fontFamily: FONT,
-              fontSize: 14.5,
-              color: isHighlighted("sesli")
-                ? "rgba(255,255,255,0.75)"
-                : "rgba(255,255,255,0.55)",
-              lineHeight: 1.7,
-              transition: "color 0.4s ease",
-            }}
-          >
-            <RichText
-              text="**Restoranlar, klinikler** ve işletmeler için telefon üzerinden **rezervasyon** alır, müşterilerinizle doğal bir şekilde konuşur ve size **anlık geri bildirim** sağlar."
-              brightBold={isHighlighted("sesli")}
-            />
-          </p>
-        </motion.div>
+          {/* Elips 2 — right crescent, MIDDLE layer */}
+          <AnimatedLayer
+            src="/circles/elips2.png"
+            start={startAnimations}
+            entranceDelay={0.8}
+            breatheScale={[1, 1.045, 1]}
+            breatheOpacity={[0.85, 1, 0.85]}
+            breatheDuration={4.5}
+            breatheDelay={1.3}
+            transformOrigin="62% 38%"
+            zIndex={2}
+            hovered={activeHover === "sesli"}
+            hoverTranslateX={isCompact ? 16 : 30}
+            hoverScale={1.05}
+          />
 
-        {/* ── Floating label 3 — far bottom-left (Özel Yazılım) ─────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{
-            opacity: pulsingLabel === "yazilim" ? [1, 0.4, 1] : 1,
-            y: 0,
-          }}
-          transition={
-            pulsingLabel === "yazilim"
-              ? { opacity: { duration: 0.7, ease: "easeInOut" } }
-              : { duration: 0.6, delay: 1.6, ease: "easeOut" }
-          }
-          onMouseEnter={() => setHoveredLabel("yazilim")}
-          onMouseLeave={() => setHoveredLabel(null)}
-          style={{
-            position: "absolute",
-            bottom: "5%",
-            left: "-28%",
-            maxWidth: 270,
-            zIndex: 20,
-            cursor: "default",
-          }}
-        >
-          <p
+          {/* Elips 1 — left crescent, FRONT layer */}
+          <AnimatedLayer
+            src="/circles/elips1.png"
+            start={startAnimations}
+            entranceDelay={0.7}
+            breatheScale={[1, 1.045, 1]}
+            breatheOpacity={[0.85, 1, 0.85]}
+            breatheDuration={4}
+            breatheDelay={0.8}
+            transformOrigin="38% 50%"
+            zIndex={3}
+            hovered={activeHover === "chatbot"}
+            hoverTranslateX={isCompact ? -16 : -30}
+            hoverScale={1.05}
+          />
+
+          {/* CENTER LABEL — Özel Yazılım */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: startAnimations ? 1 : 0 }}
+            transition={{ duration: 0.45, delay: startAnimations ? 0.7 : 0 }}
             style={{
+              position: "absolute",
+              top: "46%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              textAlign: "center",
+              whiteSpace: "pre-line",
+              zIndex: 16,
+              pointerEvents: "none",
               fontFamily: FONT,
-              fontSize: 20,
-              fontWeight: 700,
-              color: isHighlighted("yazilim") ? "#fff" : "rgba(255,255,255,0.95)",
-              letterSpacing: "0.01em",
-              lineHeight: 1.4,
-              marginBottom: 8,
+              fontSize: centerLabelSize,
+              fontWeight: 500,
+              color: isHighlighted("yazilim")
+                ? "#fff"
+                : "rgba(255,255,255,0.9)",
+              letterSpacing: isMobile ? "0.08em" : "0.1em",
+              lineHeight: 1.6,
               textShadow: isHighlighted("yazilim")
                 ? "0 0 15px rgba(255, 45, 120, 0.3)"
-                : "none",
+                : "0 0 20px rgba(255, 45, 120, 0.15)",
               transition: "color 0.4s ease, text-shadow 0.4s ease",
             }}
           >
-            Özel Yazılım
-          </p>
-          <p
+            {"Özel\nYazılım"}
+            <MergeIcon bright={isHighlighted("yazilim")} />
+          </motion.div>
+
+          {/* Orbital particles */}
+          <OrbitalParticle start={startAnimations} animName="svc-orbit-1" duration={18} delay={2.5} />
+          <OrbitalParticle start={startAnimations} animName="svc-orbit-2" duration={22} delay={2.8} />
+          <OrbitalParticle start={startAnimations} animName="svc-orbit-3" duration={16} delay={3.0} />
+          <OrbitalParticle start={startAnimations} animName="svc-orbit-4" duration={25} delay={3.3} />
+        </motion.div>
+
+        {/* ── RIGHT COLUMN — Label 2 ─────────────────────────────── */}
+        <div
+          style={{
+            gridArea: "right",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: isCompact ? "flex-start" : "center",
+            paddingLeft: isCompact ? 0 : 30,
+            height: isCompact ? "auto" : circleH,
+            zIndex: 16,
+          }}
+        >
+          {/* Label 2: Sesli Asistan */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+              opacity: !startAnimations ? 0 : pulsingLabel === "sesli" ? [1, 0.4, 1] : 1,
+              y: startAnimations ? 0 : 20,
+            }}
+            transition={
+              !startAnimations
+                ? { duration: 0.2 }
+                : pulsingLabel === "sesli"
+                ? { opacity: { duration: 0.7, ease: "easeInOut" } }
+                : { duration: 0.5, delay: 0.7, ease: "easeOut" }
+            }
+            onMouseEnter={() => setHoveredLabel("sesli")}
+            onMouseLeave={() => setHoveredLabel(null)}
             style={{
-              fontFamily: FONT,
-              fontSize: 14.5,
-              color: isHighlighted("yazilim")
-                ? "rgba(255,255,255,0.75)"
-                : "rgba(255,255,255,0.55)",
-              lineHeight: 1.7,
-              transition: "color 0.4s ease",
+              maxWidth: isCompact ? "100%" : 260,
+              textAlign: "left",
+              cursor: "default",
             }}
           >
-            <RichText
-              text="**Chatbot ve sesli asistanın birleşimi** — işletmenizin tüm iletişim süreçlerini **tek bir akıllı sistem**de toplar, size sadece **sonuçları** sunar."
-              brightBold={isHighlighted("yazilim")}
-            />
-          </p>
-        </motion.div>
-      </motion.div>
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: labelTitleSize,
+                fontWeight: 700,
+                color: isHighlighted("sesli") ? "#fff" : "rgba(255,255,255,0.95)",
+                letterSpacing: "0.01em",
+                lineHeight: 1.4,
+                marginBottom: 0,
+                textShadow: isHighlighted("sesli")
+                  ? "0 0 15px rgba(255, 45, 120, 0.3)"
+                  : "none",
+                transition: "color 0.4s ease, text-shadow 0.4s ease",
+              }}
+            >
+              Sesli Asistan
+            </p>
+            <WaveformBars bright={isHighlighted("sesli")} />
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: labelBodySize,
+                color: isHighlighted("sesli")
+                  ? "rgba(255,255,255,0.75)"
+                  : "rgba(255,255,255,0.55)",
+                lineHeight: 1.7,
+                transition: "color 0.4s ease",
+              }}
+            >
+              <RichText
+                text="**Restoranlar, klinikler** ve işletmeler için telefon üzerinden **rezervasyon** alır, müşterilerinizle doğal bir şekilde konuşur ve size **anlık geri bildirim** sağlar."
+                brightBold={isHighlighted("sesli")}
+              />
+            </p>
+          </motion.div>
+        </div>
+      </div>
 
       {/* ── Bottom service tabs ────────────────────────────────────── */}
       <div
@@ -813,12 +954,14 @@ export default function ServiceCircleDiagram() {
           zIndex: 1,
           display: "flex",
           alignItems: "flex-start",
-          gap: "clamp(20px, 4vw, 40px)",
-          marginTop: 55,
-          paddingLeft: 24,
-          paddingRight: 24,
+          gap: isMobile ? 14 : "clamp(20px, 4vw, 40px)",
+          marginTop: isMobile ? 38 : 55,
+          paddingLeft: sectionPad,
+          paddingRight: sectionPad,
           flexWrap: "wrap",
-          justifyContent: "center",
+          justifyContent: isMobile ? "space-between" : "center",
+          maxWidth: isMobile ? 640 : 1200,
+          width: "100%",
         }}
       >
         {TABS.map((tab, i) => {
@@ -827,19 +970,20 @@ export default function ServiceCircleDiagram() {
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={{ opacity: startAnimations ? 1 : 0, y: startAnimations ? 0 : 22 }}
               transition={{
                 duration: 0.5,
-                delay: 1.8 + i * 0.15,
+                delay: startAnimations ? 0.95 + i * 0.12 : 0,
                 ease: "easeOut",
               }}
               whileHover="hover"
               style={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "flex-start",
+                alignItems: isMobile ? "center" : "flex-start",
                 cursor: "pointer",
                 fontFamily: FONT,
+                flex: isMobile ? "1 1 calc(33.333% - 10px)" : "0 0 auto",
               }}
               onClick={() => handleTabClick(i, tab.nodeId)}
             >
@@ -847,12 +991,12 @@ export default function ServiceCircleDiagram() {
               <motion.div
                 variants={{
                   hover: {
-                    width: isActive ? 110 : 100,
+                    width: isActive ? activeTabBarW : hoverTabBarW,
                     background: "#FF2D78",
                   },
                 }}
                 animate={{
-                  width: isActive ? 110 : 65,
+                  width: isActive ? activeTabBarW : idleTabBarW,
                   background: isActive
                     ? "#FF2D78"
                     : "linear-gradient(to right, #FF2D78, rgba(255,45,120,0.35))",
@@ -873,7 +1017,7 @@ export default function ServiceCircleDiagram() {
                 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
                 style={{
-                  fontSize: 14,
+                  fontSize: isMobile ? 13 : 14,
                   fontWeight: 700,
                   lineHeight: 1.35,
                   whiteSpace: "pre-line",

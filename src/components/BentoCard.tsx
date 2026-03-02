@@ -7,6 +7,8 @@ interface BentoCardProps {
   description: string;
   items: string[];
   backgroundImage?: string;
+  onHoverChange?: (hovered: boolean) => void;
+  mobile?: boolean;
 }
 
 export default function BentoCard({
@@ -14,43 +16,68 @@ export default function BentoCard({
   description,
   items,
   backgroundImage,
+  onHoverChange,
+  mobile = false,
 }: BentoCardProps) {
   const [hovered, setHovered] = useState(false);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const rotateX = ((e.clientY - rect.top) / rect.height - 0.5) * -30;
-    const rotateY = ((e.clientX - rect.left) / rect.width - 0.5) * 30;
-    setTilt({ x: rotateX, y: rotateY });
-  };
 
   const handleMouseLeave = () => {
     setHovered(false);
-    setTilt({ x: 0, y: 0 });
+    onHoverChange?.(false);
   };
 
+  /* ── MOBİL: Statik kart, hover yok ── */
+  if (mobile) {
+    return (
+      <div
+        className="relative h-full overflow-hidden rounded-2xl"
+        style={{
+          backgroundColor: "#1a1a1a",
+          backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {backgroundImage && (
+          <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+        {/* İnce pembe accent çizgi */}
+        <div
+          className="absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full"
+          style={{ background: "linear-gradient(180deg, #F472B6, #DB2777)" }}
+        />
+
+        <div className="relative z-10 h-full flex flex-col justify-end p-5 pl-6">
+          <h3 className="text-lg font-bold text-white leading-tight">{title}</h3>
+          <p className="text-xs text-white/50 mt-1 line-clamp-2">{description}</p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── DESKTOP: Mevcut hover davranışı ── */
   return (
     <div
-      className="relative overflow-hidden rounded-3xl cursor-pointer"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setHovered(true)}
+      className="relative h-full overflow-hidden rounded-3xl cursor-pointer"
+      onMouseEnter={() => {
+        setHovered(true);
+        onHoverChange?.(true);
+      }}
       onMouseLeave={handleMouseLeave}
       style={{
         backgroundColor: "#1a1a1a",
         backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transition: hovered
-          ? "transform 0.08s ease-out, box-shadow 0.3s ease"
-          : "transform 0.5s ease-out, box-shadow 0.3s ease",
+        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+        transition: "transform 0.22s ease, box-shadow 0.3s ease",
         boxShadow: hovered
-          ? "0 0 0 1.5px #FF2D78, 0 0 50px 10px rgba(255, 45, 120, 0.25)"
+          ? "0 0 0 1px rgba(244,114,182,0.75), 0 20px 48px rgba(219,39,119,0.2)"
           : "0 0 0 0px transparent",
       }}
     >
-      {/* Background image overlay */}
       {backgroundImage && (
         <div
           className="absolute inset-0 transition-opacity duration-300"
@@ -58,23 +85,26 @@ export default function BentoCard({
         />
       )}
 
-      {/* Gradient for text readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
-      {/* Pulsing glow border */}
       {hovered && (
         <div
-          className="absolute inset-0 rounded-3xl pointer-events-none animate-glow-pulse"
+          className="absolute inset-0 rounded-3xl pointer-events-none"
+          style={{
+            padding: "1px",
+            background:
+              "linear-gradient(108deg, rgba(244,114,182,0.95) 0%, rgba(236,72,153,0.85) 45%, rgba(219,39,119,0.92) 100%)",
+            WebkitMask:
+              "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+            WebkitMaskComposite: "xor",
+            maskComposite: "exclude",
+          }}
         />
       )}
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-end p-8 md:p-10">
-        <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-          {title}
-        </h3>
+      <div className="relative z-10 h-full flex flex-col justify-end p-10">
+        <h3 className="text-3xl font-bold text-white mb-3">{title}</h3>
 
-        {/* Description — collapses on hover */}
         <div
           className="overflow-hidden transition-all duration-300"
           style={{
@@ -82,10 +112,9 @@ export default function BentoCard({
             opacity: hovered ? 0 : 1,
           }}
         >
-          <p className="text-sm md:text-base text-white/60">{description}</p>
+          <p className="text-base text-white/60">{description}</p>
         </div>
 
-        {/* List — reveals on hover with stagger */}
         <div
           className="overflow-hidden transition-all duration-300"
           style={{ maxHeight: hovered ? "220px" : "0px" }}
@@ -94,7 +123,7 @@ export default function BentoCard({
             {items.map((item, i) => (
               <li
                 key={i}
-                className="text-sm md:text-base text-white/85 flex items-center gap-2.5 transition-all duration-300"
+                className="text-base text-white/85 flex items-center gap-2.5 transition-all duration-300"
                 style={{
                   opacity: hovered ? 1 : 0,
                   transform: hovered ? "translateY(0)" : "translateY(14px)",

@@ -10,7 +10,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "futura-100", "futura-100-book", "kuhlman-vf", sans-serif;
+  --font-sans: "futura-pt", sans-serif;
 }
 
 :root.dark {
@@ -21,19 +21,20 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: "futura-100", "futura-100-book", "kuhlman-vf", sans-serif;
+  font-family: "futura-pt", sans-serif;
   background-image: radial-gradient(circle, rgba(0, 0, 0, 0.15) 1.2px, transparent 1.2px);
   background-size: 28px 28px;
+  transition: none;
+}
+
+body.theme-ready {
+  transition: background-color 500ms ease, color 500ms ease;
 }
 
 .dark body,
 body:where(.dark *) {
   background-color: #0a0a0a;
   background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1.2px, transparent 1.2px);
-}
-
-.tk-kuhlman-vf {
-  font-family: "kuhlman-vf", sans-serif !important;
 }
 
 @keyframes shimmer {
@@ -49,66 +50,191 @@ body:where(.dark *) {
   animation: shimmer 3s ease-in-out infinite;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+@keyframes hero-pan {
+  0% {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.1) translate3d(-14px, -8px, 0);
+  }
 }
 
-.animate-blink {
-  animation: blink 0.8s step-end infinite;
-}
-
-@keyframes fade-in-up {
+@keyframes hero-title-in {
   0% {
     opacity: 0;
-    transform: translateY(10px) scale(0.95);
+    transform: translateY(18px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
-.animate-fade-in-up {
-  animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes hero-text-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
-@keyframes ping-slow {
+@keyframes hero-text-glow {
+  0%, 100% {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    text-shadow: 0 10px 26px rgba(244, 114, 182, 0.22);
+  }
+}
+
+.hero-text-float {
+  animation: hero-text-float 6.4s ease-in-out 0.9s infinite;
+  will-change: transform;
+}
+
+.hero-headline {
+  animation:
+    hero-title-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both 100ms,
+    hero-text-glow 6.4s ease-in-out 0.9s infinite;
+  will-change: text-shadow;
+}
+
+/* ── Full-screen mobile menu animations ─────────────────────────────── */
+
+@keyframes menu-overlay-in {
   0% {
-    transform: scale(1);
-    opacity: 0.3;
+    opacity: 0;
+    clip-path: circle(0% at calc(100% - 40px) 40px);
   }
   100% {
-    transform: scale(1.6);
-    opacity: 0;
+    opacity: 1;
+    clip-path: circle(150% at calc(100% - 40px) 40px);
   }
 }
 
-.animate-ping-slow {
-  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+@keyframes menu-overlay-out {
+  0% {
+    opacity: 1;
+    clip-path: circle(150% at calc(100% - 40px) 40px);
+  }
+  100% {
+    opacity: 0;
+    clip-path: circle(0% at calc(100% - 40px) 40px);
+  }
 }
 
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: inset 0 0 0 1.5px rgba(255, 45, 120, 0.9); }
-  50% { box-shadow: inset 0 0 0 1.5px rgba(255, 45, 120, 0.25); }
+@keyframes menu-link-in {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.animate-glow-pulse {
-  animation: glow-pulse 1.4s ease-in-out infinite;
+@keyframes menu-separator-grow {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@keyframes menu-bottom-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* ── ServiceDiagram ring animations ─────────────────────────────────────── */
+.menu-overlay-enter {
+  animation: menu-overlay-in 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
 
-@keyframes svc-cw  { from { transform: rotate(0deg);    } to { transform: rotate(360deg);  } }
-@keyframes svc-ccw { from { transform: rotate(0deg);    } to { transform: rotate(-360deg); } }
+.menu-overlay-exit {
+  animation: menu-overlay-out 450ms cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.menu-link-enter {
+  opacity: 0;
+  animation: menu-link-in 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+.menu-separator-enter {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: menu-separator-grow 400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+.menu-bottom-enter {
+  opacity: 0;
+  animation: menu-bottom-in 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--stagger-delay, 0ms);
+}
+
+/* ── Mobile navbar glow pulse ──────────────────────────────────────── */
+
+@keyframes navbar-glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+.mobile-navbar-glow {
+  position: relative;
+}
+
+.mobile-navbar-glow::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 36px;
+  background: linear-gradient(135deg, rgba(244,114,182,0.3) 0%, rgba(219,39,119,0.15) 50%, rgba(244,114,182,0.3) 100%);
+  filter: blur(8px);
+  opacity: 0.5;
+  animation: navbar-glow-pulse 4s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.dark .mobile-navbar-glow::before {
+  background: linear-gradient(135deg, rgba(244,114,182,0.2) 0%, rgba(190,24,93,0.12) 50%, rgba(244,114,182,0.2) 100%);
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-text-float,
+  .hero-headline {
+    animation: none !important;
+  }
+
+  .menu-overlay-enter,
+  .menu-overlay-exit,
+  .menu-link-enter,
+  .menu-separator-enter,
+  .menu-bottom-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+
+  .mobile-navbar-glow::before {
+    animation: none !important;
+    opacity: 0.5 !important;
+  }
+}
 
 /* ── ServiceCircleDiagram orbital particles ────────────────────────────── */
 
@@ -137,3 +263,4 @@ body:where(.dark *) {
   50%  { transform: translate(-50%,-50%) rotate(490deg) translateX(215px) rotate(-490deg); opacity: 0.35; }
   100% { transform: translate(-50%,-50%) rotate(670deg) translateX(240px) rotate(-670deg); opacity: 0.3; }
 }
+

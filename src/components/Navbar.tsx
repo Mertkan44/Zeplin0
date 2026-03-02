@@ -19,6 +19,8 @@ const rightLinks = [
   { href: "/galeri", label: "galeri" },
 ];
 
+const mobileLinks = [...leftLinks, ...rightLinks];
+
 interface BlobState {
   left: number;
   width: number;
@@ -120,6 +122,10 @@ export default function Navbar() {
   const { blob, setTarget, setImmediate } = useSpringBlob();
   const initializedRef = useRef(false);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const hasInteracted = useRef(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const getPosition = useCallback(
     (el: HTMLAnchorElement) => {
@@ -141,6 +147,65 @@ export default function Navbar() {
       }
     }
   }, [pathname, getPosition, setImmediate]);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    if (mobileOpen) document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileOpen]);
+
+  const toggleMenu = useCallback(() => {
+    hasInteracted.current = true;
+    setMobileOpen((v) => !v);
+  }, []);
+
+  // Focus management for mobile overlay
+  useEffect(() => {
+    if (mobileOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      const timer = setTimeout(() => {
+        const firstLink = overlayRef.current?.querySelector("a");
+        firstLink?.focus();
+      }, 300);
+      return () => clearTimeout(timer);
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
+  }, [mobileOpen]);
+
+  // Focus trap + Escape key
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+        return;
+      }
+      if (e.key === "Tab" && overlayRef.current) {
+        const focusable = overlayRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [mobileOpen]);
 
   const handleMouseEnter = (href: string) => {
     setHoveredHref(href);
@@ -177,7 +242,227 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-5xl">
+    <>
+      {/* ── Mobil: Sabit üst bar (desktop gradient stili) ── */}
+      <div className="fixed top-4 left-1/2 z-[70] w-[92%] -translate-x-1/2 md:hidden">
+        <div
+          className="relative flex items-center justify-between rounded-full px-3 py-2.5 transition-all duration-500"
+          style={{
+            background: mobileOpen
+              ? "transparent"
+              : isDark
+                ? "linear-gradient(135deg, #9D174D 0%, #BE185D 40%, #DB2777 100%)"
+                : "linear-gradient(135deg, #F472B6 0%, #EC4899 40%, #DB2777 100%)",
+            boxShadow: mobileOpen
+              ? "none"
+              : isDark
+                ? "0 8px 32px rgba(190, 24, 93, 0.35), 0 2px 8px rgba(0,0,0,0.4)"
+                : "0 8px 32px rgba(219, 39, 119, 0.3), 0 2px 8px rgba(0,0,0,0.1)",
+          }}
+        >
+          {/* Sol: Theme Toggle */}
+          <div className="relative z-10">
+            <ThemeToggle />
+          </div>
+
+          {/* Orta: Logo (bardan taşan — menü açıkken gizlenir) */}
+          <div
+            className="relative -my-5 z-10 transition-all duration-500"
+            style={{
+              opacity: mobileOpen ? 0 : 1,
+              transform: mobileOpen ? "scale(0.85)" : "scale(1)",
+              pointerEvents: mobileOpen ? "none" : "auto",
+            }}
+          >
+            <Link href="/">
+              <Image
+                src="/zeplin-logo.png"
+                alt="Zeplin Media"
+                width={80}
+                height={80}
+                className="drop-shadow-lg hover:scale-110 transition-transform duration-300"
+                priority
+              />
+            </Link>
+          </div>
+
+          {/* Sağ: Hamburger / Close butonu */}
+          <button
+            type="button"
+            onClick={toggleMenu}
+            aria-label={mobileOpen ? "Menüyü kapat" : "Menüyü aç"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu-overlay"
+            className="relative z-10 grid h-10 w-10 place-items-center rounded-full transition-all duration-300"
+          >
+            <div className="flex h-5 w-6 flex-col justify-between">
+              <span
+                className={`block h-[2.5px] rounded-full bg-white/90 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  mobileOpen
+                    ? "translate-y-[8.75px] rotate-45 bg-white"
+                    : "w-full"
+                }`}
+              />
+              <span
+                className={`block h-[2.5px] rounded-full bg-white/60 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  mobileOpen
+                    ? "scale-x-0 opacity-0 bg-white"
+                    : "w-4/5 ml-auto"
+                }`}
+              />
+              <span
+                className={`block h-[2.5px] rounded-full bg-white/90 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  mobileOpen
+                    ? "-translate-y-[8.75px] -rotate-45 bg-white"
+                    : "w-full"
+                }`}
+              />
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* ── Mobil: Full-screen overlay menü ── */}
+      <div
+        ref={overlayRef}
+        id="mobile-menu-overlay"
+        className={`fixed inset-0 z-[60] md:hidden ${
+          mobileOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Ana menü"
+        aria-hidden={!mobileOpen}
+      >
+        <div
+          className={`absolute inset-0 flex min-h-dvh flex-col ${
+            mobileOpen
+              ? "menu-overlay-enter"
+              : hasInteracted.current
+                ? "menu-overlay-exit"
+                : "opacity-0"
+          }`}
+          style={{
+            background: isDark
+              ? "linear-gradient(165deg, #831843 0%, #9D174D 30%, #BE185D 60%, #DB2777 100%)"
+              : "linear-gradient(165deg, #DB2777 0%, #EC4899 40%, #F472B6 80%, #FBCFE8 100%)",
+          }}
+        >
+          {/* Nokta desen texture */}
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+              backgroundSize: "24px 24px",
+            }}
+            aria-hidden="true"
+          />
+
+          {/* ── TOP: Logo — navbar bar logosuyla birebir aynı konumda ── */}
+          <div className="relative z-10 mt-4 mx-auto flex w-[92%] items-center justify-center rounded-full px-3 py-2.5">
+            <Link href="/" onClick={() => setMobileOpen(false)} className="-my-5">
+              <Image
+                src="/zeplin-logo.png"
+                alt="Zeplin Media"
+                width={80}
+                height={80}
+                className="drop-shadow-lg brightness-0 invert"
+              />
+            </Link>
+          </div>
+
+          {/* ── MIDDLE: Navigasyon linkleri ── */}
+          <nav className="relative z-10 flex flex-1 flex-col justify-center px-6" aria-label="Mobil navigasyon">
+            <ul className="space-y-0">
+              {mobileLinks.map((link, index) => {
+                const active = pathname === link.href;
+                const delay = 150 + index * 80;
+                return (
+                  <li key={`overlay-${link.href}`}>
+                    {index > 0 && (
+                      <div
+                        className={`h-px bg-white/20 ${mobileOpen ? "menu-separator-enter" : "scale-x-0"}`}
+                        style={{ "--stagger-delay": `${delay - 40}ms` } as React.CSSProperties}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <Link
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`group flex items-center justify-between py-4 ${
+                        mobileOpen ? "menu-link-enter" : "opacity-0"
+                      }`}
+                      style={{ "--stagger-delay": `${delay}ms` } as React.CSSProperties}
+                      {...(active ? { "aria-current": "page" as const } : {})}
+                    >
+                      <span
+                        className={`text-3xl font-bold lowercase tracking-tight transition-colors ${
+                          active
+                            ? "text-white"
+                            : "text-white/70 group-hover:text-white"
+                        }`}
+                      >
+                        {link.label}
+                      </span>
+                      <span className="flex items-center gap-3">
+                        {active && (
+                          <span className="h-2 w-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
+                        )}
+                        <svg
+                          className={`h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 ${
+                            active ? "text-white" : "text-white/40 group-hover:text-white/70"
+                          }`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2.5}
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          {/* ── BOTTOM: Dil seçici, CTA, Theme toggle ── */}
+          <div
+            className={`relative z-10 px-6 pb-8 ${
+              mobileOpen ? "menu-bottom-enter" : "opacity-0"
+            }`}
+            style={{ "--stagger-delay": `${150 + mobileLinks.length * 80 + 100}ms` } as React.CSSProperties}
+          >
+            <div className="flex gap-2">
+              {["TR", "EN", "DE", "RU"].map((lang, i) => (
+                <button
+                  key={lang}
+                  type="button"
+                  className={`rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition-colors ${
+                    i === 0
+                      ? "bg-white text-[#DB2777] shadow-[0_4px_12px_rgba(0,0,0,0.15)]"
+                      : "border border-white/25 text-white/70 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="mt-5 w-full rounded-2xl bg-white py-4 text-lg font-semibold text-[#DB2777] shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition-transform active:scale-[0.98]"
+            >
+              İletişime Geç
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+      <nav className="fixed top-6 left-1/2 z-50 hidden w-[90%] max-w-5xl -translate-x-1/2 md:block">
       {/* SVG Filters */}
       <svg className="absolute w-0 h-0" aria-hidden="true">
         <defs>
@@ -346,6 +631,7 @@ export default function Navbar() {
       <div className="absolute -right-12 top-1/2 -translate-y-1/2">
         <ThemeToggle />
       </div>
-    </nav>
+      </nav>
+    </>
   );
 }

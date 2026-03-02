@@ -17,8 +17,15 @@ export default function RootLayout({
     <html lang="tr" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/ryi5mzw.css" />
+        <link rel="stylesheet" href="https://use.typekit.net/fad1vyk.css" />
+        <link rel="stylesheet" href="https://use.typekit.net/psq5rwo.css" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="light")return;document.documentElement.classList.add("dark")}catch(e){}})()`,
+          }}
+        />
       </head>
-      <body className="font-sans antialiased bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-500">
+      <body className="font-sans antialiased">
         <ThemeProvider>
           <Navbar />
           {children}
