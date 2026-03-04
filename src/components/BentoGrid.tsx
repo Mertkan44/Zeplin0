@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback, type CSSProperties } from "react";
 import Link from "next/link";
 import { motion, MotionConfig } from "framer-motion";
 import BentoCard from "@/components/BentoCard";
+import { useTheme } from "./ThemeProvider";
 
 interface Project {
   name: string;
@@ -89,29 +90,89 @@ function SocialRowCards({
   block: Block;
   refCb: (el: HTMLDivElement | null) => void;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const socials = (block.socials ?? []).slice(0, 3);
+  const [pulseIdx, setPulseIdx] = useState<number | null>(null);
+  const pulseTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const triggerPulse = useCallback((idx: number) => {
+    clearTimeout(pulseTimeoutRef.current);
+    setPulseIdx(idx);
+    pulseTimeoutRef.current = setTimeout(() => {
+      setPulseIdx((prev) => (prev === idx ? null : prev));
+    }, 280);
+  }, []);
+
+  useEffect(
+    () => () => {
+      clearTimeout(pulseTimeoutRef.current);
+    },
+    []
+  );
+
+  const getBrandTint = (name: string) => {
+    if (isDark) {
+      switch (name) {
+        case "Instagram":
+          return "linear-gradient(160deg, rgba(24, 10, 18, 0.42) 0%, rgba(157, 23, 77, 0.34) 56%, rgba(244, 114, 182, 0.14) 100%)";
+        case "LinkedIn":
+          return "linear-gradient(160deg, rgba(29, 12, 22, 0.44) 0%, rgba(131, 24, 67, 0.36) 54%, rgba(236, 72, 153, 0.16) 100%)";
+        case "WhatsApp":
+          return "linear-gradient(160deg, rgba(19, 7, 15, 0.42) 0%, rgba(82, 22, 59, 0.34) 54%, rgba(219, 39, 119, 0.16) 100%)";
+        default:
+          return "linear-gradient(160deg, rgba(29, 12, 22, 0.42) 0%, rgba(131, 24, 67, 0.34) 100%)";
+      }
+    }
+
+    switch (name) {
+      case "Instagram":
+        return "linear-gradient(160deg, rgba(244, 114, 182, 0.28) 0%, rgba(236, 72, 153, 0.22) 52%, rgba(219, 39, 119, 0.16) 100%)";
+      case "LinkedIn":
+        return "linear-gradient(160deg, rgba(236, 72, 153, 0.24) 0%, rgba(219, 39, 119, 0.28) 56%, rgba(190, 24, 93, 0.2) 100%)";
+      case "WhatsApp":
+        return "linear-gradient(160deg, rgba(251, 207, 232, 0.22) 0%, rgba(244, 114, 182, 0.24) 54%, rgba(219, 39, 119, 0.2) 100%)";
+      default:
+        return "linear-gradient(160deg, rgba(244, 114, 182, 0.24) 0%, rgba(219, 39, 119, 0.24) 100%)";
+    }
+  };
+
+  const flowPositions = ["0% 50%", "50% 50%", "100% 50%"];
+  const flowGradient = isDark
+    ? "linear-gradient(135deg, #9D174D 0%, #BE185D 40%, #DB2777 100%)"
+    : "linear-gradient(135deg, #F472B6 0%, #EC4899 40%, #DB2777 100%)";
 
   return (
     <div
       ref={refCb}
-      className="rounded-2xl bg-foreground/[0.04] p-3.5"
+      className="mt-5 rounded-2xl bg-foreground/[0.04] p-3.5"
     >
       <div className="grid grid-cols-3 gap-3">
-        {socials.map((social) => (
+        {socials.map((social, idx) => (
           <a
             key={social.name}
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-[112px] items-center justify-center rounded-2xl"
-            style={{
-              background:
-                "linear-gradient(160deg, #F0679E 0%, #DB2777 40%, #A21D56 100%)",
-              boxShadow:
-                "0 6px 20px rgba(157, 23, 77, 0.25), 0 2px 6px rgba(0,0,0,0.1)",
-            }}
+            onPointerDown={() => triggerPulse(idx)}
+            onTouchStart={() => triggerPulse(idx)}
+            className={`social-card group flex h-[112px] items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300/75 ${
+              pulseIdx === idx ? "is-pressed" : ""
+            }`}
+            style={
+              {
+                "--sheen-delay": `${idx * 120}ms`,
+                backgroundImage: `${getBrandTint(social.name)}, ${flowGradient}`,
+                backgroundSize: "100% 100%, 300% 100%",
+                backgroundPosition: `center, ${flowPositions[idx] ?? "50% 50%"}`,
+              } as CSSProperties
+            }
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-900/30">
+            <div
+              className={`social-icon-wrap relative z-[2] flex h-10 w-10 items-center justify-center rounded-full ${
+                isDark ? "bg-black/30" : "bg-pink-900/30"
+              }`}
+            >
               <SocialIcon name={social.name} />
             </div>
           </a>
@@ -370,6 +431,7 @@ export default function BentoGrid({ blocks }: BentoGridProps) {
 
             {blocks[1]?.projects && (
               <motion.div
+                className="mt-5"
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"

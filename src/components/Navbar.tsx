@@ -21,6 +21,15 @@ const rightLinks = [
 
 const mobileLinks = [...leftLinks, ...rightLinks];
 
+const NAVBAR_GRADIENT_LIGHT =
+  "linear-gradient(135deg, #F472B6 0%, #EC4899 40%, #DB2777 100%)";
+const NAVBAR_GRADIENT_DARK =
+  "linear-gradient(135deg, #9D174D 0%, #BE185D 40%, #DB2777 100%)";
+const NAVBAR_SHADOW_LIGHT =
+  "0 8px 32px rgba(219, 39, 119, 0.3), 0 2px 8px rgba(0,0,0,0.1)";
+const NAVBAR_SHADOW_DARK =
+  "0 8px 32px rgba(190, 24, 93, 0.35), 0 2px 8px rgba(0,0,0,0.4)";
+
 interface BlobState {
   left: number;
   width: number;
@@ -251,13 +260,13 @@ export default function Navbar() {
             background: mobileOpen
               ? "transparent"
               : isDark
-                ? "linear-gradient(135deg, #9D174D 0%, #BE185D 40%, #DB2777 100%)"
-                : "linear-gradient(135deg, #F472B6 0%, #EC4899 40%, #DB2777 100%)",
+                ? NAVBAR_GRADIENT_DARK
+                : NAVBAR_GRADIENT_LIGHT,
             boxShadow: mobileOpen
               ? "none"
               : isDark
-                ? "0 8px 32px rgba(190, 24, 93, 0.35), 0 2px 8px rgba(0,0,0,0.4)"
-                : "0 8px 32px rgba(219, 39, 119, 0.3), 0 2px 8px rgba(0,0,0,0.1)",
+                ? NAVBAR_SHADOW_DARK
+                : NAVBAR_SHADOW_LIGHT,
           }}
         >
           {/* Sol: Theme Toggle */}
@@ -504,11 +513,11 @@ export default function Navbar() {
         className="relative flex items-center justify-between rounded-full px-3 py-2.5 transition-all duration-500"
         style={{
           background: isDark
-            ? "linear-gradient(135deg, #9D174D 0%, #BE185D 40%, #DB2777 100%)"
-            : "linear-gradient(135deg, #F472B6 0%, #EC4899 40%, #DB2777 100%)",
+            ? NAVBAR_GRADIENT_DARK
+            : NAVBAR_GRADIENT_LIGHT,
           boxShadow: isDark
-            ? "0 8px 32px rgba(190, 24, 93, 0.35), 0 2px 8px rgba(0,0,0,0.4)"
-            : "0 8px 32px rgba(219, 39, 119, 0.3), 0 2px 8px rgba(0,0,0,0.1)",
+            ? NAVBAR_SHADOW_DARK
+            : NAVBAR_SHADOW_LIGHT,
         }}
       >
         {/* === LIQUID 3D BLOB === */}
