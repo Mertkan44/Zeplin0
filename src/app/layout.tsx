@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import { Jost } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
+
+const jost = Jost({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jost",
+});
 
 export const metadata: Metadata = {
   title: "Zeplin Media | Dijital Ajans",
@@ -25,10 +33,11 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased">
+      <body className={`${jost.variable} font-sans antialiased`}>
         <ThemeProvider>
           <Navbar />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

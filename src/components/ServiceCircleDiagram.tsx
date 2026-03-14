@@ -5,7 +5,7 @@ import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 
-const FONT = '"futura-pt", sans-serif';
+const FONT = 'var(--font-jost), sans-serif';
 
 const CIRCLE_W = 680; // center column width for circles
 const ASPECT = 1912 / 2940;
@@ -307,6 +307,30 @@ const TABS = [
   { label: "Sesli\nAsistan", nodeId: "sesli" },
 ] as const;
 
+const SERVICE_CONTENT_MAP = {
+  chatbot: {
+    title: "Akıllı Chatbot",
+    short:
+      "WhatsApp ve web üzerinden 7/24 yanıt vererek müşteri iletişimini otomatikleştirir.",
+    long:
+      "**WhatsApp** hesabınıza entegre edilir, müşterilerinizle **7/24** iletişim kurar ve işletmenizin tüm yazışmalarını **profesyonelce** yönetir.",
+  },
+  yazilim: {
+    title: "Özel Yazılım",
+    short:
+      "Chatbot ve sesli asistanı tek merkezde birleştirip süreçleri tek panelden yönetir.",
+    long:
+      "**Chatbot ve sesli asistanın birleşimi** — işletmenizin tüm iletişim süreçlerini **tek bir akıllı sistem**de toplar, size sadece **sonuçları** sunar.",
+  },
+  sesli: {
+    title: "Sesli Asistan",
+    short:
+      "Telefon görüşmelerinde rezervasyon ve bilgi taleplerini doğal konuşmayla yönetir.",
+    long:
+      "**Restoranlar, klinikler** ve işletmeler için telefon üzerinden **rezervasyon** alır, müşterilerinizle doğal bir şekilde konuşur ve size **anlık geri bildirim** sağlar.",
+  },
+} as const;
+
 /* ── Component ──────────────────────────────────────────────────────────── */
 
 export default function ServiceCircleDiagram() {
@@ -316,6 +340,7 @@ export default function ServiceCircleDiagram() {
   const [circleCw, setCircleCw] = useState(CIRCLE_W);
   const [gridW, setGridW] = useState(1200);
   const [activeTab, setActiveTab] = useState(0);
+  const [expandedDetail, setExpandedDetail] = useState(false);
   const [pulsingLabel, setPulsingLabel] = useState<string | null>(null);
   const [hoveredCircle, setHoveredCircle] = useState<string | null>(null);
   const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
@@ -435,6 +460,8 @@ export default function ServiceCircleDiagram() {
   const idleTabBarW = isMobile ? 52 : 65;
   const hoverTabBarW = isMobile ? 78 : 100;
   const colW = isCompact ? 220 : 260;
+  const activeTabNodeId = TABS[activeTab]?.nodeId ?? "chatbot";
+  const activeServiceContent = SERVICE_CONTENT_MAP[activeTabNodeId];
 
   /* ── Derived hover — either circle or label triggers both ───── */
   const activeHover = hoveredCircle || hoveredLabel;
@@ -445,6 +472,7 @@ export default function ServiceCircleDiagram() {
 
   function handleTabClick(i: number, nodeId: string) {
     setActiveTab(i);
+    setExpandedDetail(false);
     setPulsingLabel(nodeId);
     setTimeout(() => setPulsingLabel(null), 750);
   }
@@ -495,7 +523,7 @@ export default function ServiceCircleDiagram() {
         flexDirection: "column",
         alignItems: "center",
         paddingTop: isMobile ? 30 : 44,
-        paddingBottom: isMobile ? 64 : 80,
+        paddingBottom: isMobile ? 84 : 80,
         background: `
           radial-gradient(ellipse 50% 45% at 50% 50%, rgba(255,45,120,0.06) 0%, transparent 70%),
           radial-gradient(ellipse 70% 60% at 50% 45%, rgba(90,20,55,0.35) 0%, transparent 70%),
@@ -538,9 +566,8 @@ export default function ServiceCircleDiagram() {
         }}
       >
         <h2
-          className="tk-futura-pt"
           style={{
-            fontFamily: '"futura-pt", sans-serif',
+            fontFamily: FONT,
             fontStyle: "normal",
             fontWeight: 400,
             fontSize: isMobile ? "clamp(24px, 7.2vw, 34px)" : "clamp(28px, 4vw, 48px)",
@@ -580,21 +607,21 @@ export default function ServiceCircleDiagram() {
           position: "relative",
           zIndex: 1,
           display: "grid",
-          gridTemplateColumns: isCompact
-            ? isMobile
-              ? "1fr"
-              : "minmax(0, 1fr) minmax(0, 1fr)"
+          gridTemplateColumns: isMobile
+            ? "1fr"
+            : isCompact
+            ? "minmax(0, 1fr) minmax(0, 1fr)"
             : "260px 1fr 260px",
-          gridTemplateAreas: isCompact
-            ? isMobile
-              ? '"center" "left" "right"'
-              : '"center center" "left right"'
+          gridTemplateAreas: isMobile
+            ? '"center"'
+            : isCompact
+            ? '"center center" "left right"'
             : '"left center right"',
-          maxWidth: isCompact ? 980 : 1200,
+          maxWidth: isMobile ? 740 : isCompact ? 980 : 1200,
           width: "100%",
           alignItems: "stretch",
-          rowGap: isCompact ? (isMobile ? 24 : 28) : 0,
-          columnGap: isCompact ? 22 : 0,
+          rowGap: isMobile ? 0 : isCompact ? 28 : 0,
+          columnGap: isMobile ? 0 : isCompact ? 22 : 0,
           paddingLeft: sectionPad,
           paddingRight: sectionPad,
         }}
@@ -643,6 +670,7 @@ export default function ServiceCircleDiagram() {
         )}
 
         {/* ── LEFT COLUMN — Labels 1 & 3 ─────────────────────────── */}
+        {!isMobile && (
         <div
           style={{
             gridArea: "left",
@@ -692,7 +720,7 @@ export default function ServiceCircleDiagram() {
                 transition: "color 0.4s ease, text-shadow 0.4s ease",
               }}
             >
-              Akıllı Chatbot
+              {SERVICE_CONTENT_MAP.chatbot.title}
             </p>
             <TypingDots bright={isHighlighted("chatbot")} />
             <p
@@ -707,7 +735,7 @@ export default function ServiceCircleDiagram() {
               }}
             >
               <RichText
-                text="**WhatsApp** hesabınıza entegre edilir, müşterilerinizle **7/24** iletişim kurar ve işletmenizin tüm yazışmalarını **profesyonelce** yönetir."
+                text={SERVICE_CONTENT_MAP.chatbot.long}
                 brightBold={isHighlighted("chatbot")}
               />
             </p>
@@ -750,7 +778,7 @@ export default function ServiceCircleDiagram() {
                 transition: "color 0.4s ease, text-shadow 0.4s ease",
               }}
             >
-              Özel Yazılım
+              {SERVICE_CONTENT_MAP.yazilim.title}
             </p>
             <p
               style={{
@@ -764,29 +792,30 @@ export default function ServiceCircleDiagram() {
               }}
             >
               <RichText
-                text="**Chatbot ve sesli asistanın birleşimi** — işletmenizin tüm iletişim süreçlerini **tek bir akıllı sistem**de toplar, size sadece **sonuçları** sunar."
+                text={SERVICE_CONTENT_MAP.yazilim.long}
                 brightBold={isHighlighted("yazilim")}
               />
             </p>
           </motion.div>
         </div>
+        )}
 
         {/* ── CENTER COLUMN — Circles ─────────────────────────────── */}
         <motion.div
           ref={circleRef}
-          onMouseMove={handleDiagramMouseMove}
-          onMouseLeave={handleDiagramMouseLeave}
+          onMouseMove={isMobile ? undefined : handleDiagramMouseMove}
+          onMouseLeave={isMobile ? undefined : handleDiagramMouseLeave}
           style={{
             gridArea: "center",
             position: "relative",
             width: "100%",
             minWidth: isCompact ? 0 : 400,
-            maxWidth: isCompact ? (isMobile ? 640 : 760) : "none",
+            maxWidth: isMobile ? 520 : isCompact ? 760 : "none",
             margin: isCompact ? "0 auto" : 0,
             height: circleH,
             overflow: "visible",
-            x: isCompact ? 0 : parallaxX,
-            y: isCompact ? 0 : parallaxY,
+            x: isMobile || isCompact ? 0 : parallaxX,
+            y: isMobile || isCompact ? 0 : parallaxY,
             cursor: "default",
           }}
         >
@@ -876,6 +905,7 @@ export default function ServiceCircleDiagram() {
         </motion.div>
 
         {/* ── RIGHT COLUMN — Label 2 ─────────────────────────────── */}
+        {!isMobile && (
         <div
           style={{
             gridArea: "right",
@@ -924,7 +954,7 @@ export default function ServiceCircleDiagram() {
                 transition: "color 0.4s ease, text-shadow 0.4s ease",
               }}
             >
-              Sesli Asistan
+              {SERVICE_CONTENT_MAP.sesli.title}
             </p>
             <WaveformBars bright={isHighlighted("sesli")} />
             <p
@@ -939,97 +969,277 @@ export default function ServiceCircleDiagram() {
               }}
             >
               <RichText
-                text="**Restoranlar, klinikler** ve işletmeler için telefon üzerinden **rezervasyon** alır, müşterilerinizle doğal bir şekilde konuşur ve size **anlık geri bildirim** sağlar."
+                text={SERVICE_CONTENT_MAP.sesli.long}
                 brightBold={isHighlighted("sesli")}
               />
             </p>
           </motion.div>
         </div>
+        )}
       </div>
 
-      {/* ── Bottom service tabs ────────────────────────────────────── */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          display: "flex",
-          alignItems: "flex-start",
-          gap: isMobile ? 14 : "clamp(20px, 4vw, 40px)",
-          marginTop: isMobile ? 38 : 55,
-          paddingLeft: sectionPad,
-          paddingRight: sectionPad,
-          flexWrap: "wrap",
-          justifyContent: isMobile ? "space-between" : "center",
-          maxWidth: isMobile ? 640 : 1200,
-          width: "100%",
-        }}
-      >
-        {TABS.map((tab, i) => {
-          const isActive = activeTab === i;
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: startAnimations ? 1 : 0, y: startAnimations ? 0 : 22 }}
-              transition={{
-                duration: 0.5,
-                delay: startAnimations ? 0.95 + i * 0.12 : 0,
-                ease: "easeOut",
-              }}
-              whileHover="hover"
+      {isMobile && (
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: startAnimations ? 1 : 0, y: startAnimations ? 0 : 18 }}
+          transition={{ duration: 0.45, delay: startAnimations ? 0.85 : 0, ease: "easeOut" }}
+          style={{
+            position: "relative",
+            zIndex: 2,
+            width: "100%",
+            maxWidth: 740,
+            marginTop: 30,
+            paddingLeft: sectionPad,
+            paddingRight: sectionPad,
+          }}
+        >
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gap: 8,
+              marginBottom: 8,
+            }}
+          >
+            {TABS.map((tab, i) => {
+              const isActive = activeTab === i;
+              return (
+                <button
+                  key={tab.nodeId}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => handleTabClick(i, tab.nodeId)}
+                  style={{
+                    border: "none",
+                    background: "transparent",
+                    color: isActive ? "rgba(255,255,255,0.96)" : "rgba(255,255,255,0.56)",
+                    fontFamily: FONT,
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    lineHeight: 1.28,
+                    whiteSpace: "pre-line",
+                    padding: "0 2px 2px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 8,
+                    textAlign: "center",
+                    minWidth: 0,
+                  }}
+                >
+                  <span
+                    aria-hidden
+                    style={{
+                      display: "block",
+                      width: isActive ? "100%" : "58%",
+                      height: 3,
+                      borderRadius: 999,
+                      margin: "0 auto",
+                      background: isActive
+                        ? "linear-gradient(90deg, #FF2D78 0%, #FF6AA7 100%)"
+                        : "linear-gradient(90deg, rgba(255,45,120,0.42) 0%, rgba(255,255,255,0.08) 100%)",
+                      opacity: isActive ? 1 : 0.72,
+                      transition:
+                        "width 180ms ease, opacity 180ms ease, background 180ms ease",
+                    }}
+                  />
+                  <span
+                    style={{
+                      display: "block",
+                      transition: "color 180ms ease, transform 180ms ease",
+                      transform: isActive ? "translateY(0)" : "translateY(1px)",
+                    }}
+                  >
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            style={{
+              position: "relative",
+              maxWidth: 360,
+              margin: "4px auto 0",
+              padding: "6px 6px 0",
+            }}
+          >
+            <div
+              aria-hidden
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: isMobile ? "center" : "flex-start",
-                cursor: "pointer",
-                fontFamily: FONT,
-                flex: isMobile ? "1 1 calc(33.333% - 10px)" : "0 0 auto",
+                width: 62,
+                height: 1,
+                margin: "0 auto 10px",
+                background:
+                  "linear-gradient(90deg, rgba(255,45,120,0.92) 0%, rgba(255,255,255,0.12) 100%)",
               }}
-              onClick={() => handleTabClick(i, tab.nodeId)}
+            />
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: 17,
+                fontWeight: 700,
+                color: "rgba(255,255,255,0.95)",
+                margin: 0,
+                textAlign: "center",
+                textShadow: "0 1px 12px rgba(0,0,0,0.16)",
+              }}
             >
-              {/* Pink accent bar */}
-              <motion.div
-                variants={{
-                  hover: {
-                    width: isActive ? activeTabBarW : hoverTabBarW,
-                    background: "#FF2D78",
-                  },
-                }}
-                animate={{
-                  width: isActive ? activeTabBarW : idleTabBarW,
-                  background: isActive
-                    ? "#FF2D78"
-                    : "linear-gradient(to right, #FF2D78, rgba(255,45,120,0.35))",
-                }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-                style={{ height: 4, borderRadius: 2, marginBottom: 10 }}
-              />
-              {/* Label text */}
-              <motion.span
-                variants={{
-                  hover: { y: -2, color: "rgba(255,255,255,1)" },
-                }}
-                animate={{
-                  y: 0,
-                  color: isActive
-                    ? "rgba(255,255,255,1)"
-                    : "rgba(255,255,255,0.55)",
-                }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+              {activeServiceContent.title}
+            </p>
+            <p
+              style={{
+                fontFamily: FONT,
+                fontSize: 13.25,
+                lineHeight: 1.58,
+                color: "rgba(255,255,255,0.7)",
+                marginTop: 5,
+                marginBottom: 0,
+                textAlign: "center",
+                textWrap: "balance",
+              }}
+            >
+              {activeServiceContent.short}
+            </p>
+            {expandedDetail && (
+              <p
                 style={{
-                  fontSize: isMobile ? 13 : 14,
-                  fontWeight: 700,
-                  lineHeight: 1.35,
-                  whiteSpace: "pre-line",
-                  display: "block",
+                  fontFamily: FONT,
+                  fontSize: 13,
+                  lineHeight: 1.64,
+                  color: "rgba(255,255,255,0.6)",
+                  marginTop: 8,
+                  marginBottom: 0,
+                  textAlign: "center",
+                  textWrap: "balance",
+                  transition: "opacity 180ms ease, transform 180ms ease",
                 }}
               >
-                {tab.label}
-              </motion.span>
-            </motion.div>
-          );
-        })}
-      </div>
+                <RichText text={activeServiceContent.long} brightBold />
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={() => setExpandedDetail((prev) => !prev)}
+              style={{
+                marginTop: 8,
+                border: "none",
+                background: "transparent",
+                color: "rgba(255, 124, 178, 0.82)",
+                fontFamily: FONT,
+                fontSize: 12,
+                fontWeight: 600,
+                padding: 0,
+                letterSpacing: "0.01em",
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
+              {expandedDetail ? "Detayı Gizle" : "Detayı Gör"}
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {!isMobile && (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "clamp(20px, 4vw, 40px)",
+            marginTop: 55,
+            paddingLeft: sectionPad,
+            paddingRight: sectionPad,
+            justifyContent: "center",
+            maxWidth: 1200,
+            width: "100%",
+          }}
+        >
+          {TABS.map((tab, i) => {
+            const isActive = activeTab === i;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: startAnimations ? 1 : 0, y: startAnimations ? 0 : 22 }}
+                transition={{
+                  duration: 0.5,
+                  delay: startAnimations ? 0.95 + i * 0.12 : 0,
+                  ease: "easeOut",
+                }}
+                whileHover="hover"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  cursor: "pointer",
+                  fontFamily: FONT,
+                  flex: "0 0 auto",
+                }}
+                onClick={() => handleTabClick(i, tab.nodeId)}
+              >
+                <motion.div
+                  variants={{
+                    hover: {
+                      width: isActive ? activeTabBarW : hoverTabBarW,
+                      background: "#FF2D78",
+                    },
+                  }}
+                  animate={{
+                    width: isActive ? activeTabBarW : idleTabBarW,
+                    background: isActive
+                      ? "#FF2D78"
+                      : "linear-gradient(to right, #FF2D78, rgba(255,45,120,0.35))",
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  style={{ height: 4, borderRadius: 2, marginBottom: 10 }}
+                />
+                <motion.span
+                  variants={{
+                    hover: { y: -2, color: "rgba(255,255,255,1)" },
+                  }}
+                  animate={{
+                    y: 0,
+                    color: isActive
+                      ? "rgba(255,255,255,1)"
+                      : "rgba(255,255,255,0.55)",
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    lineHeight: 1.35,
+                    whiteSpace: "pre-line",
+                    display: "block",
+                  }}
+                >
+                  {tab.label}
+                </motion.span>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+
+      {isMobile && (
+        <div
+          aria-hidden
+          style={{
+            pointerEvents: "none",
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 84,
+            background:
+              "linear-gradient(180deg, rgba(13,6,8,0) 0%, rgba(13,6,8,0.68) 58%, rgba(13,6,8,0.92) 100%)",
+          }}
+        />
+      )}
     </section>
   );
 }

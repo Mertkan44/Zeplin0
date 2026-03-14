@@ -204,13 +204,13 @@ export default function ServiceCarousel() {
       <div className="mb-14 text-center">
         <h2
           className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white md:text-5xl"
-          style={{ fontFamily: '"futura-pt", sans-serif' }}
+          style={{ fontFamily: 'var(--font-jost), sans-serif' }}
         >
           Kendi Paketini Oluştur
         </h2>
         <p
           className="mx-auto mt-3 max-w-md text-base font-light text-zinc-500 dark:text-white/40"
-          style={{ fontFamily: '"futura-pt", sans-serif' }}
+          style={{ fontFamily: 'var(--font-jost), sans-serif' }}
         >
           ihtiyacına uygun hizmetleri seç, paketini kendin oluştur
         </p>

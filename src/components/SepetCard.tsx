@@ -39,7 +39,7 @@ export default function SepetCard({
             x="380"
             y="460"
             fill="#c797ac"
-            fontFamily="montserrat, sans-serif"
+            fontFamily="var(--font-jost), sans-serif"
             fontWeight="300"
             fontSize={topFontSize}
             letterSpacing={topTracking}
@@ -50,7 +50,7 @@ export default function SepetCard({
             x="380"
             y="540"
             fill="#c59aae"
-            fontFamily="montserrat, sans-serif"
+            fontFamily="var(--font-jost), sans-serif"
             fontWeight="800"
             fontSize={bottomFontSize}
             letterSpacing={bottomTracking}
@@ -65,7 +65,7 @@ export default function SepetCard({
             x="322"
             y="610"
             fill="#f8e9f0"
-            fontFamily="montserrat, sans-serif"
+            fontFamily="var(--font-jost), sans-serif"
             fontWeight="450"
             fontSize="22"
             letterSpacing="0.2"
@@ -77,7 +77,7 @@ export default function SepetCard({
             y="610"
             textAnchor="end"
             fill="#fff7fb"
-            fontFamily="montserrat, sans-serif"
+            fontFamily="var(--font-jost), sans-serif"
             fontWeight="500"
             fontSize="22"
             letterSpacing="0.2"

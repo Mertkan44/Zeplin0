@@ -1,6 +1,7 @@
 import HeroBanner from "@/components/HeroBanner";
 import BentoGrid from "@/components/BentoGrid";
 import ServiceCircleDiagram from "@/components/ServiceCircleDiagram";
+import BrandMarquee from "@/components/BrandMarquee";
 import ServiceCarousel from "@/components/ServiceCarousel";
 
 
@@ -46,6 +47,22 @@ export default function Home() {
       <BentoGrid blocks={blocks} />
 
       <ServiceCircleDiagram />
+
+      <BrandMarquee
+        brands={[
+          { name: "Koç Holding" },
+          { name: "Turkcell" },
+          { name: "Migros" },
+          { name: "THY" },
+          { name: "Garanti BBVA" },
+          { name: "Vodafone" },
+          { name: "LC Waikiki" },
+          { name: "Trendyol" },
+          { name: "Hepsiburada" },
+          { name: "N11" },
+        ]}
+      />
+
       <ServiceCarousel />
     </main>
   );
