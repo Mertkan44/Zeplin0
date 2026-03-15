@@ -7,38 +7,32 @@ import { useTheme } from "./ThemeProvider";
 
 export interface Brand {
   name: string;
-  logo?: string; // path to logo image — when set, renders <img>
+  logo?: string;
 }
 
 interface BrandMarqueeProps {
   brands: Brand[];
 }
 
-/* ── Brand Tile (square mini-bento) ───────────────────────────────── */
+/* ── Brand Tile ───────────────────────────────────────────────────── */
 
-function BrandTile({
-  brand,
-  isDark,
-}: {
-  brand: Brand;
-  isDark: boolean;
-}) {
+function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
   return (
     <div
       className="brand-tile flex-shrink-0 flex items-center justify-center"
       style={{
-        /* Square */
-        width:  "clamp(72px, 9vw, 110px)",
+        width: "clamp(72px, 9vw, 110px)",
         height: "clamp(72px, 9vw, 110px)",
         borderRadius: "clamp(14px, 2vw, 20px)",
-        border: isDark
-          ? "1px solid rgba(255,255,255,0.08)"
-          : "1px solid rgba(0,0,0,0.07)",
+        /* Jakub: shadows adapt to any background, borders don't */
+        boxShadow: isDark
+          ? "0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.04)"
+          : "0px 0px 0px 1px rgba(0,0,0,0.05), 0px 1px 2px -1px rgba(0,0,0,0.05), 0px 2px 4px 0px rgba(0,0,0,0.03)",
         background: isDark
-          ? "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.015) 100%)"
-          : "linear-gradient(135deg, rgba(0,0,0,0.035) 0%, rgba(0,0,0,0.01) 100%)",
-        backdropFilter: "blur(6px)",
-        transition: "border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1)",
+          ? "linear-gradient(135deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.01) 100%)"
+          : "linear-gradient(145deg, #ffffff 0%, rgba(255,255,255,0.75) 100%)",
+        backdropFilter: "blur(8px)",
+        willChange: "transform",
       }}
     >
       {brand.logo ? (
@@ -56,33 +50,35 @@ function BrandTile({
           }}
         />
       ) : (
-        /* Placeholder: brand initial + name */
-        <div className="flex flex-col items-center gap-[3px] select-none pointer-events-none">
+        <div className="flex flex-col items-center gap-[4px] select-none pointer-events-none">
+          {/* Gradient initial — more premium than flat pink */}
           <span
             style={{
-              fontFamily: 'var(--font-jost), sans-serif',
-              fontWeight: 700,
-              fontSize: "clamp(1.1rem, 2.2vw, 1.6rem)",
+              fontFamily: "var(--font-jost), sans-serif",
+              fontWeight: 800,
+              fontSize: "clamp(1.3rem, 2.4vw, 1.85rem)",
               lineHeight: 1,
-              color: isDark
-                ? "rgba(244,114,182,0.45)"
-                : "rgba(236,72,153,0.35)",
+              background: isDark
+                ? "linear-gradient(135deg, #F472B6 0%, #DB2777 100%)"
+                : "linear-gradient(135deg, #EC4899 0%, #9D174D 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
             }}
           >
             {brand.name.charAt(0)}
           </span>
           <span
             style={{
-              fontFamily: 'var(--font-jost), sans-serif',
+              fontFamily: "var(--font-jost), sans-serif",
               fontWeight: 500,
-              fontSize: "clamp(0.42rem, 0.75vw, 0.6rem)",
-              letterSpacing: "0.04em",
+              fontSize: "clamp(0.38rem, 0.7vw, 0.55rem)",
+              letterSpacing: "0.07em",
+              textTransform: "uppercase",
               textAlign: "center",
               lineHeight: 1.2,
               maxWidth: "85%",
-              color: isDark
-                ? "rgba(255,255,255,0.30)"
-                : "rgba(0,0,0,0.25)",
+              color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -112,24 +108,24 @@ function MarqueeRow({
   const animName = direction === "left" ? "marquee-left" : "marquee-right";
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ padding: "10px 0" }}>
+    <div className="relative w-full overflow-hidden" style={{ padding: "8px 0" }}>
       {/* Fade edges */}
       <div
         className="pointer-events-none absolute inset-y-0 left-0 z-10"
         style={{
-          width: "clamp(48px, 8vw, 120px)",
+          width: "clamp(60px, 10vw, 140px)",
           background: isDark
             ? "linear-gradient(to right, #0d0608, transparent)"
-            : "linear-gradient(to right, #ffffff, transparent)",
+            : "linear-gradient(to right, #fafafa, transparent)",
         }}
       />
       <div
         className="pointer-events-none absolute inset-y-0 right-0 z-10"
         style={{
-          width: "clamp(48px, 8vw, 120px)",
+          width: "clamp(60px, 10vw, 140px)",
           background: isDark
             ? "linear-gradient(to left, #0d0608, transparent)"
-            : "linear-gradient(to left, #ffffff, transparent)",
+            : "linear-gradient(to left, #fafafa, transparent)",
         }}
       />
 
@@ -142,7 +138,6 @@ function MarqueeRow({
           willChange: "transform",
         }}
       >
-        {/* 3 copies for seamless loop */}
         {[0, 1, 2].map((copy) => (
           <div
             key={copy}
@@ -167,12 +162,13 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
-  // IntersectionObserver for entrance
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
       { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
     );
     obs.observe(el);
@@ -184,44 +180,70 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
       ref={sectionRef}
       className="relative w-full overflow-hidden"
       style={{
-        padding: "clamp(40px, 7vw, 80px) 0",
+        padding: "clamp(48px, 8vw, 96px) 0",
+        /* Jakub: materializing entrance — opacity + translateY + blur */
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(24px)",
+        transform: visible ? "translateY(0)" : "translateY(28px)",
+        filter: visible ? "blur(0px)" : "blur(6px)",
         transition:
-          "opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1)",
+          "opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.7s cubic-bezier(0.22,1,0.36,1)",
       }}
     >
-      {/* Soft pink glow */}
+      {/* Background ambient glow */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
           background: isDark
-            ? "radial-gradient(ellipse 60% 55% at 50% 50%, rgba(190,24,93,0.08), transparent)"
-            : "radial-gradient(ellipse 60% 55% at 50% 50%, rgba(244,114,182,0.05), transparent)",
+            ? "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(190,24,93,0.07), transparent)"
+            : "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(244,114,182,0.06), transparent)",
         }}
       />
 
-      {/* Pink gradient separator — top */}
+      {/* Section Header — staggered entrance */}
       <div
-        className="mx-auto mb-8 md:mb-12"
+        className="text-center px-4"
         style={{
-          width: "clamp(140px, 28vw, 320px)",
-          height: 2,
-          borderRadius: 1,
-          background: isDark
-            ? "linear-gradient(90deg, transparent, rgba(244,114,182,0.50), transparent)"
-            : "linear-gradient(90deg, transparent, rgba(236,72,153,0.35), transparent)",
+          marginBottom: "clamp(32px, 5vw, 56px)",
+          opacity: visible ? 1 : 0,
+          transform: visible ? "translateY(0)" : "translateY(16px)",
+          filter: visible ? "blur(0px)" : "blur(4px)",
+          transition:
+            "opacity 0.6s 0.08s cubic-bezier(0.22,1,0.36,1), transform 0.6s 0.08s cubic-bezier(0.22,1,0.36,1), filter 0.6s 0.08s cubic-bezier(0.22,1,0.36,1)",
         }}
-      />
+      >
+        {/* Eyebrow */}
+        <p
+          style={{
+            fontFamily: "var(--font-jost), sans-serif",
+            fontWeight: 600,
+            fontSize: "clamp(0.6rem, 1vw, 0.72rem)",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: isDark ? "rgba(244,114,182,0.65)" : "rgba(219,39,119,0.65)",
+            marginBottom: "0.5rem",
+          }}
+        >
+          Güvenilir Markalar
+        </p>
+        {/* Headline */}
+        <h2
+          style={{
+            fontFamily: "var(--font-jost), sans-serif",
+            fontWeight: 700,
+            fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)",
+            lineHeight: 1.15,
+            letterSpacing: "-0.025em",
+            color: isDark ? "rgba(255,255,255,0.90)" : "rgba(0,0,0,0.82)",
+            margin: 0,
+          }}
+        >
+          Birlikte büyüdüğümüz markalar
+        </h2>
+      </div>
 
-      {/* Rows */}
-      <div className="flex flex-col" style={{ gap: "clamp(12px, 2vw, 20px)" }}>
-        <MarqueeRow
-          brands={brands}
-          direction="left"
-          speed={28}
-          isDark={isDark}
-        />
+      {/* Marquee Rows */}
+      <div className="flex flex-col" style={{ gap: "clamp(10px, 1.5vw, 16px)" }}>
+        <MarqueeRow brands={brands} direction="left" speed={28} isDark={isDark} />
         <MarqueeRow
           brands={[...brands].reverse()}
           direction="right"
@@ -230,20 +252,20 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
         />
       </div>
 
-      {/* Pink gradient separator — bottom */}
+      {/* Bottom separator */}
       <div
-        className="mx-auto mt-8 md:mt-12"
+        className="mx-auto"
         style={{
-          width: "clamp(140px, 28vw, 320px)",
-          height: 2,
-          borderRadius: 1,
+          marginTop: "clamp(32px, 5vw, 56px)",
+          width: "clamp(80px, 16vw, 200px)",
+          height: 1,
           background: isDark
-            ? "linear-gradient(90deg, transparent, rgba(244,114,182,0.50), transparent)"
-            : "linear-gradient(90deg, transparent, rgba(236,72,153,0.35), transparent)",
+            ? "linear-gradient(90deg, transparent, rgba(244,114,182,0.35), transparent)"
+            : "linear-gradient(90deg, transparent, rgba(236,72,153,0.22), transparent)",
         }}
       />
 
-      {/* Keyframes + hover styles */}
+      {/* Keyframes + interaction styles */}
       <style>{`
         @keyframes marquee-left {
           0%   { transform: translateX(0); }
@@ -253,16 +275,40 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
           0%   { transform: translateX(-33.333%); }
           100% { transform: translateX(0); }
         }
+
+        /* Accessibility: respect reduced motion */
         @media (prefers-reduced-motion: reduce) {
           .brand-marquee-strip { animation-play-state: paused !important; }
         }
+
+        /* Pause row on hover for readability */
         .brand-marquee-strip:hover {
           animation-play-state: paused;
         }
+
+        /* Tile hover — lift + pink glow (Jhey: @property for smooth glow) */
+        @property --tile-glow {
+          syntax: '<number>';
+          initial-value: 0;
+          inherits: false;
+        }
+        .brand-tile {
+          transition:
+            box-shadow 0.3s cubic-bezier(0.22,1,0.36,1),
+            transform 0.35s cubic-bezier(0.22,1,0.36,1),
+            --tile-glow 0.3s ease;
+        }
         .brand-tile:hover {
-          border-color: rgba(244,114,182,0.35) !important;
-          box-shadow: 0 0 20px rgba(244,114,182,0.12), 0 4px 12px rgba(0,0,0,0.20);
-          transform: scale(1.06);
+          --tile-glow: 1;
+          transform: translateY(-3px) scale(1.05);
+          box-shadow:
+            0 0 0 1.5px rgba(244,114,182,0.55),
+            0 6px 24px rgba(219,39,119,calc(0.18 * var(--tile-glow))),
+            0 2px 8px rgba(0,0,0,0.10) !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .brand-tile:hover { transform: none; }
         }
       `}</style>
     </section>
