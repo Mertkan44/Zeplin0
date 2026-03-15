@@ -1,8 +1,44 @@
 import HeroBanner from "@/components/HeroBanner";
 import BentoGrid from "@/components/BentoGrid";
+import VideoTestimonials from "@/components/VideoTestimonials";
 import ServiceCircleDiagram from "@/components/ServiceCircleDiagram";
 import BrandMarquee from "@/components/BrandMarquee";
 import ServiceCarousel from "@/components/ServiceCarousel";
+
+const videoTestimonials = [
+  {
+    id: "brand-a",
+    videoSrc: "/videos/testimonial-a.mp4",
+    posterSrc: "/images/dag.png",
+    brandName: "Marka A",
+    personName: "Ahmet Yılmaz",
+    personRole: "Pazarlama Direktörü",
+  },
+  {
+    id: "brand-b",
+    videoSrc: "/videos/testimonial-b.mp4",
+    posterSrc: "/images/dag.png",
+    brandName: "Marka B",
+    personName: "Elif Demir",
+    personRole: "Kurucu Ortak",
+  },
+  {
+    id: "brand-c",
+    videoSrc: "/videos/testimonial-c.mp4",
+    posterSrc: "/images/dag.png",
+    brandName: "Marka C",
+    personName: "Can Baran",
+    personRole: "CEO",
+  },
+  {
+    id: "brand-d",
+    videoSrc: "/videos/testimonial-d.mp4",
+    posterSrc: "/images/dag.png",
+    brandName: "Marka D",
+    personName: "Selin Aydın",
+    personRole: "Marka Müdürü",
+  },
+];
 
 
 const blocks = [
@@ -47,6 +83,8 @@ export default function Home() {
       <BentoGrid blocks={blocks} />
 
       <ServiceCircleDiagram />
+
+      <VideoTestimonials testimonials={videoTestimonials} />
 
       <BrandMarquee
         brands={[
