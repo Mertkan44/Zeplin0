@@ -8,18 +8,18 @@ import {
   useSpring,
   AnimatePresence,
 } from "framer-motion";
+import FirstScrollSnap from "@/components/FirstScrollSnap";
 
 /* ── Constants ────────────────────────────────────────────────────── */
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FONT = { fontFamily: "var(--font-jost), sans-serif" } as const;
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.985, filter: "blur(6px)" },
+  hidden: { opacity: 0, y: 30, scale: 0.985 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: "blur(0px)",
     transition: { duration: 0.52, ease: EASE, delay },
   }),
 };
@@ -76,12 +76,11 @@ function GradientBorderCard({
     <div
       className={`group relative rounded-[28px] p-[1px] transition-shadow duration-500 hover:shadow-[0_8px_40px_rgba(219,39,119,0.1)] dark:hover:shadow-[0_8px_40px_rgba(157,23,77,0.15)] ${className}`}
     >
-      {/* Rotating conic gradient border */}
+      {/* Static gradient border */}
       <div
         className="absolute inset-0 rounded-[28px] opacity-30 transition-opacity duration-500 group-hover:opacity-80"
         style={{
-          background: `conic-gradient(from var(--angle, 0deg), ${color}, transparent 40%, ${color})`,
-          animation: "rotate-gradient 4s linear infinite",
+          background: `linear-gradient(135deg, ${color}, transparent 50%, ${color})`,
         }}
       />
       {/* Inner card */}
@@ -353,6 +352,8 @@ export default function OperasyonlarPage() {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-zinc-900 dark:bg-[#0a0a0a] dark:text-zinc-100">
+      <FirstScrollSnap targetId="operations-first-section" />
+
       {/* ── SECTION 1: Hero ───────────────────────────────────────── */}
       <section
         className="relative overflow-hidden bg-center bg-no-repeat bg-[length:auto_100%] px-6 pb-12 pt-[46svh] md:bg-cover md:pb-24 md:pt-56"
@@ -384,16 +385,19 @@ export default function OperasyonlarPage() {
           </motion.p>
         </div>
 
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[50vw] w-[50vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#EC4899]/10 blur-[120px] dark:bg-[#BE185D]/10" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[40vw] w-[40vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#EC4899]/10 blur-[80px] dark:bg-[#BE185D]/10" />
       </section>
 
       {/* ── SECTION 2: Metrics Strip ──────────────────────────────── */}
-      <section className="mx-auto -mt-6 max-w-[1200px] px-6 py-4 md:-mt-8 md:py-8">
+      <section
+        id="operations-first-section"
+        className="mx-auto -mt-6 max-w-[1200px] px-6 py-4 scroll-mt-28 md:-mt-8 md:py-8 md:scroll-mt-36"
+      >
         <motion.div
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -14% 0px" }}
+          viewport={{ once: true, margin: "0px" }}
           custom={0}
         >
           {/* Animated gradient top border */}
@@ -555,8 +559,8 @@ export default function OperasyonlarPage() {
       {/* ── SECTION 4: Workflow — Dark ────────────────────────────── */}
       <section className="relative overflow-hidden py-16 md:py-24">
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#1a0e17_0%,#140c12_100%)] dark:bg-[linear-gradient(180deg,#0f0a0d_0%,#0a0a0a_100%)]" />
-        <div className="pointer-events-none absolute left-1/4 top-0 h-[400px] w-[400px] rounded-full bg-[#DB2777]/5 blur-[140px]" />
-        <div className="pointer-events-none absolute bottom-0 right-1/3 h-[300px] w-[300px] rounded-full bg-[#9D174D]/6 blur-[120px]" />
+        <div className="pointer-events-none absolute left-1/4 top-0 h-[280px] w-[280px] rounded-full bg-[#DB2777]/5 blur-[80px]" />
+        <div className="pointer-events-none absolute bottom-0 right-1/3 h-[220px] w-[220px] rounded-full bg-[#9D174D]/6 blur-[80px]" />
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
@@ -614,8 +618,8 @@ export default function OperasyonlarPage() {
               {workflowSteps.map((step, i) => (
                 <motion.div
                   key={step.num}
-                  initial={{ opacity: 0, y: 25, filter: "blur(4px)" }}
-                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "0px 0px -10% 0px" }}
                   transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
                   className="group flex gap-4"
@@ -631,7 +635,7 @@ export default function OperasyonlarPage() {
                       damping: 20,
                       delay: 0.3 + i * 0.08,
                     }}
-                    className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.05] backdrop-blur-sm"
+                    className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.06]"
                   >
                     <span
                       className="text-[13px] font-bold tabular-nums text-[#F472B6]"
@@ -639,7 +643,7 @@ export default function OperasyonlarPage() {
                     >
                       {step.num}
                     </span>
-                    <div className="pointer-events-none absolute inset-[-6px] rounded-full bg-[#DB2777]/0 blur-[14px] transition-all duration-500 group-hover:bg-[#DB2777]/20" />
+                    <div className="pointer-events-none absolute inset-[-4px] rounded-full opacity-0 bg-[#DB2777]/20 blur-[10px] transition-opacity duration-500 group-hover:opacity-100" />
                   </motion.div>
 
                   <div>
@@ -666,7 +670,7 @@ export default function OperasyonlarPage() {
       {/* ── SECTION 5: Neden 360° — Expanding Cards — Dark ────────── */}
       <section className="relative overflow-hidden py-16 md:py-24">
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#140c12_0%,#110a0f_100%)] dark:bg-[linear-gradient(180deg,#0a0a0a_0%,#0a0a0a_100%)]" />
-        <div className="pointer-events-none absolute right-0 top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-[#DB2777]/4 blur-[140px]" />
+        <div className="pointer-events-none absolute right-0 top-1/2 h-[280px] w-[280px] -translate-y-1/2 rounded-full bg-[#DB2777]/4 blur-[80px]" />
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
@@ -717,8 +721,8 @@ export default function OperasyonlarPage() {
       <section className="py-16 md:py-24">
         {/* Live ticker */}
         <div className="relative mb-14 overflow-hidden border-y border-zinc-200/60 py-4 dark:border-white/[0.06] md:mb-20">
-          <div className="flex animate-[marquee_30s_linear_infinite] gap-4">
-            {[...ticker, ...ticker, ...ticker].map((item, i) => (
+          <div className="flex animate-[marquee_30s_linear_infinite] gap-4" style={{ willChange: "transform" }}>
+            {[...ticker, ...ticker].map((item, i) => (
               <div
                 key={`ticker-${i}`}
                 className="flex shrink-0 items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-2 dark:border-white/[0.06] dark:bg-white/[0.03]"
@@ -816,7 +820,7 @@ export default function OperasyonlarPage() {
           transition={{ duration: 0.6, ease: EASE }}
           className="relative overflow-hidden rounded-[34px] bg-[linear-gradient(135deg,#DB2777_0%,#9D174D_50%,#831843_100%)] p-10 md:p-16"
         >
-          <div className="pointer-events-none absolute -right-20 -top-20 h-[300px] w-[300px] rounded-full bg-white/10 blur-[100px]" />
+          <div className="pointer-events-none absolute -right-20 -top-20 h-[200px] w-[200px] rounded-full bg-white/10 blur-[60px]" />
           <div className="pointer-events-none absolute -bottom-10 -left-10 h-[200px] w-[200px] rounded-full bg-[#F472B6]/20 blur-[80px]" />
 
           <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">

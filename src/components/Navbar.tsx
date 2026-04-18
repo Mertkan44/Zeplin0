@@ -41,11 +41,14 @@ interface BlobState {
 
 const SPRING_STIFFNESS = 0.12;
 const SPRING_DAMPING = 0.7;
+/** Increased threshold so the loop settles faster */
+const SETTLE_THRESHOLD = 1.2;
 
 function useSpringBlob() {
   const targetRef = useRef({ left: 0, width: 0, opacity: 0 });
   const currentRef = useRef({ left: 0, width: 0, opacity: 0 });
   const velocityRef = useRef({ left: 0, width: 0, opacity: 0 });
+  const blobElRef = useRef<HTMLDivElement | null>(null);
   const [blob, setBlob] = useState<BlobState>({
     left: 0, width: 0, opacity: 0, scaleX: 1, scaleY: 1, velocityX: 0,
   });
@@ -66,7 +69,7 @@ function useSpringBlob() {
       velocity[key] = (velocity[key] + springForce) * SPRING_DAMPING;
       current[key] += velocity[key];
 
-      if (Math.abs(displacement) > 0.5 || Math.abs(velocity[key]) > 0.5) {
+      if (Math.abs(displacement) > SETTLE_THRESHOLD || Math.abs(velocity[key]) > SETTLE_THRESHOLD) {
         settled = false;
       }
     }
@@ -75,22 +78,31 @@ function useSpringBlob() {
     const squishAmount = Math.min(speed * 0.015, 0.18);
     const scaleX = 1 + squishAmount;
     const scaleY = 1 - squishAmount * 0.5;
+    const skew = Math.max(-8, Math.min(8, velocity.left * -0.6));
 
-    setBlob({
-      left: current.left, width: current.width, opacity: current.opacity,
-      scaleX, scaleY, velocityX: velocity.left,
-    });
+    // Direct DOM update — avoids React re-render on every frame
+    const el = blobElRef.current;
+    if (el) {
+      el.style.left = `${current.left}px`;
+      el.style.width = `${current.width}px`;
+      el.style.opacity = `${current.opacity}`;
+      el.style.transform = `translateY(-50%) scaleX(${scaleX}) scaleY(${scaleY}) skewX(${skew}deg)`;
+    }
 
     if (!settled) {
       rafRef.current = requestAnimationFrame(animate);
     } else {
+      // Snap to target
       current.left = target.left;
       current.width = target.width;
       current.opacity = target.opacity;
-      setBlob({
-        left: target.left, width: target.width, opacity: target.opacity,
-        scaleX: 1, scaleY: 1, velocityX: 0,
-      });
+      velocityRef.current = { left: 0, width: 0, opacity: 0 };
+      if (el) {
+        el.style.left = `${target.left}px`;
+        el.style.width = `${target.width}px`;
+        el.style.opacity = `${target.opacity}`;
+        el.style.transform = `translateY(-50%) scaleX(1) scaleY(1) skewX(0deg)`;
+      }
       isAnimatingRef.current = false;
     }
   }, []);
@@ -110,6 +122,13 @@ function useSpringBlob() {
     targetRef.current = { left, width, opacity };
     currentRef.current = { left, width, opacity };
     velocityRef.current = { left: 0, width: 0, opacity: 0 };
+    const el = blobElRef.current;
+    if (el) {
+      el.style.left = `${left}px`;
+      el.style.width = `${width}px`;
+      el.style.opacity = `${opacity}`;
+      el.style.transform = `translateY(-50%) scaleX(1) scaleY(1) skewX(0deg)`;
+    }
     setBlob({ left, width, opacity, scaleX: 1, scaleY: 1, velocityX: 0 });
   }, []);
 
@@ -119,7 +138,7 @@ function useSpringBlob() {
     };
   }, []);
 
-  return { blob, setTarget, setImmediate };
+  return { blob, blobElRef, setTarget, setImmediate };
 }
 
 export default function Navbar() {
@@ -128,7 +147,7 @@ export default function Navbar() {
   const isDark = theme === "dark";
   const navRef = useRef<HTMLDivElement>(null);
   const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
-  const { blob, setTarget, setImmediate } = useSpringBlob();
+  const { blob, blobElRef, setTarget, setImmediate } = useSpringBlob();
   const initializedRef = useRef(false);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -238,8 +257,6 @@ export default function Navbar() {
   const setLinkRef = (href: string, el: HTMLAnchorElement | null) => {
     if (el) linkRefs.current.set(href, el);
   };
-
-  const skewDeg = Math.max(-8, Math.min(8, blob.velocityX * -0.6));
 
   const getLinkClass = (href: string) => {
     const isActive = pathname === href;
@@ -471,41 +488,11 @@ export default function Navbar() {
         </div>
       </div>
 
-      <nav className="fixed top-6 left-1/2 z-50 hidden w-[90%] max-w-5xl -translate-x-1/2 md:block">
-      {/* SVG Filters */}
-      <svg className="absolute w-0 h-0" aria-hidden="true">
-        <defs>
-          <filter id="gooey">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -11"
-              result="goo"
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-
-          <filter id="glass-texture" x="0%" y="0%" width="100%" height="100%">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.65"
-              numOctaves="4"
-              seed="5"
-              result="noise"
-            />
-            <feDiffuseLighting
-              in="noise"
-              lightingColor="white"
-              surfaceScale="2"
-              result="diffLight"
-            >
-              <feDistantLight azimuth="235" elevation="40" />
-            </feDiffuseLighting>
-            <feComposite in="SourceGraphic" in2="diffLight" operator="arithmetic" k1="0.7" k2="0.35" k3="0.15" k4="0" />
-          </filter>
-        </defs>
-      </svg>
+      <nav
+        data-site-nav
+        className="fixed top-6 left-1/2 z-50 hidden w-[90%] max-w-5xl -translate-x-1/2 md:block"
+      >
+      {/* SVG filters removed for performance */}
 
       <div
         ref={navRef}
@@ -522,13 +509,13 @@ export default function Navbar() {
       >
         {/* === LIQUID 3D BLOB === */}
         <div
-          className="absolute top-1/2 h-[calc(100%-10px)] rounded-full pointer-events-none"
+          ref={blobElRef}
+          className="absolute top-1/2 h-[calc(100%-10px)] rounded-full pointer-events-none will-change-transform"
           style={{
             left: `${blob.left}px`,
             width: `${blob.width}px`,
             opacity: blob.opacity,
-            transform: `translateY(-50%) scaleX(${blob.scaleX}) scaleY(${blob.scaleY}) skewX(${skewDeg}deg)`,
-            filter: "url(#gooey)",
+            transform: `translateY(-50%) scaleX(${blob.scaleX}) scaleY(${blob.scaleY}) skewX(0deg)`,
           }}
         >
           {/* Katman 1: Dış gölge */}
@@ -540,32 +527,26 @@ export default function Navbar() {
             }}
           />
 
-          {/* Katman 2: Ana cam gövde */}
+          {/* Katman 2: Ana cam gövde — simplified, no SVG filter */}
           <div
-            className="absolute inset-0 rounded-full border overflow-hidden transition-all duration-500"
+            className="absolute inset-0 rounded-full border overflow-hidden"
             style={{
               borderColor: isDark ? "rgba(251,113,133,0.3)" : "rgba(255,255,255,0.5)",
               background: isDark
                 ? "linear-gradient(145deg, rgba(251,113,133,0.2) 0%, rgba(244,63,94,0.12) 30%, rgba(190,24,93,0.08) 100%)"
                 : "linear-gradient(145deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 30%, rgba(255,240,245,0.35) 70%, rgba(255,228,238,0.3) 100%)",
-              backdropFilter: "blur(14px) saturate(1.6)",
+              backdropFilter: "blur(8px) saturate(1.3)",
               boxShadow: isDark
-                ? "inset 0 2px 4px rgba(251,113,133,0.25), inset 0 -1px 3px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1)"
-                : "inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06)",
+                ? "inset 0 1px 3px rgba(251,113,133,0.2), 0 4px 12px rgba(0,0,0,0.1)"
+                : "inset 0 1px 3px rgba(255,255,255,0.5), 0 4px 12px rgba(0,0,0,0.05)",
             }}
-          >
-            {/* Cam texture overlay */}
-            <div
-              className="absolute inset-0 rounded-full opacity-20 mix-blend-overlay"
-              style={{ filter: "url(#glass-texture)" }}
-            />
-          </div>
+          />
 
           {/* Katman 3: Specular highlight */}
           <div
             className="absolute top-[2px] left-[8%] right-[8%] h-[45%] rounded-full"
             style={{
-              background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 100%)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.08) 100%)",
             }}
           />
 
@@ -573,20 +554,9 @@ export default function Navbar() {
           <div
             className="absolute bottom-[2px] left-[12%] right-[12%] h-[18%] rounded-full"
             style={{
-              background: "linear-gradient(0deg, rgba(255,255,255,0.2) 0%, transparent 100%)",
+              background: "linear-gradient(0deg, rgba(255,255,255,0.15) 0%, transparent 100%)",
             }}
           />
-
-          {/* Katman 5: Shimmer */}
-          <div className="absolute inset-0 rounded-full overflow-hidden">
-            <div
-              className="absolute inset-0 animate-shimmer"
-              style={{
-                background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)",
-                backgroundSize: "200% 100%",
-              }}
-            />
-          </div>
         </div>
 
         {/* Sol menü */}

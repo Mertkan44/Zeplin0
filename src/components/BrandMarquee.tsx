@@ -29,9 +29,8 @@ function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
           ? "0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.04)"
           : "0px 0px 0px 1px rgba(0,0,0,0.05), 0px 1px 2px -1px rgba(0,0,0,0.05), 0px 2px 4px 0px rgba(0,0,0,0.03)",
         background: isDark
-          ? "linear-gradient(135deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.01) 100%)"
+          ? "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)"
           : "linear-gradient(145deg, #ffffff 0%, rgba(255,255,255,0.75) 100%)",
-        backdropFilter: "blur(8px)",
         willChange: "transform",
       }}
     >
@@ -58,7 +57,7 @@ function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
               fontWeight: 800,
               fontSize: "clamp(1.3rem, 2.4vw, 1.85rem)",
               lineHeight: 1,
-              background: isDark
+              backgroundImage: isDark
                 ? "linear-gradient(135deg, #F472B6 0%, #DB2777 100%)"
                 : "linear-gradient(135deg, #EC4899 0%, #9D174D 100%)",
               WebkitBackgroundClip: "text",
@@ -181,12 +180,10 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
       className="relative w-full overflow-hidden"
       style={{
         padding: "clamp(48px, 8vw, 96px) 0",
-        /* Jakub: materializing entrance — opacity + translateY + blur */
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(28px)",
-        filter: visible ? "blur(0px)" : "blur(6px)",
         transition:
-          "opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.7s cubic-bezier(0.22,1,0.36,1)",
+          "opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1)",
       }}
     >
       {/* Background ambient glow */}
@@ -206,9 +203,8 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
           marginBottom: "clamp(32px, 5vw, 56px)",
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(16px)",
-          filter: visible ? "blur(0px)" : "blur(4px)",
           transition:
-            "opacity 0.6s 0.08s cubic-bezier(0.22,1,0.36,1), transform 0.6s 0.08s cubic-bezier(0.22,1,0.36,1), filter 0.6s 0.08s cubic-bezier(0.22,1,0.36,1)",
+            "opacity 0.6s 0.08s cubic-bezier(0.22,1,0.36,1), transform 0.6s 0.08s cubic-bezier(0.22,1,0.36,1)",
         }}
       >
         {/* Eyebrow */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion, useMotionValue, useTransform, useSpring, useInView } from "framer-motion";
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 
@@ -50,6 +50,7 @@ interface LayerProps {
   hovered: boolean;
   hoverTranslateX?: number;
   hoverScale?: number;
+  isVisible?: boolean;
 }
 
 function AnimatedLayer({
@@ -65,6 +66,7 @@ function AnimatedLayer({
   hovered,
   hoverTranslateX = 0,
   hoverScale = 1,
+  isVisible = true,
 }: LayerProps) {
   const [breathing, setBreathing] = useState(false);
 
@@ -93,7 +95,7 @@ function AnimatedLayer({
     ? {
       scale: {
         duration: breatheDuration,
-        repeat: Infinity,
+        repeat: isVisible ? Infinity : 0,
         ease: "easeInOut" as const,
         delay: breatheDelay,
       },
@@ -101,7 +103,7 @@ function AnimatedLayer({
         ? {
           opacity: {
             duration: breatheDuration,
-            repeat: Infinity,
+            repeat: isVisible ? Infinity : 0,
             ease: "easeInOut" as const,
             delay: breatheDelay,
           },
@@ -196,7 +198,7 @@ function OrbitalParticle({
 
 /* ── Typing Dots (Chatbot indicator) ───────────────────────────────────── */
 
-function TypingDots({ bright }: { bright: boolean }) {
+function TypingDots({ bright, isVisible }: { bright: boolean; isVisible: boolean }) {
   const dotColor = bright
     ? "rgba(255, 45, 120, 0.7)"
     : "rgba(255, 45, 120, 0.4)";
@@ -208,7 +210,7 @@ function TypingDots({ bright }: { bright: boolean }) {
           animate={{ scale: [0.6, 1, 0.6] }}
           transition={{
             duration: bright ? 0.7 : 1,
-            repeat: Infinity,
+            repeat: isVisible ? Infinity : 0,
             ease: "easeInOut",
             delay: d,
           }}
@@ -227,15 +229,16 @@ function TypingDots({ bright }: { bright: boolean }) {
 
 /* ── Audio Waveform Bars (Sesli Asistan indicator) ─────────────────────── */
 
+const MAX_BAR_H = 28;
 const WAVE_BARS = [
-  { heights: [8, 24, 10, 18, 8], dur: 1.2 },
-  { heights: [18, 8, 26, 10, 18], dur: 1.0 },
-  { heights: [10, 28, 12, 22, 10], dur: 1.4 },
-  { heights: [22, 10, 18, 8, 22], dur: 1.1 },
-  { heights: [12, 20, 8, 26, 12], dur: 1.3 },
+  { scales: [8/28, 24/28, 10/28, 18/28, 8/28], dur: 1.2 },
+  { scales: [18/28, 8/28, 26/28, 10/28, 18/28], dur: 1.0 },
+  { scales: [10/28, 28/28, 12/28, 22/28, 10/28], dur: 1.4 },
+  { scales: [22/28, 10/28, 18/28, 8/28, 22/28], dur: 1.1 },
+  { scales: [12/28, 20/28, 8/28, 26/28, 12/28], dur: 1.3 },
 ];
 
-function WaveformBars({ bright }: { bright: boolean }) {
+function WaveformBars({ bright, isVisible }: { bright: boolean; isVisible: boolean }) {
   const barColor = bright
     ? "rgba(255, 45, 120, 0.7)"
     : "rgba(255, 45, 120, 0.35)";
@@ -253,16 +256,18 @@ function WaveformBars({ bright }: { bright: boolean }) {
       {WAVE_BARS.map((bar, i) => (
         <motion.div
           key={i}
-          animate={{ height: bar.heights }}
+          animate={{ scaleY: bar.scales }}
           transition={{
             duration: bright ? bar.dur * 0.8 : bar.dur,
-            repeat: Infinity,
+            repeat: isVisible ? Infinity : 0,
             ease: "easeInOut",
           }}
           style={{
             width: 4,
+            height: MAX_BAR_H,
             borderRadius: 2,
             background: barColor,
+            transformOrigin: "bottom",
             transition: "background 0.4s ease",
           }}
         />
@@ -273,7 +278,7 @@ function WaveformBars({ bright }: { bright: boolean }) {
 
 /* ── Merge Icon (Özel Yazılım — two lines becoming one) ────────────────── */
 
-function MergeIcon({ bright }: { bright: boolean }) {
+function MergeIcon({ bright, isVisible }: { bright: boolean; isVisible: boolean }) {
   return (
     <motion.svg
       width={44}
@@ -281,7 +286,7 @@ function MergeIcon({ bright }: { bright: boolean }) {
       viewBox="0 0 44 22"
       style={{ display: "block", margin: "14px auto 0" }}
       animate={{ opacity: bright ? [0.4, 0.6, 0.4] : [0.15, 0.4, 0.15] }}
-      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      transition={{ duration: 3, repeat: isVisible ? Infinity : 0, ease: "easeInOut" }}
     >
       <motion.line
         x1={4} y1={2} x2={22} y2={20}
@@ -337,6 +342,7 @@ export default function ServiceCircleDiagram() {
   const circleRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const isVisible = useInView(sectionRef as React.RefObject<Element>, { margin: "0px 0px -15% 0px" });
   const [circleCw, setCircleCw] = useState(CIRCLE_W);
   const [gridW, setGridW] = useState(1200);
   const [activeTab, setActiveTab] = useState(0);
@@ -550,7 +556,7 @@ export default function ServiceCircleDiagram() {
         animate={{ opacity: startAnimations ? [0.3, 0.5, 0.3] : 0 }}
         transition={
           startAnimations
-            ? { duration: 4, repeat: Infinity, ease: "easeInOut" }
+            ? { duration: 4, repeat: isVisible ? Infinity : 0, ease: "easeInOut" }
             : { duration: 0.8 }
         }
       />
@@ -722,7 +728,7 @@ export default function ServiceCircleDiagram() {
             >
               {SERVICE_CONTENT_MAP.chatbot.title}
             </p>
-            <TypingDots bright={isHighlighted("chatbot")} />
+            <TypingDots bright={isHighlighted("chatbot")} isVisible={isVisible} />
             <p
               style={{
                 fontFamily: FONT,
@@ -831,6 +837,7 @@ export default function ServiceCircleDiagram() {
             zIndex={1}
             hovered={activeHover === "yazilim"}
             hoverScale={1.04}
+            isVisible={isVisible}
           />
 
           {/* Elips 2 — right crescent, MIDDLE layer */}
@@ -847,6 +854,7 @@ export default function ServiceCircleDiagram() {
             hovered={activeHover === "sesli"}
             hoverTranslateX={isCompact ? 16 : 30}
             hoverScale={1.05}
+            isVisible={isVisible}
           />
 
           {/* Elips 1 — left crescent, FRONT layer */}
@@ -863,6 +871,7 @@ export default function ServiceCircleDiagram() {
             hovered={activeHover === "chatbot"}
             hoverTranslateX={isCompact ? -16 : -30}
             hoverScale={1.05}
+            isVisible={isVisible}
           />
 
           {/* CENTER LABEL — Özel Yazılım */}
@@ -894,7 +903,7 @@ export default function ServiceCircleDiagram() {
             }}
           >
             {"Özel\nYazılım"}
-            <MergeIcon bright={isHighlighted("yazilim")} />
+            <MergeIcon bright={isHighlighted("yazilim")} isVisible={isVisible} />
           </motion.div>
 
           {/* Orbital particles */}
@@ -956,7 +965,7 @@ export default function ServiceCircleDiagram() {
             >
               {SERVICE_CONTENT_MAP.sesli.title}
             </p>
-            <WaveformBars bright={isHighlighted("sesli")} />
+            <WaveformBars bright={isHighlighted("sesli")} isVisible={isVisible} />
             <p
               style={{
                 fontFamily: FONT,

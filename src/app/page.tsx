@@ -4,6 +4,7 @@ import VideoTestimonials from "@/components/VideoTestimonials";
 import ServiceCircleDiagram from "@/components/ServiceCircleDiagram";
 import BrandMarquee from "@/components/BrandMarquee";
 import ServiceCarousel from "@/components/ServiceCarousel";
+import FirstScrollSnap from "@/components/FirstScrollSnap";
 
 const videoTestimonials = [
   {
@@ -78,9 +79,11 @@ const blocks = [
 export default function Home() {
   return (
     <main>
+      <FirstScrollSnap targetId="home-first-section" />
+
       <HeroBanner />
 
-      <BentoGrid blocks={blocks} />
+      <BentoGrid blocks={blocks} sectionId="home-first-section" />
 
       <ServiceCircleDiagram />
 

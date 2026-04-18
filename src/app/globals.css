@@ -107,7 +107,7 @@ body:where(.dark *) {
   animation:
     hero-title-in 600ms cubic-bezier(0.22, 1, 0.36, 1) both 100ms,
     hero-text-glow 6.4s ease-in-out 0.9s infinite;
-  will-change: text-shadow;
+  will-change: transform, opacity;
 }
 
 /* ── Full-screen mobile menu animations ─────────────────────────────── */
@@ -265,7 +265,6 @@ body:where(.dark *) {
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
     filter 220ms ease;
-  will-change: transform, box-shadow;
   touch-action: manipulation;
 }
 
@@ -317,7 +316,6 @@ body:where(.dark *) {
 /* ── Gallery helpers ─────────────────────────────────────────────────── */
 
 .gallery-tile {
-  will-change: transform;
 }
 
 @keyframes gallery-scroll-left {
@@ -453,4 +451,36 @@ body:where(.dark *) {
   0%   { transform: translate(-50%,-50%) rotate(310deg) translateX(240px) rotate(-310deg); opacity: 0.3; }
   50%  { transform: translate(-50%,-50%) rotate(490deg) translateX(215px) rotate(-490deg); opacity: 0.35; }
   100% { transform: translate(-50%,-50%) rotate(670deg) translateX(240px) rotate(-670deg); opacity: 0.3; }
+}
+
+/* ── Video Testimonials ────────────────────────────── */
+
+@keyframes play-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+.video-play-icon {
+  animation: play-pulse 2.4s ease-in-out infinite;
+}
+
+.video-card {
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 768px) {
+  .video-card:hover {
+    transform: translateY(-6px) scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-play-icon {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .video-card {
+    transition: none !important;
+  }
 }

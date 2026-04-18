@@ -15,12 +15,11 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FONT = { fontFamily: "var(--font-jost), sans-serif" } as const;
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.985, filter: "blur(6px)" },
+  hidden: { opacity: 0, y: 30, scale: 0.985 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: "blur(0px)",
     transition: { duration: 0.52, ease: EASE, delay },
   }),
 };
@@ -44,11 +43,11 @@ function WordReveal({
       {words.map((word, i) => (
         <motion.span
           key={`${word}-${i}`}
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+          initial={{ opacity: 0, y: 20 }}
           animate={
             isInView
-              ? { opacity: 1, y: 0, filter: "blur(0px)" }
-              : { opacity: 0, y: 20, filter: "blur(8px)" }
+              ? { opacity: 1, y: 0 }
+              : { opacity: 0, y: 20 }
           }
           transition={{
             duration: 0.5,
@@ -224,7 +223,7 @@ export default function HakkimizdaPage() {
           </motion.p>
         </div>
 
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[50vw] w-[50vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#EC4899]/10 blur-[120px] dark:bg-[#BE185D]/10" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[40vw] w-[40vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#EC4899]/10 blur-[80px] dark:bg-[#BE185D]/10" />
       </section>
 
       {/* ── Manifesto — Large Word-by-Word Reveal ──────────────────── */}
@@ -249,8 +248,8 @@ export default function HakkimizdaPage() {
 
       {/* ── Metrics — Marquee Strip ────────────────────────────────── */}
       <section className="relative overflow-hidden border-y border-zinc-200/60 py-6 dark:border-white/[0.06] md:py-10">
-        <div className="flex animate-[marquee_20s_linear_infinite] gap-12 md:gap-20">
-          {[...metrics, ...metrics, ...metrics].map((m, i) => (
+        <div className="flex animate-[marquee_20s_linear_infinite] gap-12 md:gap-20" style={{ willChange: "transform" }}>
+          {[...metrics, ...metrics].map((m, i) => (
             <div
               key={`metric-${i}`}
               className="flex shrink-0 items-baseline gap-3"
@@ -281,10 +280,10 @@ export default function HakkimizdaPage() {
         <div className="grid items-center gap-10 md:grid-cols-[1fr_1.2fr] md:gap-16">
           {/* Left — Image with clip-path reveal */}
           <motion.div
-            initial={{ clipPath: "inset(100% 0 0 0)" }}
-            whileInView={{ clipPath: "inset(0% 0 0 0)" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.9, ease: EASE }}
+            transition={{ duration: 0.7, ease: EASE }}
             className="relative aspect-[4/5] overflow-hidden rounded-[28px]"
           >
             <Image
@@ -392,8 +391,8 @@ export default function HakkimizdaPage() {
       <section className="relative overflow-hidden py-16 md:py-24">
         {/* Dark background */}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#1a0e17_0%,#140c12_100%)] dark:bg-[linear-gradient(180deg,#0f0a0d_0%,#0a0a0a_100%)]" />
-        <div className="pointer-events-none absolute left-1/3 top-0 h-[400px] w-[400px] rounded-full bg-[#DB2777]/5 blur-[140px]" />
-        <div className="pointer-events-none absolute bottom-0 right-1/4 h-[300px] w-[300px] rounded-full bg-[#9D174D]/6 blur-[120px]" />
+        <div className="pointer-events-none absolute left-1/3 top-0 h-[280px] w-[280px] rounded-full bg-[#DB2777]/5 blur-[80px]" />
+        <div className="pointer-events-none absolute bottom-0 right-1/4 h-[220px] w-[220px] rounded-full bg-[#9D174D]/6 blur-[80px]" />
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
@@ -449,8 +448,8 @@ export default function HakkimizdaPage() {
               {processSteps.map((step, i) => (
                 <motion.div
                   key={step.num}
-                  initial={{ opacity: 0, y: 25, filter: "blur(4px)" }}
-                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "0px 0px -10% 0px" }}
                   transition={{ duration: 0.5, ease: EASE, delay: i * 0.1 }}
                   className="group relative flex gap-5 md:flex-col md:items-center md:gap-0 md:text-center"
@@ -466,7 +465,7 @@ export default function HakkimizdaPage() {
                       damping: 20,
                       delay: 0.3 + i * 0.1,
                     }}
-                    className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.05] backdrop-blur-sm"
+                    className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/[0.08] bg-white/[0.06]"
                   >
                     <span
                       className="text-[13px] font-bold tabular-nums text-[#F472B6]"
@@ -475,7 +474,7 @@ export default function HakkimizdaPage() {
                       {step.num}
                     </span>
                     {/* Hover glow */}
-                    <div className="pointer-events-none absolute inset-[-6px] rounded-full bg-[#DB2777]/0 blur-[14px] transition-all duration-500 group-hover:bg-[#DB2777]/20" />
+                    <div className="pointer-events-none absolute inset-[-4px] rounded-full opacity-0 bg-[#DB2777]/20 blur-[10px] transition-opacity duration-500 group-hover:opacity-100" />
                   </motion.div>
 
                   <div className="md:mt-5">
@@ -572,7 +571,7 @@ export default function HakkimizdaPage() {
 
                   {/* Content */}
                   <div
-                    className={`flex-1 rounded-[20px] border border-zinc-100 bg-white/80 p-6 backdrop-blur-sm dark:border-white/[0.06] dark:bg-white/[0.03] md:w-[calc(50%-40px)] md:flex-initial ${
+                    className={`flex-1 rounded-[20px] border border-zinc-100 bg-white p-6 dark:border-white/[0.06] dark:bg-white/[0.03] md:w-[calc(50%-40px)] md:flex-initial ${
                       isEven
                         ? "md:mr-auto md:pr-12"
                         : "md:ml-auto md:pl-12"
@@ -605,7 +604,7 @@ export default function HakkimizdaPage() {
       <section className="relative overflow-hidden py-20 md:py-32">
         {/* Full-width dark background */}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#1a0e17_0%,#120a10_100%)] dark:bg-[linear-gradient(180deg,#0f0a0d_0%,#0a0a0a_100%)]" />
-        <div className="pointer-events-none absolute -left-32 top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-[#DB2777]/6 blur-[120px]" />
+        <div className="pointer-events-none absolute -left-32 top-1/2 h-[280px] w-[280px] -translate-y-1/2 rounded-full bg-[#DB2777]/6 blur-[80px]" />
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
@@ -623,21 +622,9 @@ export default function HakkimizdaPage() {
             <AnimatePresence mode="wait">
               <motion.blockquote
                 key={activeQuote}
-                initial={{
-                  opacity: 0,
-                  y: 30,
-                  filter: "blur(8px)",
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  filter: "blur(0px)",
-                }}
-                exit={{
-                  opacity: 0,
-                  y: -20,
-                  filter: "blur(6px)",
-                }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, ease: EASE }}
               >
                 {/* Large decorative quote */}
@@ -703,7 +690,7 @@ export default function HakkimizdaPage() {
           className="relative overflow-hidden rounded-[34px] bg-[linear-gradient(135deg,#DB2777_0%,#9D174D_50%,#831843_100%)] p-10 md:p-16"
         >
           {/* Decorative elements */}
-          <div className="pointer-events-none absolute -right-20 -top-20 h-[300px] w-[300px] rounded-full bg-white/10 blur-[100px]" />
+          <div className="pointer-events-none absolute -right-20 -top-20 h-[200px] w-[200px] rounded-full bg-white/10 blur-[60px]" />
           <div className="pointer-events-none absolute -bottom-10 -left-10 h-[200px] w-[200px] rounded-full bg-[#F472B6]/20 blur-[80px]" />
 
           <div className="relative flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback, type CSSProperties } from "react";
+import { useEffect, useRef, useState, useCallback, type CSSProperties } from "react";
 import Link from "next/link";
 import { motion, MotionConfig } from "framer-motion";
 import BentoCard from "@/components/BentoCard";
@@ -28,6 +28,7 @@ interface Block {
 
 interface BentoGridProps {
   blocks: Block[];
+  sectionId?: string;
 }
 
 /* ── Framer-motion reveal variants ── */
@@ -83,13 +84,7 @@ function SocialIcon({ name }: { name: string }) {
 }
 
 /* ── Mobil sosyal medya kartları ── */
-function SocialRowCards({
-  block,
-  refCb,
-}: {
-  block: Block;
-  refCb: (el: HTMLDivElement | null) => void;
-}) {
+function SocialRowCards({ block }: { block: Block }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const socials = (block.socials ?? []).slice(0, 3);
@@ -144,8 +139,7 @@ function SocialRowCards({
 
   return (
     <div
-      ref={refCb}
-      className="mt-5 rounded-2xl bg-foreground/[0.04] p-3.5"
+      className="rounded-2xl bg-foreground/[0.04] p-3.5 md:rounded-3xl md:p-5"
     >
       <div className="grid grid-cols-3 gap-3">
         {socials.map((social, idx) => (
@@ -156,7 +150,7 @@ function SocialRowCards({
             rel="noopener noreferrer"
             onPointerDown={() => triggerPulse(idx)}
             onTouchStart={() => triggerPulse(idx)}
-            className={`social-card group flex h-[112px] items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300/75 ${
+            className={`social-card group flex h-[112px] items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300/75 md:h-[160px] md:rounded-3xl ${
               pulseIdx === idx ? "is-pressed" : ""
             }`}
             style={
@@ -169,7 +163,7 @@ function SocialRowCards({
             }
           >
             <div
-              className={`social-icon-wrap relative z-[2] flex h-10 w-10 items-center justify-center rounded-full ${
+              className={`social-icon-wrap relative z-[2] flex h-10 w-10 items-center justify-center rounded-full md:h-14 md:w-14 ${
                 isDark ? "bg-black/30" : "bg-pink-900/30"
               }`}
             >
@@ -182,142 +176,144 @@ function SocialRowCards({
   );
 }
 
-const PARALLAX_STRENGTH = 0.06;
-const AUTO_SLIDE_INTERVAL = 3500;
-
 function ProjectSlider({
   title,
   projects,
-  refCb,
 }: {
   title: string;
   projects: Project[];
-  refCb: (el: HTMLDivElement | null) => void;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
-  const autoRef = useRef<ReturnType<typeof setInterval>>(undefined);
-  const visibleRef = useRef(false);
+  const isProgScrollRef = useRef(false);
+  const progTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const scrollTo = useCallback((idx: number) => {
     const el = scrollRef.current;
     if (!el) return;
     const card = el.children[idx] as HTMLElement | undefined;
     if (!card) return;
+    isProgScrollRef.current = true;
+    clearTimeout(progTimer.current);
+    progTimer.current = setTimeout(() => { isProgScrollRef.current = false; }, 600);
     const containerCenter = el.offsetWidth / 2;
     const cardCenter = card.offsetLeft + card.offsetWidth / 2;
     el.scrollTo({ left: cardCenter - containerCenter, behavior: "smooth" });
   }, []);
 
-  const startAutoSlide = useCallback(() => {
-    clearInterval(autoRef.current);
-    autoRef.current = setInterval(() => {
-      setActiveIdx((prev) => {
-        const next = (prev + 1) % projects.length;
-        scrollTo(next);
-        return next;
-      });
-    }, AUTO_SLIDE_INTERVAL);
-  }, [projects.length, scrollTo]);
-
-  const stopAutoSlide = useCallback(() => {
-    clearInterval(autoRef.current);
-  }, []);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        visibleRef.current = entry.isIntersecting;
-        if (entry.isIntersecting) {
-          startAutoSlide();
-        } else {
-          stopAutoSlide();
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      stopAutoSlide();
-    };
-  }, [startAutoSlide, stopAutoSlide]);
-
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     const onScroll = () => {
+      if (isProgScrollRef.current) return;
       const child0 = el.children[0] as HTMLElement | undefined;
       const child1 = el.children[1] as HTMLElement | undefined;
       if (!child0) return;
-      const cardWidth = child0.offsetWidth;
-      const gap = child1 ? child1.offsetLeft - child0.offsetLeft - cardWidth : 0;
-      const idx = Math.round(el.scrollLeft / (cardWidth + gap));
+      const cardW = child0.offsetWidth;
+      const gap = child1 ? child1.offsetLeft - child0.offsetLeft - cardW : 0;
+      const idx = Math.round(el.scrollLeft / (cardW + gap));
       setActiveIdx(idx);
     };
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleInteraction = () => {
-    if (visibleRef.current) startAutoSlide();
+  const goPrev = () => {
+    const prev = Math.max(0, activeIdx - 1);
+    scrollTo(prev);
+    setActiveIdx(prev);
+  };
+  const goNext = () => {
+    const next = Math.min(projects.length - 1, activeIdx + 1);
+    scrollTo(next);
+    setActiveIdx(next);
   };
 
   return (
-    <div ref={(el) => { containerRef.current = el; refCb(el); }}
-      className="rounded-2xl bg-foreground/[0.04] p-4"
-    >
-      <div className="mb-4 flex flex-nowrap items-center gap-2.5">
-        <h3 className="min-w-0 flex-1 text-[clamp(1.65rem,6.2vw,1.95rem)] font-bold text-foreground tracking-tight">
+    <div>
+      {/* Başlık + kontroller */}
+      <div className="mb-3 flex items-center gap-2.5 md:mb-5">
+        <h3 className="min-w-0 flex-1 text-[clamp(1.65rem,6.2vw,1.95rem)] font-bold text-foreground tracking-tight md:text-[1.95rem]">
           {title}
         </h3>
-        <div className="ml-auto flex shrink-0 flex-nowrap items-center gap-1 whitespace-nowrap">
-          {projects.map((_, i) => (
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
+          {/* Ok butonları — desktop */}
+          <div className="hidden items-center gap-1.5 md:flex">
             <button
-              key={i}
               type="button"
-              aria-label={`Proje ${i + 1}`}
-              onClick={() => { scrollTo(i); setActiveIdx(i); handleInteraction(); }}
-              className="flex h-6 w-6 items-center justify-center rounded-full sm:h-8 sm:w-8"
+              aria-label="Önceki proje"
+              onClick={goPrev}
+              disabled={activeIdx === 0}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.04] text-foreground/50 transition-all duration-200 hover:bg-foreground/[0.08] hover:text-foreground/80 hover:border-foreground/20 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
             >
-              <span className={`block h-2 rounded-full transition-all duration-300 ${
-                activeIdx === i ? "w-4 bg-pink-400 sm:w-5" : "w-1.5 bg-foreground/20 sm:w-2"
-              }`} />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 12L6 8L10 4" /></svg>
             </button>
-          ))}
+            <button
+              type="button"
+              aria-label="Sonraki proje"
+              onClick={goNext}
+              disabled={activeIdx === projects.length - 1}
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.04] text-foreground/50 transition-all duration-200 hover:bg-foreground/[0.08] hover:text-foreground/80 hover:border-foreground/20 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 4L10 8L6 12" /></svg>
+            </button>
+          </div>
+          {/* Dot göstergeleri */}
+          <div className="flex items-center gap-1">
+            {projects.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Proje ${i + 1}`}
+                onClick={() => { scrollTo(i); setActiveIdx(i); }}
+                className="flex h-6 w-6 items-center justify-center rounded-full md:h-8 md:w-8"
+              >
+                <span className={`block h-1.5 rounded-full transition-all duration-300 md:h-2 ${
+                  activeIdx === i ? "w-4 bg-pink-400 md:w-5" : "w-1.5 bg-foreground/20 md:w-2"
+                }`} />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div
-        ref={scrollRef}
-        onTouchStart={handleInteraction}
-        className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4"
-        style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch", scrollPaddingInline: "16px" }}
-      >
-        {projects.map((project, i) => (
-          <div
-            key={i}
-            className="snap-center flex-shrink-0 w-[75vw] h-[220px] rounded-2xl overflow-hidden relative"
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundImage: `url(${project.image})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-5">
-              <p className="text-lg font-bold text-white">{project.name}</p>
-            </div>
-          </div>
-        ))}
+      {/* Slider — full-width */}
+      <div className="relative -mx-4 md:-mx-12">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 md:w-32" style={{ background: "linear-gradient(to right, var(--background) 0%, transparent 100%)" }} />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5 md:w-32" style={{ background: "linear-gradient(to left, var(--background) 0%, transparent 100%)" }} />
+
+        <div
+          ref={scrollRef}
+          className="flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 md:gap-5 md:px-12"
+          style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
+        >
+          {projects.map((project, i) => {
+            const isActive = activeIdx === i;
+            return (
+              <div
+                key={i}
+                className="snap-center flex-shrink-0 w-[75vw] h-[220px] rounded-2xl overflow-hidden relative group cursor-pointer md:w-[380px] md:h-[280px] md:rounded-3xl lg:w-[420px] lg:h-[300px]"
+                style={{
+                  transform: isActive ? "scale(1)" : "scale(0.97)",
+                  opacity: isActive ? 1 : 0.7,
+                  boxShadow: isActive
+                    ? "0 0 0 1.5px rgba(244,114,182,0.4), 0 8px 28px rgba(219,39,119,0.15)"
+                    : "none",
+                  transition: "transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease, box-shadow 0.4s ease",
+                }}
+              >
+                <div
+                  className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105"
+                  style={{ backgroundImage: `url(${project.image})`, backgroundSize: "cover", backgroundPosition: "center" }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                  <p className="text-lg font-bold text-white md:text-xl">{project.name}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -326,35 +322,22 @@ function ProjectSlider({
 function MobileCard({
   block,
   idx,
-  height,
-  refCb,
-  offset,
+  heightClass,
 }: {
   block: Block;
   idx: number;
-  height: string;
-  refCb: (idx: number, el: HTMLDivElement | null) => void;
-  offset: number;
+  heightClass: string;
 }) {
   const inner = (
     <motion.div
-      ref={(el) => refCb(idx, el)}
       variants={revealVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "0px 0px -14% 0px" }}
+      viewport={{ once: true, margin: "0px" }}
       custom={idx * 0.08}
-      style={{ height }}
+      className={heightClass}
     >
-      <div
-        style={{
-          transform: `translateY(${offset}px)`,
-          transition: "transform 0.1s linear",
-          height: "100%",
-        }}
-      >
-        <BentoCard {...block} mobile />
-      </div>
+      <BentoCard {...block} mobile />
     </motion.div>
   );
 
@@ -367,141 +350,45 @@ function MobileCard({
   );
 }
 
-export default function BentoGrid({ blocks }: BentoGridProps) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-  const mobileCardsRef = useRef<HTMLDivElement[]>([]);
-  const [parallaxOffsets, setParallaxOffsets] = useState<number[]>([0, 0, 0]);
-
-  const updateParallax = useCallback(() => {
-    const cards = mobileCardsRef.current;
-    if (!cards.length) return;
-
-    const vh = window.innerHeight;
-    const newOffsets = cards.map((card) => {
-      if (!card) return 0;
-      const rect = card.getBoundingClientRect();
-      const center = rect.top + rect.height / 2;
-      const viewportCenter = vh / 2;
-      const distance = (center - viewportCenter) / vh;
-      return distance * rect.height * PARALLAX_STRENGTH;
-    });
-
-    setParallaxOffsets(newOffsets);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => requestAnimationFrame(updateParallax);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    updateParallax();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [updateParallax]);
-
-  const [row1Left, row1Right] = useMemo(() => {
-    if (hoveredIndex === 0) return [3.8, 1.2];
-    if (hoveredIndex === 1) return [1.2, 3.8];
-    return [3, 2];
-  }, [hoveredIndex]);
-
-  const handleHoverChange = (index: number, isHovered: boolean) => {
-    setHoveredIndex((prev) => {
-      if (isHovered) return index;
-      if (prev === index) return null;
-      return prev;
-    });
-  };
-
-  const setMobileCardRef = (idx: number, el: HTMLDivElement | null) => {
-    if (el) mobileCardsRef.current[idx] = el;
-  };
-
+export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
   return (
     <MotionConfig reducedMotion="user">
-      <section ref={sectionRef} className="px-4 pt-8 pb-10 md:px-12 md:pt-20 md:pb-16">
+      <section
+        id={sectionId}
+        className="px-4 pt-8 pb-10 scroll-mt-28 md:px-12 md:pt-20 md:pb-16 md:scroll-mt-36"
+      >
         <div className="mx-auto max-w-6xl">
-          {/* ── MOBILE ── */}
-          <div className="md:hidden flex flex-col gap-3" style={{ overflow: "visible" }}>
+          <div className="flex flex-col gap-8 md:gap-10" style={{ overflow: "visible" }}>
             <MobileCard
               block={blocks[0]}
               idx={0}
-              height="220px"
-              refCb={setMobileCardRef}
-              offset={parallaxOffsets[0]}
+              heightClass="h-[220px] md:h-[400px]"
             />
 
             {blocks[1]?.projects && (
               <motion.div
-                className="mt-5"
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, margin: "0px 0px -14% 0px" }}
-                custom={0.08}
+                viewport={{ once: true, margin: "0px" }}
+                custom={0.1}
               >
                 <ProjectSlider
                   title={blocks[1].title}
                   projects={blocks[1].projects}
-                  refCb={(el) => setMobileCardRef(1, el)}
                 />
               </motion.div>
             )}
 
-            <SocialRowCards block={blocks[2]} refCb={(el) => setMobileCardRef(2, el)} />
-          </div>
-
-          {/* ── DESKTOP ── */}
-          <div className="hidden flex-col gap-5 md:flex">
-            <div className="flex h-[420px] gap-5">
-              <motion.div
-                variants={revealVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "0px 0px -14% 0px" }}
-                custom={0}
-                style={{
-                  flex: `${row1Left} 1 0%`,
-                  transition: "flex 480ms cubic-bezier(0.22, 1, 0.36, 1)",
-                }}
-              >
-                <BentoCard
-                  {...blocks[0]}
-                  onHoverChange={(isHovered) => handleHoverChange(0, isHovered)}
-                />
-              </motion.div>
-              <motion.div
-                variants={revealVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "0px 0px -14% 0px" }}
-                custom={0.09}
-                style={{
-                  flex: `${row1Right} 1 0%`,
-                  transition: "flex 480ms cubic-bezier(0.22, 1, 0.36, 1)",
-                }}
-              >
-                <BentoCard
-                  {...blocks[1]}
-                  onHoverChange={(isHovered) => handleHoverChange(1, isHovered)}
-                />
-              </motion.div>
-            </div>
-
-            {/* Satır 2: hakkımızda — tam genişlik */}
-            <div className="h-[250px]">
-              <motion.div
-                variants={revealVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "0px 0px -14% 0px" }}
-                custom={0.18}
-                className="h-full"
-              >
-                <BentoCard
-                  {...blocks[2]}
-                  onHoverChange={(isHovered) => handleHoverChange(2, isHovered)}
-                />
-              </motion.div>
-            </div>
+            <motion.div
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "0px" }}
+              custom={0.18}
+            >
+              <SocialRowCards block={blocks[2]} />
+            </motion.div>
           </div>
         </div>
       </section>

@@ -8,6 +8,7 @@ import {
   useScroll,
   useTransform,
   useReducedMotion,
+  type MotionValue,
 } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 
@@ -113,6 +114,7 @@ function TileCard({
           ? "1px solid rgba(255,255,255,0.12)"
           : "1px solid rgba(0,0,0,0.08)",
         transform: hovered ? "scale(1.05)" : "scale(1)",
+        willChange: "transform",
         transition:
           "transform 420ms cubic-bezier(0.22,1,0.36,1), box-shadow 350ms ease",
         boxShadow: hovered
@@ -182,6 +184,7 @@ function GalleryRow({
   mobile,
   isDark,
   reducedMotion,
+  scrollY,
   onSelect,
 }: {
   tiles: GalleryTile[];
@@ -189,9 +192,9 @@ function GalleryRow({
   mobile: boolean;
   isDark: boolean;
   reducedMotion: boolean;
+  scrollY: MotionValue<number>;
   onSelect: (t: GalleryTile) => void;
 }) {
-  const { scrollY } = useScroll();
   const h   = mobile ? config.hMobile : config.height;
   const gap = mobile ? GAP_M : GAP_D;
   const wScale = mobile ? MW : 1;
@@ -359,6 +362,7 @@ export default function GalleryGrid({ tiles }: GalleryGridProps) {
   const [selected, setSelected] = useState<GalleryTile | null>(null);
   const close    = useCallback(() => setSelected(null), []);
   const rowTiles = buildRows(tiles, NUM_ROWS);
+  const { scrollY } = useScroll();
 
   return (
     <MotionConfig reducedMotion="user">
@@ -374,6 +378,7 @@ export default function GalleryGrid({ tiles }: GalleryGridProps) {
               mobile={false}
               isDark={isDark}
               reducedMotion={reducedMotion}
+              scrollY={scrollY}
               onSelect={setSelected}
             />
           ))}
@@ -389,6 +394,7 @@ export default function GalleryGrid({ tiles }: GalleryGridProps) {
               mobile={true}
               isDark={isDark}
               reducedMotion={reducedMotion}
+              scrollY={scrollY}
               onSelect={setSelected}
             />
           ))}

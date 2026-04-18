@@ -8,21 +8,10 @@ import {
   useSpring,
   AnimatePresence,
 } from "framer-motion";
-
-/* ── Constants ────────────────────────────────────────────────────── */
-const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const FONT = { fontFamily: 'var(--font-jost), sans-serif' } as const;
-
-const revealVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.985, filter: "blur(6px)" },
-  visible: (delay: number) => ({
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.52, ease: EASE, delay },
-  }),
-};
+import Link from "next/link";
+import { EASE, FONT, revealVariants } from "@/lib/motion";
+import { serviceTabs } from "@/data/services";
+import FirstScrollSnap from "@/components/FirstScrollSnap";
 
 /* ── Metrics ──────────────────────────────────────────────────────── */
 const metrics = [
@@ -60,49 +49,7 @@ function CountUp({ value, suffix, delay }: { value: number; suffix: string; dela
   );
 }
 
-/* ── Service tabs data ────────────────────────────────────────────── */
-const serviceTabs = [
-  {
-    id: "tasarim",
-    label: "Tasarım",
-    cards: [
-      { title: "Post Tasarımı", desc: "Sosyal medya için dikkat çekici görseller", img: "/images/dag.png", dark: true },
-      { title: "Kartvizit Tasarımı", desc: "Profesyonel ve akılda kalıcı kartvizitler", img: "/images/wherehavee.jpg", dark: false },
-      { title: "Logo Tasarımı", desc: "Markanızı tanımlayan özgün logolar", img: "/images/dag.png", dark: false },
-      { title: "Banner & Afiş", desc: "Dijital ve basılı reklam görselleri", img: "/images/wherehavee.jpg", dark: true },
-    ],
-  },
-  {
-    id: "icerik",
-    label: "İçerik",
-    cards: [
-      { title: "Blog Yazıları", desc: "SEO uyumlu, değer katan blog içerikleri", img: "/images/wherehavee.jpg", dark: true },
-      { title: "Sosyal Medya Metni", desc: "Etkileşim odaklı caption ve copyler", img: "/images/dag.png", dark: false },
-      { title: "E-posta Pazarlama", desc: "Dönüşüm sağlayan e-posta kampanyaları", img: "/images/dag.png", dark: true },
-      { title: "Senaryo & Script", desc: "Video ve reklam senaryoları", img: "/images/wherehavee.jpg", dark: false },
-    ],
-  },
-  {
-    id: "video",
-    label: "Video",
-    cards: [
-      { title: "Tanıtım Filmi", desc: "Markanızı anlatan profesyonel prodüksiyon", img: "/images/wherehavee.jpg", dark: true },
-      { title: "Reels & Shorts", desc: "Viral kısa video içerikleri", img: "/images/dag.png", dark: false },
-      { title: "Reklam Spotu", desc: "Dijital platformlar için reklam videoları", img: "/images/dag.png", dark: true },
-      { title: "Motion Graphics", desc: "Animasyon ve hareketli grafikler", img: "/images/wherehavee.jpg", dark: false },
-    ],
-  },
-  {
-    id: "otomasyon",
-    label: "Otomasyon",
-    cards: [
-      { title: "AI Chatbot", desc: "7/24 akıllı müşteri destek sistemi", img: "/images/dag.png", dark: true },
-      { title: "AI Callbot", desc: "Sesli yanıt ve yönlendirme otomasyonu", img: "/images/wherehavee.jpg", dark: false },
-      { title: "İş Akışı", desc: "Tekrarlayan süreçlerin otomasyonu", img: "/images/wherehavee.jpg", dark: true },
-      { title: "CRM Entegrasyonu", desc: "Mevcut sistemlerinizle entegrasyon", img: "/images/dag.png", dark: false },
-    ],
-  },
-];
+/* ── Service tabs data — imported from @/data/services ─────────── */
 
 /* ── Testimonials ─────────────────────────────────────────────────── */
 const testimonials = [
@@ -119,6 +66,8 @@ export default function HizmetlerPage() {
 
   return (
     <main className="min-h-screen bg-white text-zinc-900 dark:bg-[#0a0a0a] dark:text-zinc-100">
+      <FirstScrollSnap targetId="services-first-section" />
+
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section
         className="relative overflow-hidden px-6 pb-12 pt-[46svh] md:pb-24 md:pt-56 bg-center bg-no-repeat bg-[length:auto_100%] md:bg-cover"
@@ -153,12 +102,15 @@ export default function HizmetlerPage() {
       </section>
 
       {/* ── Metrics ──────────────────────────────────────────────── */}
-      <section className="mx-auto -mt-6 max-w-[1200px] px-6 py-4 md:-mt-8 md:py-8">
+      <section
+        id="services-first-section"
+        className="mx-auto -mt-6 max-w-[1200px] px-6 py-4 scroll-mt-28 md:-mt-8 md:py-8 md:scroll-mt-36"
+      >
         <motion.div
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -14% 0px" }}
+          viewport={{ once: true, margin: "0px" }}
           custom={0}
           className="border-y border-zinc-200/80 py-2 dark:border-white/10 md:py-4"
         >
@@ -188,7 +140,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -12% 0px" }}
+          viewport={{ once: true, margin: "0px" }}
           custom={0.08}
         >
           <div className="overflow-hidden rounded-[34px] border border-[#F9A8D4]/50 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] shadow-[0_24px_70px_rgba(219,39,119,0.14)] dark:border-[#9D174D]/30 dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] dark:shadow-[0_24px_70px_rgba(157,23,77,0.25)]">
@@ -268,39 +220,43 @@ export default function HizmetlerPage() {
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.42, ease: EASE, delay: ci * 0.08 }}
-                  className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-transparent transition-[border-color,box-shadow] duration-500 hover:border-[#F472B6]/20 hover:shadow-[0_8px_40px_rgba(219,39,119,0.1)] dark:hover:border-[#9D174D]/30 dark:hover:shadow-[0_8px_40px_rgba(157,23,77,0.12)]"
-                  style={{ minHeight: "340px" }}
                 >
-                  {/* BG image */}
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                    style={{ backgroundImage: `url('${card.img}')` }}
-                  />
+                  <Link
+                    href={`/hizmetler/${card.slug}`}
+                    className="group relative block cursor-pointer overflow-hidden rounded-[24px] border border-transparent transition-[border-color,box-shadow] duration-500 hover:border-[#F472B6]/20 hover:shadow-[0_8px_40px_rgba(219,39,119,0.1)] dark:hover:border-[#9D174D]/30 dark:hover:shadow-[0_8px_40px_rgba(157,23,77,0.12)]"
+                    style={{ minHeight: "340px" }}
+                  >
+                    {/* BG image */}
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                      style={{ backgroundImage: `url('${card.img}')` }}
+                    />
 
-                  {/* Overlay — monochrome dark, image speaks for itself */}
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_5%,rgba(15,10,13,0.88)_62%)] transition-all duration-500 group-hover:bg-[linear-gradient(180deg,transparent_5%,rgba(15,10,13,0.80)_62%)]" />
+                    {/* Overlay — monochrome dark, image speaks for itself */}
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_5%,rgba(15,10,13,0.88)_62%)] transition-all duration-500 group-hover:bg-[linear-gradient(180deg,transparent_5%,rgba(15,10,13,0.80)_62%)]" />
 
-                  {/* Content pinned to bottom */}
-                  <div className="relative flex h-full min-h-[340px] flex-col justify-end p-7 md:p-8">
-                    <span className="mb-3 inline-block w-fit rounded-full border border-white/20 px-3 py-1 text-[11px] font-medium tracking-[0.12em] text-white/70 backdrop-blur-sm">
-                      {serviceTabs[activeTab].label}
-                    </span>
-                    <h4
-                      className="text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] text-white md:text-[26px]"
-                      style={FONT}
-                    >
-                      {card.title}
-                    </h4>
-                    <p className="mt-2 max-w-[32ch] text-[14px] leading-[1.6] text-white/60">
-                      {card.desc}
-                    </p>
-                    <span className="mt-5 inline-flex w-fit items-center gap-1.5 text-[13px] font-semibold text-[#F472B6] opacity-0 transition-all duration-400 group-hover:opacity-100">
-                      teklif al
-                      <svg width="14" height="14" viewBox="0 0 12 12" fill="none" className="transition-transform duration-300 group-hover:translate-x-1">
-                        <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </span>
-                  </div>
+                    {/* Content pinned to bottom */}
+                    <div className="relative flex h-full min-h-[340px] flex-col justify-end p-7 md:p-8">
+                      <span className="mb-3 inline-block w-fit rounded-full border border-white/20 px-3 py-1 text-[11px] font-medium tracking-[0.12em] text-white/70 backdrop-blur-sm">
+                        {serviceTabs[activeTab].label}
+                      </span>
+                      <h4
+                        className="text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] text-white md:text-[26px]"
+                        style={FONT}
+                      >
+                        {card.title}
+                      </h4>
+                      <p className="mt-2 max-w-[32ch] text-[14px] leading-[1.6] text-white/60">
+                        {card.desc}
+                      </p>
+                      <span className="mt-5 inline-flex w-fit items-center gap-1.5 text-[13px] font-semibold text-[#F472B6] opacity-0 transition-all duration-400 group-hover:opacity-100">
+                        detaylar
+                        <svg width="14" height="14" viewBox="0 0 12 12" fill="none" className="transition-transform duration-300 group-hover:translate-x-1">
+                          <path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </Link>
                 </motion.div>
               ))}
             </motion.div>
@@ -315,7 +271,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -14% 0px" }}
+          viewport={{ once: true, margin: "0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -450,7 +406,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -14% 0px" }}
+          viewport={{ once: true, margin: "0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
