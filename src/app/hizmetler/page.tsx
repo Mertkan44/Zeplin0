@@ -71,7 +71,7 @@ export default function HizmetlerPage() {
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section
         className="relative overflow-hidden px-6 pb-12 pt-[46svh] md:pb-24 md:pt-56 bg-center bg-no-repeat bg-[length:auto_100%] md:bg-cover"
-        style={{ backgroundImage: "url('/images/wherehavee.jpg')" }}
+        style={{ backgroundImage: "url('/images/services-digital-premium-optimized.webp')" }}
       >
         <div className="absolute inset-0 bg-linear-to-b from-white/30 via-white/70 to-white dark:from-[#0a0a0a]/20 dark:via-[#0a0a0a]/70 dark:to-[#0a0a0a]" />
 
@@ -160,9 +160,14 @@ export default function HizmetlerPage() {
                 </p>
               </div>
 
-              {/* Right — gradient visual */}
-              <div className="min-h-[260px] border-t border-white/8 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] md:min-h-full md:border-l md:border-t-0 md:border-white/8">
-                <div className="h-full w-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.32),transparent_34%),linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.08)_100%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_34%),linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.02)_100%)]" />
+              {/* Right — visual */}
+              <div className="relative min-h-[260px] overflow-hidden border-t border-white/8 bg-[#160812] md:min-h-full md:border-l md:border-t-0 md:border-white/8">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: "url('/images/services-digital-premium-optimized.webp')" }}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,12,24,0.82)_0%,rgba(31,12,24,0.18)_52%,rgba(31,12,24,0)_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_46%,rgba(236,72,153,0.32),transparent_38%)]" />
               </div>
             </div>
           </div>

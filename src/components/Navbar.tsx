@@ -55,7 +55,7 @@ function useSpringBlob() {
   const rafRef = useRef<number>(0);
   const isAnimatingRef = useRef(false);
 
-  const animate = useCallback(() => {
+  const animate = useCallback(function animateFrame() {
     const target = targetRef.current;
     const current = currentRef.current;
     const velocity = velocityRef.current;
@@ -90,7 +90,7 @@ function useSpringBlob() {
     }
 
     if (!settled) {
-      rafRef.current = requestAnimationFrame(animate);
+      rafRef.current = requestAnimationFrame(animateFrame);
     } else {
       // Snap to target
       current.left = target.left;
@@ -151,7 +151,7 @@ export default function Navbar() {
   const initializedRef = useRef(false);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const hasInteracted = useRef(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
@@ -177,7 +177,8 @@ export default function Navbar() {
   }, [pathname, getPosition, setImmediate]);
 
   useEffect(() => {
-    setMobileOpen(false);
+    const timer = window.setTimeout(() => setMobileOpen(false), 0);
+    return () => window.clearTimeout(timer);
   }, [pathname]);
 
   useEffect(() => {
@@ -189,7 +190,7 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   const toggleMenu = useCallback(() => {
-    hasInteracted.current = true;
+    setHasInteracted(true);
     setMobileOpen((v) => !v);
   }, []);
 
@@ -364,7 +365,7 @@ export default function Navbar() {
           className={`absolute inset-0 flex min-h-dvh flex-col ${
             mobileOpen
               ? "menu-overlay-enter"
-              : hasInteracted.current
+              : hasInteracted
                 ? "menu-overlay-exit"
                 : "opacity-0"
           }`}

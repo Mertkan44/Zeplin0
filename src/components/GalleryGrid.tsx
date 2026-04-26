@@ -74,7 +74,7 @@ function buildRows(tiles: GalleryTile[], numRows: number): GalleryTile[][] {
 
 /* No color tint — plain photo with vignette only */
 const PHOTO_BG = {
-  backgroundImage: "url('/images/dag.png')",
+  backgroundImage: "url('/images/dag-optimized.webp')",
   backgroundSize: "cover",
   backgroundPosition: "center",
 };

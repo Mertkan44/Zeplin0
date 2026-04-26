@@ -9,6 +9,10 @@ import { useTheme } from "./ThemeProvider";
 interface Project {
   name: string;
   image: string;
+  description?: string;
+  imagePosition?: string;
+  tags?: string[];
+  variant?: "image" | "website";
 }
 
 interface Social {
@@ -279,8 +283,8 @@ function ProjectSlider({
 
       {/* Slider — full-width */}
       <div className="relative -mx-4 md:-mx-12">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 md:w-32" style={{ background: "linear-gradient(to right, var(--background) 0%, transparent 100%)" }} />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5 md:w-32" style={{ background: "linear-gradient(to left, var(--background) 0%, transparent 100%)" }} />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 md:w-20" style={{ background: "linear-gradient(to right, var(--background) 0%, transparent 100%)" }} />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5 md:w-20" style={{ background: "linear-gradient(to left, var(--background) 0%, transparent 100%)" }} />
 
         <div
           ref={scrollRef}
@@ -289,27 +293,96 @@ function ProjectSlider({
         >
           {projects.map((project, i) => {
             const isActive = activeIdx === i;
+            const isWebsite = project.variant === "website";
             return (
               <div
                 key={i}
                 className="snap-center flex-shrink-0 w-[75vw] h-[220px] rounded-2xl overflow-hidden relative group cursor-pointer md:w-[380px] md:h-[280px] md:rounded-3xl lg:w-[420px] lg:h-[300px]"
                 style={{
                   transform: isActive ? "scale(1)" : "scale(0.97)",
-                  opacity: isActive ? 1 : 0.7,
+                  opacity: isActive ? 1 : 0.9,
                   boxShadow: isActive
                     ? "0 0 0 1.5px rgba(244,114,182,0.4), 0 8px 28px rgba(219,39,119,0.15)"
                     : "none",
                   transition: "transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease, box-shadow 0.4s ease",
                 }}
               >
-                <div
-                  className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105"
-                  style={{ backgroundImage: `url(${project.image})`, backgroundSize: "cover", backgroundPosition: "center" }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                  <p className="text-lg font-bold text-white md:text-xl">{project.name}</p>
-                </div>
+                {isWebsite ? (
+                  <>
+                    <div className="absolute inset-0 bg-[linear-gradient(135deg,#f8fbff_0%,#e8f1ff_48%,#ffffff_100%)]" />
+                    <div className="absolute -right-12 -top-10 h-44 w-44 rounded-full bg-[#2B61B4]/12 blur-2xl md:h-56 md:w-56" />
+                    <div className="absolute left-5 top-5 h-2 w-16 rounded-full bg-[#2B61B4]/45" />
+
+                    <div className="absolute right-4 top-8 h-[118px] w-[230px] overflow-hidden rounded-2xl border border-[#2B61B4]/12 bg-white shadow-[0_18px_46px_rgba(30,64,175,0.18)] transition-transform duration-500 group-hover:-translate-y-1 md:right-6 md:top-9 md:h-[152px] md:w-[292px] lg:w-[312px]">
+                      <div className="flex h-6 items-center gap-1.5 border-b border-slate-200/80 bg-white px-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+                        <span className="ml-2 h-2 w-20 rounded-full bg-slate-100" />
+                      </div>
+                      <div
+                        className="h-[calc(100%-1.5rem)] bg-cover"
+                        style={{
+                          backgroundImage: `url(${project.image})`,
+                          backgroundPosition: project.imagePosition ?? "center top",
+                        }}
+                      />
+                    </div>
+
+                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                      {project.tags && (
+                        <div className="mb-3 flex flex-wrap gap-1.5">
+                          {project.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-[#2B61B4]/18 bg-[#2B61B4]/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2B61B4]"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <p className="text-lg font-bold leading-tight text-slate-950 md:text-xl">{project.name}</p>
+                      {project.description && (
+                        <p className="mt-1 max-w-[28ch] text-sm font-medium leading-snug text-slate-500 md:text-[15px]">
+                          {project.description}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105"
+                      style={{
+                        backgroundImage: `url(${project.image})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: project.imagePosition ?? "center",
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/18 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                      {project.tags && (
+                        <div className="mb-3 flex flex-wrap gap-1.5">
+                          {project.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/78 backdrop-blur-sm"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <p className="text-lg font-bold text-white md:text-xl">{project.name}</p>
+                      {project.description && (
+                        <p className="mt-1 max-w-[28ch] text-sm font-medium leading-snug text-white/68 md:text-[15px]">
+                          {project.description}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}
@@ -331,7 +404,7 @@ function MobileCard({
   const inner = (
     <motion.div
       variants={revealVariants}
-      initial="hidden"
+      initial={idx === 0 ? "visible" : "hidden"}
       whileInView="visible"
       viewport={{ once: true, margin: "0px" }}
       custom={idx * 0.08}

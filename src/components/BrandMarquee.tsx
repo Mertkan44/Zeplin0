@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "./ThemeProvider";
 
@@ -35,9 +36,11 @@ function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
       }}
     >
       {brand.logo ? (
-        <img
+        <Image
           src={brand.logo}
           alt={brand.name}
+          width={80}
+          height={80}
           draggable={false}
           className="pointer-events-none select-none"
           style={{

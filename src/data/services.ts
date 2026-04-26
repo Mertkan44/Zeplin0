@@ -53,7 +53,7 @@ export const services: ServiceData[] = [
     shortDesc: "Sosyal medya için dikkat çekici görseller",
     longDesc:
       "Markanızın sosyal medya varlığını güçlendiren, dikkat çekici ve paylaşılabilir post tasarımları üretiyoruz. Her platformun dinamiklerine uygun, tutarlı bir görsel dil oluşturuyoruz.",
-    heroImage: "/images/dag.png",
+    heroImage: "/images/dag-optimized.webp",
     dark: true,
     features: [
       { title: "Platform Optimizasyonu", desc: "Instagram, Facebook, LinkedIn ve X için optimize edilmiş boyut ve formatlar" },
@@ -77,7 +77,7 @@ export const services: ServiceData[] = [
     shortDesc: "Profesyonel ve akılda kalıcı kartvizitler",
     longDesc:
       "İlk izlenimi kalıcı kılan, markanızı yansıtan profesyonel kartvizit tasarımları. Baskı kalitesinden kağıt seçimine kadar her detayı düşünüyoruz.",
-    heroImage: "/images/wherehavee.jpg",
+    heroImage: "/images/wherehavee-optimized.webp",
     dark: false,
     features: [
       { title: "Özel Kesim & Lak", desc: "Kabartma, folyo ve özel kesim seçenekleri" },
@@ -101,7 +101,7 @@ export const services: ServiceData[] = [
     shortDesc: "Markanızı tanımlayan özgün logolar",
     longDesc:
       "Markanızın kimliğini tek bir sembolde özetleyen, akılda kalıcı ve ölçeklenebilir logo tasarımları. Dijitalden baskıya her ortamda kusursuz görünen logolar üretiyoruz.",
-    heroImage: "/images/dag.png",
+    heroImage: "/images/dag-optimized.webp",
     dark: false,
     features: [
       { title: "Araştırma & Analiz", desc: "Sektör ve rakip analizi ile özgün yön belirleme" },
@@ -125,7 +125,7 @@ export const services: ServiceData[] = [
     shortDesc: "Dijital ve basılı reklam görselleri",
     longDesc:
       "Google Ads, sosyal medya reklamları ve fiziksel afiş tasarımlarıyla markanızın mesajını etkili bir şekilde iletiyoruz. Dönüşüm odaklı, dikkat çekici görseller üretiyoruz.",
-    heroImage: "/images/wherehavee.jpg",
+    heroImage: "/images/wherehavee-optimized.webp",
     dark: true,
     features: [
       { title: "Dijital Banner", desc: "Google Display, Facebook ve Instagram reklam görselleri" },
@@ -151,7 +151,7 @@ export const services: ServiceData[] = [
     shortDesc: "SEO uyumlu, değer katan blog içerikleri",
     longDesc:
       "Markanızın otoritesini artıran, organik trafiği büyüten SEO uyumlu blog içerikleri üretiyoruz. Anahtar kelime stratejisinden içerik takvimine kadar uçtan uca yönetiyoruz.",
-    heroImage: "/images/wherehavee.jpg",
+    heroImage: "/images/wherehavee-optimized.webp",
     dark: true,
     features: [
       { title: "SEO Optimizasyonu", desc: "Anahtar kelime araştırması ve on-page SEO" },
@@ -175,7 +175,7 @@ export const services: ServiceData[] = [
     shortDesc: "Etkileşim odaklı caption ve copyler",
     longDesc:
       "Her platformun diline hakim, etkileşim oranlarını artıran sosyal medya metinleri yazıyoruz. Caption'dan hikaye metnine, CTA'dan hashtag stratejisine kadar her detayı kapsıyoruz.",
-    heroImage: "/images/dag.png",
+    heroImage: "/images/dag-optimized.webp",
     dark: false,
     features: [
       { title: "Platform Dili", desc: "Instagram, X, LinkedIn — her platforma özel ton" },
@@ -199,7 +199,7 @@ export const services: ServiceData[] = [
     shortDesc: "Dönüşüm sağlayan e-posta kampanyaları",
     longDesc:
       "Açılma oranlarını ve dönüşümleri artıran profesyonel e-posta kampanyaları tasarlıyor ve yönetiyoruz. Otomatik akışlardan bültenlere, segmentasyondan A/B testlere kadar tam hizmet.",
-    heroImage: "/images/dag.png",
+    heroImage: "/images/dag-optimized.webp",
     dark: true,
     features: [
       { title: "Şablon Tasarımı", desc: "Responsive ve marka uyumlu e-posta şablonları" },
@@ -223,7 +223,7 @@ export const services: ServiceData[] = [
     shortDesc: "Video ve reklam senaryoları",
     longDesc:
       "Tanıtım filmlerinden reklam spotlarına, sosyal medya videolarından podcast scriptlerine kadar her format için profesyonel senaryo ve script yazıyoruz.",
-    heroImage: "/images/wherehavee.jpg",
+    heroImage: "/images/wherehavee-optimized.webp",
     dark: false,
     features: [
       { title: "Video Senaryosu", desc: "Tanıtım filmi ve reklam spotu senaryoları" },
@@ -249,7 +249,7 @@ export const services: ServiceData[] = [
     shortDesc: "Profesyonel video prodüksiyon hizmetleri",
     longDesc:
       "Tanıtım filmlerinden reklam spotlarına, sosyal medya içeriklerinden motion graphics'e kadar tüm video ihtiyaçlarınızı tek çatı altında karşılıyoruz. Fikir aşamasından final teslimata uçtan uca profesyonel prodüksiyon.",
-    heroImage: "/images/wherehavee.jpg",
+    heroImage: "/images/wherehavee-optimized.webp",
     dark: true,
     customPage: "video",
     features: [
@@ -277,7 +277,7 @@ export const services: ServiceData[] = [
     shortDesc: "AI destekli otomasyon çözümleri",
     longDesc:
       "Chatbot, callbot ve otomasyon akışlarını markanızın günlük operasyonuna sade ama güçlü bir katman olarak yerleştiriyoruz. 7/24 müşteri desteğinden CRM entegrasyonuna, iş akışı otomasyonundan veri analitiğine kadar yapay zeka gücünü işinize katıyoruz.",
-    heroImage: "/images/dag.png",
+    heroImage: "/images/dag-optimized.webp",
     dark: true,
     customPage: "ai",
     features: [
@@ -326,40 +326,40 @@ export const serviceTabs: ServiceTab[] = [
     id: "tasarim",
     label: "Tasarım",
     cards: [
-      { slug: "post-tasarimi", title: "Post Tasarımı", desc: "Sosyal medya için dikkat çekici görseller", img: "/images/dag.png", dark: true },
-      { slug: "kartvizit-tasarimi", title: "Kartvizit Tasarımı", desc: "Profesyonel ve akılda kalıcı kartvizitler", img: "/images/wherehavee.jpg", dark: false },
-      { slug: "logo-tasarimi", title: "Logo Tasarımı", desc: "Markanızı tanımlayan özgün logolar", img: "/images/dag.png", dark: false },
-      { slug: "banner-afis", title: "Banner & Afiş", desc: "Dijital ve basılı reklam görselleri", img: "/images/wherehavee.jpg", dark: true },
+      { slug: "post-tasarimi", title: "Post Tasarımı", desc: "Sosyal medya için dikkat çekici görseller", img: "/images/dag-optimized.webp", dark: true },
+      { slug: "kartvizit-tasarimi", title: "Kartvizit Tasarımı", desc: "Profesyonel ve akılda kalıcı kartvizitler", img: "/images/wherehavee-optimized.webp", dark: false },
+      { slug: "logo-tasarimi", title: "Logo Tasarımı", desc: "Markanızı tanımlayan özgün logolar", img: "/images/dag-optimized.webp", dark: false },
+      { slug: "banner-afis", title: "Banner & Afiş", desc: "Dijital ve basılı reklam görselleri", img: "/images/wherehavee-optimized.webp", dark: true },
     ],
   },
   {
     id: "icerik",
     label: "İçerik",
     cards: [
-      { slug: "blog-yazilari", title: "Blog Yazıları", desc: "SEO uyumlu, değer katan blog içerikleri", img: "/images/wherehavee.jpg", dark: true },
-      { slug: "sosyal-medya-metni", title: "Sosyal Medya Metni", desc: "Etkileşim odaklı caption ve copyler", img: "/images/dag.png", dark: false },
-      { slug: "e-posta-pazarlama", title: "E-posta Pazarlama", desc: "Dönüşüm sağlayan e-posta kampanyaları", img: "/images/dag.png", dark: true },
-      { slug: "senaryo-script", title: "Senaryo & Script", desc: "Video ve reklam senaryoları", img: "/images/wherehavee.jpg", dark: false },
+      { slug: "blog-yazilari", title: "Blog Yazıları", desc: "SEO uyumlu, değer katan blog içerikleri", img: "/images/wherehavee-optimized.webp", dark: true },
+      { slug: "sosyal-medya-metni", title: "Sosyal Medya Metni", desc: "Etkileşim odaklı caption ve copyler", img: "/images/dag-optimized.webp", dark: false },
+      { slug: "e-posta-pazarlama", title: "E-posta Pazarlama", desc: "Dönüşüm sağlayan e-posta kampanyaları", img: "/images/dag-optimized.webp", dark: true },
+      { slug: "senaryo-script", title: "Senaryo & Script", desc: "Video ve reklam senaryoları", img: "/images/wherehavee-optimized.webp", dark: false },
     ],
   },
   {
     id: "video",
     label: "Video",
     cards: [
-      { slug: "video-produksiyon", title: "Tanıtım Filmi", desc: "Markanızı anlatan profesyonel prodüksiyon", img: "/images/wherehavee.jpg", dark: true },
-      { slug: "video-produksiyon", title: "Reels & Shorts", desc: "Viral kısa video içerikleri", img: "/images/dag.png", dark: false },
-      { slug: "video-produksiyon", title: "Reklam Spotu", desc: "Dijital platformlar için reklam videoları", img: "/images/dag.png", dark: true },
-      { slug: "video-produksiyon", title: "Motion Graphics", desc: "Animasyon ve hareketli grafikler", img: "/images/wherehavee.jpg", dark: false },
+      { slug: "video-produksiyon", title: "Tanıtım Filmi", desc: "Markanızı anlatan profesyonel prodüksiyon", img: "/images/wherehavee-optimized.webp", dark: true },
+      { slug: "video-produksiyon", title: "Reels & Shorts", desc: "Viral kısa video içerikleri", img: "/images/dag-optimized.webp", dark: false },
+      { slug: "video-produksiyon", title: "Reklam Spotu", desc: "Dijital platformlar için reklam videoları", img: "/images/dag-optimized.webp", dark: true },
+      { slug: "video-produksiyon", title: "Motion Graphics", desc: "Animasyon ve hareketli grafikler", img: "/images/wherehavee-optimized.webp", dark: false },
     ],
   },
   {
     id: "otomasyon",
     label: "Otomasyon",
     cards: [
-      { slug: "yapay-zeka", title: "AI Chatbot", desc: "7/24 akıllı müşteri destek sistemi", img: "/images/dag.png", dark: true },
-      { slug: "yapay-zeka", title: "AI Callbot", desc: "Sesli yanıt ve yönlendirme otomasyonu", img: "/images/wherehavee.jpg", dark: false },
-      { slug: "yapay-zeka", title: "İş Akışı", desc: "Tekrarlayan süreçlerin otomasyonu", img: "/images/wherehavee.jpg", dark: true },
-      { slug: "yapay-zeka", title: "CRM Entegrasyonu", desc: "Mevcut sistemlerinizle entegrasyon", img: "/images/dag.png", dark: false },
+      { slug: "yapay-zeka", title: "AI Chatbot", desc: "7/24 akıllı müşteri destek sistemi", img: "/images/dag-optimized.webp", dark: true },
+      { slug: "yapay-zeka", title: "AI Callbot", desc: "Sesli yanıt ve yönlendirme otomasyonu", img: "/images/wherehavee-optimized.webp", dark: false },
+      { slug: "yapay-zeka", title: "İş Akışı", desc: "Tekrarlayan süreçlerin otomasyonu", img: "/images/wherehavee-optimized.webp", dark: true },
+      { slug: "yapay-zeka", title: "CRM Entegrasyonu", desc: "Mevcut sistemlerinizle entegrasyon", img: "/images/dag-optimized.webp", dark: false },
     ],
   },
 ];

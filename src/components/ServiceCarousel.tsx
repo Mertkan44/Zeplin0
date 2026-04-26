@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SepetCard from "@/components/SepetCard";
@@ -302,9 +303,11 @@ export default function ServiceCarousel() {
           onDragLeave={handleDropZoneDragLeave}
           onDrop={handleDropZoneDrop}
         >
-          <img
+          <Image
             src="/sepet-v2/sol-bg-tight.png"
             alt="Sürükleme alanı"
+            width={1285}
+            height={1186}
             className="block h-auto w-full"
             loading="lazy"
           />
@@ -333,22 +336,28 @@ export default function ServiceCarousel() {
                     >
                       <div className="flex flex-col gap-2 sm:grid sm:grid-cols-[minmax(220px,300px)_auto_minmax(180px,1fr)] sm:items-center sm:gap-3">
                         <div className="relative w-full max-w-[300px]">
-                          <img
+                          <Image
                             src="/sepet-v2/sol-kart-tight.png"
                             alt=""
+                            width={538}
+                            height={217}
                             className="block h-auto w-full"
                             loading="lazy"
                           />
 
-                          <img
+                          <Image
                             src="/sepet-v2/ikon bg.png"
                             alt=""
+                            width={94}
+                            height={92}
                             className="pointer-events-none absolute left-[7%] top-1/2 w-[17%] -translate-y-1/2"
                             loading="lazy"
                           />
-                          <img
+                          <Image
                             src="/sepet-v2/ikon ufak.png"
                             alt=""
+                            width={46}
+                            height={50}
                             className="pointer-events-none absolute left-[10.8%] top-1/2 w-[8.8%] -translate-y-1/2"
                             loading="lazy"
                           />
@@ -437,9 +446,11 @@ export default function ServiceCarousel() {
           className="relative z-10 mx-auto w-full max-w-[520px] overflow-hidden lg:mx-0 lg:w-full lg:max-w-none"
           aria-label="Sepet alanı"
         >
-          <img
+          <Image
             src="/sepet-v2/sag-bg-yeni-tight.png"
             alt="Sepet alanı"
+            width={929}
+            height={1166}
             className="block h-auto w-full"
             loading="lazy"
           />
@@ -489,9 +500,11 @@ export default function ServiceCarousel() {
             </div>
 
             <div className="shrink-0">
-              <img
+              <Image
                 src="/sepet-v2/ilk-ayrac.png"
                 alt=""
+                width={456}
+                height={5}
                 className="mt-3 h-auto w-[60%]"
                 loading="lazy"
               />
@@ -512,9 +525,11 @@ export default function ServiceCarousel() {
                 </div>
               </motion.div>
 
-              <img
+              <Image
                 src="/sepet-v2/ikinci-ayrac.png"
                 alt=""
+                width={456}
+                height={7}
                 className="mt-3 h-auto w-[60%]"
                 loading="lazy"
               />

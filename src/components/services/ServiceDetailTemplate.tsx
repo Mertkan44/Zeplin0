@@ -191,10 +191,10 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {[
-            { img: "/images/dag.png", label: "Proje 01" },
-            { img: "/images/wherehavee.jpg", label: "Proje 02" },
-            { img: "/images/wherehavee.jpg", label: "Proje 03" },
-            { img: "/images/dag.png", label: "Proje 04" },
+            { img: "/images/dag-optimized.webp", label: "Proje 01" },
+            { img: "/images/wherehavee-optimized.webp", label: "Proje 02" },
+            { img: "/images/wherehavee-optimized.webp", label: "Proje 03" },
+            { img: "/images/dag-optimized.webp", label: "Proje 04" },
           ].map((item, i) => (
             <motion.div
               key={item.label}

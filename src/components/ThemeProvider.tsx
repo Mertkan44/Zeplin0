@@ -20,27 +20,33 @@ export function useTheme() {
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
-  const [isThemeReady, setIsThemeReady] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    const initialTheme: Theme = saved === "light" ? "light" : "dark";
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme === "dark");
-    // Tema hazır — transition'ları aktif et (2 frame bekle, paint sonrası)
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
+    let secondFrame = 0;
+    const firstFrame = requestAnimationFrame(() => {
+      const initialTheme: Theme = document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light";
+      setTheme(initialTheme);
+      setIsReady(true);
+
+      secondFrame = requestAnimationFrame(() => {
         document.body.classList.add("theme-ready");
       });
     });
-    setIsThemeReady(true);
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      if (secondFrame) cancelAnimationFrame(secondFrame);
+    };
   }, []);
 
   useEffect(() => {
-    if (!isThemeReady) return;
+    if (!isReady) return;
     document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
-  }, [theme, isThemeReady]);
+  }, [theme, isReady]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
@@ -51,5 +57,13 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     [theme]
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      {isReady ? (
+        children
+      ) : (
+        <div aria-hidden="true" style={{ minHeight: "100vh", background: "var(--background)" }} />
+      )}
+    </ThemeContext.Provider>
+  );
 }

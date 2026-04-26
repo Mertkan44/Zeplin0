@@ -35,6 +35,8 @@ const slides = [
   },
 ];
 
+const crtHeroImage = "/images/hero-crt-forest-optimized.webp";
+
 export default function HeroBanner() {
   const [activeSlide, setActiveSlide] = useState(1);
   const touchStartXRef = useRef<number | null>(null);
@@ -97,11 +99,16 @@ export default function HeroBanner() {
 
         {/* ── ÜST YARI: Görsel / Video ── */}
         <div className="relative h-[50svh] min-h-[280px] w-full overflow-hidden" style={{ touchAction: "pan-y" }}>
-          {/* Slayt 0: Video */}
+          {/* Slayt 0: Fotoğraf */}
           <div className={`absolute inset-0 transition-opacity duration-700 ${activeSlide === 0 ? "opacity-100" : "opacity-0"}`}>
-            <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover object-center">
-              <source src="/hero-video.mp4" type="video/mp4" />
-            </video>
+            <div
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url('${crtHeroImage}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "28% center",
+              }}
+            />
           </div>
 
           {/* Slayt 1: Fotoğraf */}
@@ -109,7 +116,7 @@ export default function HeroBanner() {
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: "url('/images/hero-foto.png')",
+                backgroundImage: "url('/images/hero-foto-optimized.webp')",
                 backgroundSize: "cover",
                 backgroundPosition: "34% center",
                 animation: "none",
@@ -189,11 +196,17 @@ export default function HeroBanner() {
           DESKTOP: Full-screen overlay (mevcut)
           ══════════════════════════════════════════════ */}
       <div className="relative hidden w-full overflow-hidden md:block md:h-[72vh] md:min-h-[540px]">
-        {/* Arka plan: Video */}
+        {/* Arka plan: Fotoğraf */}
         <div className={`absolute inset-0 transition-opacity duration-700 ${activeSlide === 0 ? "opacity-100" : "opacity-0"}`}>
-          <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover object-center">
-            <source src="/hero-video.mp4" type="video/mp4" />
-          </video>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url('${crtHeroImage}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              animation: "hero-pan 18s ease-in-out infinite alternate",
+            }}
+          />
           <div className="absolute inset-0 z-[7] bg-[linear-gradient(to_left,rgba(0,0,0,0.62)_0%,rgba(0,0,0,0.26)_34%,rgba(0,0,0,0.08)_56%,transparent_72%)]" />
         </div>
 
@@ -202,7 +215,7 @@ export default function HeroBanner() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: "url('/images/hero-foto.png')",
+              backgroundImage: "url('/images/hero-foto-optimized.webp')",
               backgroundSize: "cover",
               backgroundPosition: "left 40%",
               animation: "hero-pan 16s ease-in-out infinite alternate",

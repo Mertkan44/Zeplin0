@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { EASE, FONT, revealVariants } from "@/lib/motion";
+import { FONT, revealVariants } from "@/lib/motion";
 import type { ServiceData } from "@/data/services";
 
 export function RelatedServices({ services }: { services: ServiceData[] }) {

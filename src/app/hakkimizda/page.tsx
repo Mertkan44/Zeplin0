@@ -196,7 +196,7 @@ export default function HakkimizdaPage() {
       {/* ── Hero — hizmetler ile aynı stil ───────────────────────── */}
       <section
         className="relative overflow-hidden px-6 pb-12 pt-[46svh] md:pb-24 md:pt-56 bg-center bg-no-repeat bg-[length:auto_100%] md:bg-cover"
-        style={{ backgroundImage: "url('/images/hakk%C4%B1m%C4%B1zdafoto.png')" }}
+        style={{ backgroundImage: "url('/images/hakkimizda-optimized.webp')" }}
       >
         <div className="absolute inset-0 bg-linear-to-b from-white/30 via-white/70 to-white dark:from-[#0a0a0a]/20 dark:via-[#0a0a0a]/70 dark:to-[#0a0a0a]" />
 
@@ -287,7 +287,7 @@ export default function HakkimizdaPage() {
             className="relative aspect-[4/5] overflow-hidden rounded-[28px]"
           >
             <Image
-              src="/images/hakk%C4%B1m%C4%B1zdafoto.png"
+              src="/images/hakkimizda-optimized.webp"
               alt="Zeplin Media Hikayemiz"
               fill
               className="object-cover"

@@ -45,8 +45,6 @@ export default function HeroBanner() {
     return () => clearInterval(timer);
   }, []);
 
-  const current = slides[activeSlide];
-
   return (
     <section className="relative w-full">
       <div className="relative h-[82svh] min-h-[560px] w-full overflow-hidden md:h-[72vh] md:min-h-[540px]">
@@ -63,7 +61,7 @@ export default function HeroBanner() {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: "url('/images/hero-foto.png')",
+              backgroundImage: "url('/images/hero-foto-optimized.webp')",
               backgroundSize: "cover",
               backgroundPosition: "left 40%",
               animation: "hero-pan 16s ease-in-out infinite alternate",

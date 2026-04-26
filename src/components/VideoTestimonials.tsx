@@ -1,9 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence, MotionConfig } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  MotionConfig,
+  useInView,
+  useMotionValue,
+  useTransform,
+  animate,
+  useReducedMotion,
+} from "framer-motion";
 import { useTheme } from "./ThemeProvider";
-import { createPortal } from "react-dom";
 
 /* ── Types ────────────────────────────────────────────────────────── */
 interface VideoTestimonial {
@@ -33,8 +42,94 @@ const revealVariants = {
   }),
 };
 
-/* Desktop asimetrik offset'ler */
-const CARD_OFFSETS = [0, 32, 8, 40]; // px (mt-0, mt-8, mt-2, mt-10)
+const zeplinMetrics = [
+  {
+    to: 38,
+    decimals: 0,
+    suffix: "+",
+    label: "aktif marka",
+    desc: "tek ekip içinde strateji, içerik ve yayın akışı",
+  },
+  {
+    to: 1.8,
+    decimals: 1,
+    suffix: "M+",
+    label: "aylık erişim",
+    desc: "organik ve reklamlı kampanyalarda birleşik görünürlük",
+  },
+  {
+    to: 92,
+    decimals: 0,
+    suffix: "%",
+    label: "teslim ritmi",
+    desc: "revizyon, prodüksiyon ve yayın takvimlerinde disiplin",
+  },
+  {
+    to: 4.7,
+    decimals: 1,
+    suffix: "x",
+    label: "etkileşim artışı",
+    desc: "markaya özel format testleri ve içerik ritmiyle",
+  },
+];
+
+const [primaryMetric, ...supportingMetrics] = zeplinMetrics;
+
+/* ── Impact card helpers ──────────────────────────────────────────── */
+function CountUp({
+  to,
+  suffix = "",
+  decimals = 0,
+  inView,
+  delay = 0,
+}: {
+  to: number;
+  suffix?: string;
+  decimals?: number;
+  inView: boolean;
+  delay?: number;
+}) {
+  const mv = useMotionValue(0);
+  const rounded = useTransform(mv, (v) => v.toFixed(decimals));
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!inView) return;
+    if (reduceMotion) {
+      mv.set(to);
+      return;
+    }
+    const controls = animate(mv, to, { duration: 1.6, delay, ease: EASE });
+    return () => controls.stop();
+  }, [inView, to, delay, reduceMotion, mv]);
+
+  return (
+    <>
+      <motion.span>{rounded}</motion.span>
+      {suffix}
+    </>
+  );
+}
+
+function PulseDot() {
+  const reduceMotion = useReducedMotion();
+  return (
+    <motion.span
+      aria-hidden="true"
+      className="mr-2.5 inline-block h-1.5 w-1.5 rounded-full bg-[#F472B6] align-middle"
+      animate={
+        reduceMotion
+          ? { scale: 1, opacity: 0.85 }
+          : { scale: [1, 1.4, 1], opacity: [0.55, 1, 0.55] }
+      }
+      transition={
+        reduceMotion
+          ? undefined
+          : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
+      }
+    />
+  );
+}
 
 /* ── Play Icon ────────────────────────────────────────────────────── */
 function PlayIcon({ size = 56 }: { size?: number }) {
@@ -81,20 +176,20 @@ function VideoCard({
       whileInView="visible"
       viewport={{ once: true, margin: "0px" }}
       custom={index * 0.1}
-      className="flex-shrink-0"
-      style={{ marginTop: `${CARD_OFFSETS[index] ?? 0}px` }}
+      className={index === 1 ? "flex-shrink-0 md:mt-10" : "flex-shrink-0"}
     >
       <button
         type="button"
         onClick={onClick}
-        className="video-card group relative block w-[56vw] overflow-hidden rounded-2xl md:w-[200px] md:rounded-3xl lg:w-[220px]"
+        className="video-card group relative block w-full overflow-hidden rounded-[24px] shadow-[0_22px_58px_rgba(15,10,13,0.18)] transition-transform duration-300 hover:-translate-y-1 md:rounded-[30px]"
         style={{ aspectRatio: "9 / 16" }}
       >
         {/* Poster */}
-        <img
+        <Image
           src={testimonial.posterSrc}
           alt={`${testimonial.brandName} video`}
-          loading="lazy"
+          fill
+          sizes="(min-width: 1024px) 300px, 50vw"
           className="absolute inset-0 h-full w-full object-cover"
         />
 
@@ -135,8 +230,8 @@ function VideoCard({
           className="pointer-events-none absolute inset-0 rounded-2xl md:rounded-3xl"
           style={{
             boxShadow: isDark
-              ? "inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.4)"
-              : "inset 0 0 0 1px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.15)",
+              ? "inset 0 0 0 1px rgba(255,255,255,0.10), 0 18px 48px rgba(0,0,0,0.45)"
+              : "inset 0 0 0 1px rgba(255,255,255,0.18), inset 0 -80px 90px rgba(0,0,0,0.22)",
           }}
         />
       </button>
@@ -262,103 +357,246 @@ export default function VideoTestimonials({
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [selected, setSelected] = useState<VideoTestimonial | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const visibleTestimonials = testimonials.slice(0, 2);
 
-  /* Portal needs client-side mount */
-  useEffect(() => setMounted(true), []);
+  const impactRef = useRef<HTMLDivElement>(null);
+  const impactInView = useInView(impactRef, {
+    once: true,
+    margin: "0px 0px -10% 0px",
+  });
 
   const handleClose = useCallback(() => setSelected(null), []);
 
   return (
     <MotionConfig reducedMotion="user">
       <section
-        className="relative px-4 py-16 md:px-12 md:py-20"
+        className="relative overflow-hidden px-4 py-14 md:px-12 md:py-20"
         style={{
           background: isDark
-            ? "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(157,23,77,0.04) 0%, transparent 70%)"
-            : "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(244,114,182,0.04) 0%, transparent 70%)",
+            ? "radial-gradient(ellipse 70% 55% at 72% 45%, rgba(157,23,77,0.08) 0%, transparent 68%)"
+            : "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(253,242,248,0.58) 48%, rgba(255,255,255,0) 100%)",
         }}
       >
-        <div className="mx-auto max-w-6xl">
-          {/* Section header */}
-          <motion.div
-            variants={revealVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "0px" }}
-            custom={0}
-            className="mb-8 md:mb-12"
-          >
-            <span
-              className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
-              style={FONT}
+        <div className="mx-auto grid max-w-7xl gap-16 lg:grid-cols-[minmax(420px,0.82fr)_minmax(420px,0.78fr)] lg:items-center lg:gap-24 xl:gap-32">
+          <div className="lg:pt-3">
+            <motion.div
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "0px" }}
+              custom={0}
+              className="mb-7"
             >
-              Referanslar
-            </span>
-            <h2
-              className="mt-2 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-900 dark:text-white md:text-[30px]"
-              style={FONT}
-            >
-              Markalar ne diyor?
-            </h2>
-          </motion.div>
+              <span
+                className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
+                style={FONT}
+              >
+                Referanslar
+              </span>
+              <h2
+                className="mt-2 text-[32px] font-semibold leading-[1.02] tracking-[-0.04em] text-zinc-900 dark:text-white md:text-[46px]"
+                style={FONT}
+              >
+                Markalar ne diyor?
+              </h2>
+            </motion.div>
 
-          {/* ── Mobile: horizontal scroll ── */}
-          <div className="relative -mx-4 md:hidden">
-            {/* Fade edges */}
-            <div
-              className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5"
-              style={{ background: "linear-gradient(to right, var(--background) 0%, transparent 100%)" }}
-            />
-            <div
-              className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5"
-              style={{ background: "linear-gradient(to left, var(--background) 0%, transparent 100%)" }}
-            />
-
-            <div
-              className="flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 pb-2"
-              style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
-            >
-              {testimonials.map((t, i) => (
-                <div key={t.id} className="snap-center" style={{ marginTop: 0 }}>
-                  <VideoCard
-                    testimonial={t}
-                    index={i}
-                    onClick={() => setSelected(t)}
-                  />
-                </div>
+            <div className="grid max-w-[620px] grid-cols-2 items-start gap-3 sm:gap-5">
+              {visibleTestimonials.map((t, i) => (
+                <VideoCard
+                  key={t.id}
+                  testimonial={t}
+                  index={i}
+                  onClick={() => setSelected(t)}
+                />
               ))}
             </div>
           </div>
 
-          {/* ── Desktop: flex row with asymmetric offsets ── */}
-          <div className="hidden items-start justify-center gap-6 md:flex lg:gap-8">
-            {testimonials.map((t, i) => (
-              <VideoCard
-                key={t.id}
-                testimonial={t}
-                index={i}
-                onClick={() => setSelected(t)}
-              />
-            ))}
-          </div>
+          <motion.div
+            ref={impactRef}
+            variants={revealVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            custom={0.08}
+            className="relative w-full max-w-[600px] lg:pl-6 xl:pl-10"
+          >
+            <div className="relative overflow-hidden rounded-[24px] shadow-[0_24px_60px_rgba(219,39,119,0.12)] md:rounded-[28px] dark:shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
+              {/* DARK HERO */}
+              <div
+                className="relative overflow-hidden px-6 pt-6 pb-7 sm:px-7 sm:pt-7 sm:pb-8 md:px-9 md:pt-8 md:pb-10"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #2A0D1E 0%, #1A0612 55%, #0A0205 100%)",
+                }}
+              >
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -left-20 -top-20 h-60 w-60 rounded-full opacity-60 blur-3xl"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(244,114,182,0.32), transparent 70%)",
+                  }}
+                />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-24 top-12 h-64 w-64 rounded-full opacity-30 blur-3xl"
+                  style={{
+                    background:
+                      "radial-gradient(circle, rgba(219,39,119,0.4), transparent 70%)",
+                  }}
+                />
+
+                <motion.div
+                  variants={revealVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                  custom={0.12}
+                  className="relative"
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="flex items-center text-[10px] font-medium uppercase tracking-[0.26em] text-[#F9A8D4] sm:text-[11px]"
+                      style={FONT}
+                    >
+                      <PulseDot />
+                      Zeplin etkisi
+                    </span>
+                    <span
+                      className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/45 sm:text-[11px]"
+                      style={FONT}
+                    >
+                      2026
+                      <span className="mx-1.5 text-white/25">/</span>
+                      Q2
+                    </span>
+                  </div>
+
+                  <div className="mt-6 flex items-end gap-4 sm:mt-8 sm:gap-5">
+                    <p
+                      className="text-[64px] font-semibold leading-[0.85] tracking-[-0.06em] tabular-nums sm:text-[88px] md:text-[112px]"
+                      style={{
+                        ...FONT,
+                        background:
+                          "linear-gradient(180deg, #EC4899 0%, #F9A8D4 60%, #FCE7F3 100%)",
+                        WebkitBackgroundClip: "text",
+                        backgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        color: "transparent",
+                      }}
+                    >
+                      <CountUp
+                        to={primaryMetric.to}
+                        decimals={primaryMetric.decimals}
+                        suffix={primaryMetric.suffix}
+                        inView={impactInView}
+                        delay={0.2}
+                      />
+                    </p>
+                    <div className="flex items-center gap-2.5 pb-2 sm:gap-3 sm:pb-3">
+                      <div className="h-7 w-px bg-white/25" />
+                      <span
+                        className="text-[9px] font-semibold uppercase leading-tight tracking-[0.22em] text-white/70 sm:text-[10px]"
+                        style={FONT}
+                      >
+                        aktif
+                        <br />
+                        marka
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3
+                    className="mt-6 max-w-[18ch] text-[20px] font-semibold leading-[1.06] tracking-[-0.03em] text-white sm:text-[24px] md:text-[28px]"
+                    style={FONT}
+                  >
+                    markayla{" "}
+                    <em
+                      style={{
+                        fontFamily:
+                          "'Instrument Serif', Georgia, 'Times New Roman', serif",
+                        fontWeight: 400,
+                        fontStyle: "italic",
+                        letterSpacing: "-0.01em",
+                      }}
+                    >
+                      aynı anda
+                    </em>{" "}
+                    yürüyen ritim
+                  </h3>
+                </motion.div>
+              </div>
+
+              {/* LIGHT CONTENT */}
+              <div className="relative bg-white px-6 py-6 sm:px-7 sm:py-7 md:px-9 md:py-8 dark:bg-[#160510]">
+                <p
+                  className="max-w-[46ch] text-[12.5px] leading-relaxed text-zinc-600 sm:text-[13px] dark:text-white/55"
+                  style={FONT}
+                >
+                  Strateji, üretim, revizyon ve yayın akışını tek bir ekip içinde sakin bir düzende topluyoruz.
+                </p>
+
+                <div className="mt-6 grid gap-5 sm:grid-cols-3 sm:gap-4 md:gap-5">
+                  {supportingMetrics.map((metric, i) => (
+                    <motion.div
+                      key={metric.label}
+                      variants={revealVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                      custom={0.2 + i * 0.07}
+                      className="min-w-0"
+                    >
+                      <span
+                        className="text-[10px] font-semibold tabular-nums tracking-[0.18em] text-[#DB2777] dark:text-[#F472B6]"
+                        style={FONT}
+                      >
+                        0{i + 1}
+                      </span>
+                      <p
+                        className="mt-2 text-[22px] font-semibold leading-none tracking-[-0.04em] text-zinc-950 tabular-nums sm:text-[24px] md:text-[26px] dark:text-white"
+                        style={FONT}
+                      >
+                        <CountUp
+                          to={metric.to}
+                          decimals={metric.decimals}
+                          suffix={metric.suffix}
+                          inView={impactInView}
+                          delay={0.35 + i * 0.08}
+                        />
+                      </p>
+                      <p
+                        className="mt-2.5 text-[11.5px] font-semibold leading-tight text-zinc-900 dark:text-white/85"
+                        style={FONT}
+                      >
+                        {metric.label}
+                      </p>
+                      <p
+                        className="mt-1.5 text-[11.5px] leading-relaxed text-zinc-500 dark:text-white/45"
+                        style={FONT}
+                      >
+                        {metric.desc}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ── Fullscreen overlay (portal) ── */}
-      {mounted &&
-        createPortal(
-          <AnimatePresence>
-            {selected && (
-              <VideoOverlay
-                key={selected.id}
-                testimonial={selected}
-                onClose={handleClose}
-              />
-            )}
-          </AnimatePresence>,
-          document.body,
+      <AnimatePresence>
+        {selected && (
+          <VideoOverlay
+            key={selected.id}
+            testimonial={selected}
+            onClose={handleClose}
+          />
         )}
+      </AnimatePresence>
     </MotionConfig>
   );
 }

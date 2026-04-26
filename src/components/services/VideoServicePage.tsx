@@ -11,11 +11,11 @@ import { CTABanner } from "./CTABanner";
 
 /* ── Showreel Videos (vertical/portrait) ──────────────────────────── */
 const showreelVideos = [
-  { id: "reel1", title: "Marka Tanıtım", client: "TechStart", img: "/images/wherehavee.jpg" },
-  { id: "reel2", title: "Ürün Lansman", client: "BeautyLine", img: "/images/dag.png" },
-  { id: "reel3", title: "Sosyal Reklam", client: "FitClub", img: "/images/wherehavee.jpg" },
-  { id: "reel4", title: "Etkinlik Filmi", client: "ArtFest", img: "/images/dag.png" },
-  { id: "reel5", title: "Kurumsal Video", client: "FinTech Co", img: "/images/wherehavee.jpg" },
+  { id: "reel1", title: "Marka Tanıtım", client: "TechStart", img: "/images/wherehavee-optimized.webp" },
+  { id: "reel2", title: "Ürün Lansman", client: "BeautyLine", img: "/images/dag-optimized.webp" },
+  { id: "reel3", title: "Sosyal Reklam", client: "FitClub", img: "/images/wherehavee-optimized.webp" },
+  { id: "reel4", title: "Etkinlik Filmi", client: "ArtFest", img: "/images/dag-optimized.webp" },
+  { id: "reel5", title: "Kurumsal Video", client: "FinTech Co", img: "/images/wherehavee-optimized.webp" },
 ];
 
 /* ── Video Types ──────────────────────────────────────────────────── */
@@ -25,28 +25,28 @@ const videoTypes = [
     title: "Tanıtım Filmi",
     desc: "Markanızın hikayesini güçlü bir anlatımla aktaran profesyonel prodüksiyon. Kurumsal kimliğinizi, değerlerinizi ve vizyonunuzu sinematik bir dille hedef kitlenize ulaştırıyoruz.",
     duration: "2-5 dk",
-    img: "/images/wherehavee.jpg",
+    img: "/images/wherehavee-optimized.webp",
   },
   {
     id: "reels",
     title: "Reels & Shorts",
     desc: "Instagram Reels, YouTube Shorts ve TikTok için trend odaklı, viral potansiyelli kısa video içerikleri. Hızlı prodüksiyon, yüksek etki.",
     duration: "15-60 sn",
-    img: "/images/dag.png",
+    img: "/images/dag-optimized.webp",
   },
   {
     id: "reklam",
     title: "Reklam Spotu",
     desc: "Dijital platformlar için dönüşüm odaklı reklam videoları. Facebook, Instagram, YouTube ve TikTok Ads formatlarına uygun profesyonel içerik.",
     duration: "15-30 sn",
-    img: "/images/wherehavee.jpg",
+    img: "/images/wherehavee-optimized.webp",
   },
   {
     id: "motion",
     title: "Motion Graphics",
     desc: "2D/3D animasyon ve hareketli grafiklerle karmaşık konseptleri görsel olarak anlatıyoruz. Logo animasyonlarından explainer videolara kadar.",
     duration: "30sn - 3dk",
-    img: "/images/dag.png",
+    img: "/images/dag-optimized.webp",
   },
 ];
 
@@ -326,7 +326,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
           >
             <div
               className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: "url('/images/dag.png')" }}
+              style={{ backgroundImage: "url('/images/dag-optimized.webp')" }}
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(15,10,13,0.6)_100%)]" />
           </motion.div>

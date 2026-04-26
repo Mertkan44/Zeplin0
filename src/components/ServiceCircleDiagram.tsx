@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, useMotionValue, useTransform, useSpring, useInView } from "framer-motion";
 
@@ -135,9 +136,11 @@ function AnimatedLayer({
         animate={breatheAnimate}
         transition={breatheTransition}
       >
-        <img
+        <Image
           src={src}
           alt=""
+          width={2940}
+          height={1912}
           draggable={false}
           style={{
             width: "100%",

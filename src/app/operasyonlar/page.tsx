@@ -357,7 +357,7 @@ export default function OperasyonlarPage() {
       {/* ── SECTION 1: Hero ───────────────────────────────────────── */}
       <section
         className="relative overflow-hidden bg-center bg-no-repeat bg-[length:auto_100%] px-6 pb-12 pt-[46svh] md:bg-cover md:pb-24 md:pt-56"
-        style={{ backgroundImage: "url('/images/dag.png')" }}
+        style={{ backgroundImage: "url('/images/dag-optimized.webp')" }}
       >
         <div className="absolute inset-0 bg-linear-to-b from-white/30 via-white/70 to-white dark:from-[#0a0a0a]/20 dark:via-[#0a0a0a]/70 dark:to-[#0a0a0a]" />
 
