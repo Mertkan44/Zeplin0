@@ -1,6 +1,7 @@
 import HeroBanner from "@/components/HeroBanner";
 import BentoGrid from "@/components/BentoGrid";
 import FirstScrollSnap from "@/components/FirstScrollSnap";
+import HomeScrollReset from "@/components/HomeScrollReset";
 import dynamic from "next/dynamic";
 
 const ServiceCircleDiagram = dynamic(() => import("@/components/ServiceCircleDiagram"));
@@ -97,6 +98,7 @@ const blocks = [
 export default function Home() {
   return (
     <main>
+      <HomeScrollReset />
       <FirstScrollSnap targetId="home-first-section" />
 
       <HeroBanner />
