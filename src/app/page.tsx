@@ -109,16 +109,15 @@ export default function Home() {
 
       <BrandMarquee
         brands={[
-          { name: "Koç Holding" },
-          { name: "Turkcell" },
-          { name: "Migros" },
-          { name: "THY" },
-          { name: "Garanti BBVA" },
-          { name: "Vodafone" },
-          { name: "LC Waikiki" },
-          { name: "Trendyol" },
-          { name: "Hepsiburada" },
-          { name: "N11" },
+          { name: "Gentleman", logo: "/brand-logos/gentleman-logo.webp" },
+          { name: "Hisar", logo: "/brand-logos/hisar-logo.webp" },
+          { name: "Kadıköy Sin", logo: "/brand-logos/kadikoy-sin-logo.webp" },
+          { name: "Master", logo: "/brand-logos/master-logo.webp" },
+          { name: "Mertcan Ağca", logo: "/brand-logos/mertcan-agca-logo.webp" },
+          { name: "Pam Akademi", logo: "/brand-logos/pam-akademi-logo.webp" },
+          { name: "Babi İstanbul", logo: "/brand-logos/babi-logo.webp" },
+          { name: "Ritim Jewellery", logo: "/brand-logos/ritim-logo.webp" },
+          { name: "Foton Sağlık Çözümleri", logo: "/brand-logos/foton-logo.svg" },
         ]}
       />
     </main>

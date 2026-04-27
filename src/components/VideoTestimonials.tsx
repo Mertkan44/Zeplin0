@@ -370,14 +370,14 @@ export default function VideoTestimonials({
   return (
     <MotionConfig reducedMotion="user">
       <section
-        className="relative overflow-hidden px-4 py-14 md:px-12 md:py-20"
+        className="relative overflow-hidden px-4 py-12 md:px-12 md:py-16"
         style={{
           background: isDark
             ? "radial-gradient(ellipse 70% 55% at 72% 45%, rgba(157,23,77,0.08) 0%, transparent 68%)"
             : "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(253,242,248,0.58) 48%, rgba(255,255,255,0) 100%)",
         }}
       >
-        <div className="mx-auto grid max-w-7xl gap-16 lg:grid-cols-[minmax(420px,0.82fr)_minmax(420px,0.78fr)] lg:items-center lg:gap-24 xl:gap-32">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(420px,0.82fr)_minmax(420px,0.78fr)] lg:items-center lg:gap-20 xl:gap-24">
           <div className="lg:pt-3">
             <motion.div
               variants={revealVariants}
@@ -385,16 +385,16 @@ export default function VideoTestimonials({
               whileInView="visible"
               viewport={{ once: true, margin: "0px" }}
               custom={0}
-              className="mb-7"
+              className="mb-6 md:mb-7"
             >
               <span
-                className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
+                className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#DB2777] dark:text-[#F472B6] md:text-[12px] md:tracking-[0.26em]"
                 style={FONT}
               >
                 Referanslar
               </span>
               <h2
-                className="mt-2 text-[32px] font-semibold leading-[1.02] tracking-[-0.04em] text-zinc-900 dark:text-white md:text-[46px]"
+                className="mt-2 text-[30px] font-semibold leading-[1.04] text-zinc-900 dark:text-white md:text-[44px]"
                 style={FONT}
               >
                 Markalar ne diyor?
@@ -425,7 +425,7 @@ export default function VideoTestimonials({
             <div className="relative overflow-hidden rounded-[24px] shadow-[0_24px_60px_rgba(219,39,119,0.12)] md:rounded-[28px] dark:shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
               {/* DARK HERO */}
               <div
-                className="relative overflow-hidden px-6 pt-6 pb-7 sm:px-7 sm:pt-7 sm:pb-8 md:px-9 md:pt-8 md:pb-10"
+                className="relative overflow-hidden px-5 pb-6 pt-6 sm:px-7 sm:pb-8 sm:pt-7 md:px-9 md:pb-9 md:pt-8"
                 style={{
                   background:
                     "linear-gradient(135deg, #2A0D1E 0%, #1A0612 55%, #0A0205 100%)",
@@ -474,9 +474,9 @@ export default function VideoTestimonials({
                     </span>
                   </div>
 
-                  <div className="mt-6 flex items-end gap-4 sm:mt-8 sm:gap-5">
+                  <div className="mt-5 flex items-end gap-4 sm:mt-7 sm:gap-5">
                     <p
-                      className="text-[64px] font-semibold leading-[0.85] tracking-[-0.06em] tabular-nums sm:text-[88px] md:text-[112px]"
+                      className="text-[58px] font-semibold leading-[0.88] tabular-nums sm:text-[84px] md:text-[104px]"
                       style={{
                         ...FONT,
                         background:
@@ -509,7 +509,7 @@ export default function VideoTestimonials({
                   </div>
 
                   <h3
-                    className="mt-6 max-w-[18ch] text-[20px] font-semibold leading-[1.06] tracking-[-0.03em] text-white sm:text-[24px] md:text-[28px]"
+                    className="mt-5 max-w-[18ch] text-[20px] font-semibold leading-[1.08] text-white sm:text-[24px] md:text-[28px]"
                     style={FONT}
                   >
                     markayla{" "}
@@ -530,7 +530,7 @@ export default function VideoTestimonials({
               </div>
 
               {/* LIGHT CONTENT */}
-              <div className="relative bg-white px-6 py-6 sm:px-7 sm:py-7 md:px-9 md:py-8 dark:bg-[#160510]">
+              <div className="relative bg-white px-5 py-6 sm:px-7 sm:py-7 md:px-9 md:py-8 dark:bg-[#160510]">
                 <p
                   className="max-w-[46ch] text-[12.5px] leading-relaxed text-zinc-600 sm:text-[13px] dark:text-white/55"
                   style={FONT}
@@ -538,7 +538,7 @@ export default function VideoTestimonials({
                   Strateji, üretim, revizyon ve yayın akışını tek bir ekip içinde sakin bir düzende topluyoruz.
                 </p>
 
-                <div className="mt-6 grid gap-5 sm:grid-cols-3 sm:gap-4 md:gap-5">
+                <div className="mt-5 grid gap-5 sm:grid-cols-3 sm:gap-4 md:mt-6 md:gap-5">
                   {supportingMetrics.map((metric, i) => (
                     <motion.div
                       key={metric.label}

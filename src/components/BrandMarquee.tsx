@@ -25,13 +25,13 @@ function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
         width: "clamp(72px, 9vw, 110px)",
         height: "clamp(72px, 9vw, 110px)",
         borderRadius: "clamp(14px, 2vw, 20px)",
-        /* Jakub: shadows adapt to any background, borders don't */
+        padding: "clamp(12px, 1.7vw, 18px)",
         boxShadow: isDark
-          ? "0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.04)"
-          : "0px 0px 0px 1px rgba(0,0,0,0.05), 0px 1px 2px -1px rgba(0,0,0,0.05), 0px 2px 4px 0px rgba(0,0,0,0.03)",
+          ? "0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.08)"
+          : "0 0 0 1px rgba(15,23,42,0.14), inset 0 1px 0 rgba(255,255,255,0.08)",
         background: isDark
-          ? "linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.04) 100%)"
-          : "linear-gradient(145deg, #ffffff 0%, rgba(255,255,255,0.75) 100%)",
+          ? "linear-gradient(145deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.055) 100%)"
+          : "linear-gradient(145deg, #09090b 0%, #17151a 54%, #242027 100%)",
         willChange: "transform",
       }}
     >
@@ -44,11 +44,13 @@ function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
           draggable={false}
           className="pointer-events-none select-none"
           style={{
-            width: "60%",
-            height: "60%",
+            width: "100%",
+            height: "100%",
             objectFit: "contain",
-            filter: isDark ? "brightness(0) invert(1)" : "none",
-            opacity: isDark ? 0.6 : 0.5,
+            filter: isDark
+              ? "drop-shadow(0 6px 14px rgba(0,0,0,0.32))"
+              : "brightness(0) invert(1) contrast(1.06) drop-shadow(0 3px 7px rgba(0,0,0,0.22))",
+            opacity: isDark ? 0.98 : 0.9,
           }}
         />
       ) : (
@@ -62,7 +64,7 @@ function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
               lineHeight: 1,
               backgroundImage: isDark
                 ? "linear-gradient(135deg, #F472B6 0%, #DB2777 100%)"
-                : "linear-gradient(135deg, #EC4899 0%, #9D174D 100%)",
+                : "linear-gradient(135deg, #FFFFFF 0%, #FBCFE8 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -80,7 +82,7 @@ function BrandTile({ brand, isDark }: { brand: Brand; isDark: boolean }) {
               textAlign: "center",
               lineHeight: 1.2,
               maxWidth: "85%",
-              color: isDark ? "rgba(255,255,255,0.28)" : "rgba(0,0,0,0.28)",
+              color: isDark ? "rgba(255,255,255,0.28)" : "rgba(255,255,255,0.62)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -110,24 +112,29 @@ function MarqueeRow({
   const animName = direction === "left" ? "marquee-left" : "marquee-right";
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ padding: "8px 0" }}>
+    <div
+      className="relative w-full overflow-hidden"
+      style={{
+        padding: "8px 0",
+        borderRadius: "22px",
+        background: "transparent",
+      }}
+    >
       {/* Fade edges */}
       <div
         className="pointer-events-none absolute inset-y-0 left-0 z-10"
         style={{
+          display: isDark ? "block" : "none",
           width: "clamp(60px, 10vw, 140px)",
-          background: isDark
-            ? "linear-gradient(to right, #0d0608, transparent)"
-            : "linear-gradient(to right, #fafafa, transparent)",
+          background: "linear-gradient(to right, #0d0608, transparent)",
         }}
       />
       <div
         className="pointer-events-none absolute inset-y-0 right-0 z-10"
         style={{
+          display: isDark ? "block" : "none",
           width: "clamp(60px, 10vw, 140px)",
-          background: isDark
-            ? "linear-gradient(to left, #0d0608, transparent)"
-            : "linear-gradient(to left, #fafafa, transparent)",
+          background: "linear-gradient(to left, #0d0608, transparent)",
         }}
       />
 
@@ -182,7 +189,7 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
       ref={sectionRef}
       className="relative w-full overflow-hidden"
       style={{
-        padding: "clamp(48px, 8vw, 96px) 0",
+        padding: "clamp(28px, 5vw, 60px) 0 clamp(8px, 2vw, 20px)",
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(28px)",
         transition:
@@ -195,7 +202,7 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
         style={{
           background: isDark
             ? "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(190,24,93,0.07), transparent)"
-            : "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(244,114,182,0.06), transparent)",
+            : "none",
         }}
       />
 
@@ -203,7 +210,7 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
       <div
         className="text-center px-4"
         style={{
-          marginBottom: "clamp(32px, 5vw, 56px)",
+          marginBottom: "clamp(24px, 4vw, 42px)",
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(16px)",
           transition:
@@ -218,7 +225,7 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
             fontSize: "clamp(0.6rem, 1vw, 0.72rem)",
             letterSpacing: "0.16em",
             textTransform: "uppercase",
-            color: isDark ? "rgba(244,114,182,0.65)" : "rgba(219,39,119,0.65)",
+            color: isDark ? "rgba(244,114,182,0.65)" : "rgba(157,23,77,0.78)",
             marginBottom: "0.5rem",
           }}
         >
@@ -232,7 +239,7 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
             fontSize: "clamp(1.5rem, 3.5vw, 2.25rem)",
             lineHeight: 1.15,
             letterSpacing: "-0.025em",
-            color: isDark ? "rgba(255,255,255,0.90)" : "rgba(0,0,0,0.82)",
+            color: isDark ? "rgba(255,255,255,0.90)" : "rgba(15,23,42,0.9)",
             margin: 0,
           }}
         >
@@ -255,12 +262,11 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
       <div
         className="mx-auto"
         style={{
-          marginTop: "clamp(32px, 5vw, 56px)",
+          display: isDark ? "block" : "none",
+          marginTop: "clamp(24px, 4vw, 44px)",
           width: "clamp(80px, 16vw, 200px)",
           height: 1,
-          background: isDark
-            ? "linear-gradient(90deg, transparent, rgba(244,114,182,0.35), transparent)"
-            : "linear-gradient(90deg, transparent, rgba(236,72,153,0.22), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(244,114,182,0.35), transparent)",
         }}
       />
 

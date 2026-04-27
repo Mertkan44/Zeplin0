@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 const SERIF = {
   fontFamily: "var(--font-instrument), 'Instrument Serif', Georgia, serif",
@@ -21,7 +22,16 @@ function ZMStar({
   glow?: number;
 }) {
   const w = Math.round(size * 0.15);
-  const bar = `linear-gradient(#DB2777,#DB2777) center/${size}px ${w}px no-repeat, linear-gradient(#DB2777,#DB2777) center/${w}px ${size}px no-repeat`;
+  const barStyle: CSSProperties = {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: size,
+    height: w,
+    background: "#DB2777",
+    borderRadius: 9999,
+    transform: "translate(-50%, -50%)",
+  };
   return (
     <div
       className="animate-spin"
@@ -35,8 +45,10 @@ function ZMStar({
       }}
       aria-hidden="true"
     >
-      <span style={{ position: "absolute", inset: 0, background: bar }} />
-      <span style={{ position: "absolute", inset: 0, background: bar, transform: "rotate(45deg)" }} />
+      <span style={barStyle} />
+      <span style={{ ...barStyle, transform: "translate(-50%, -50%) rotate(90deg)" }} />
+      <span style={{ ...barStyle, transform: "translate(-50%, -50%) rotate(45deg)" }} />
+      <span style={{ ...barStyle, transform: "translate(-50%, -50%) rotate(-45deg)" }} />
     </div>
   );
 }
@@ -59,10 +71,10 @@ const socialLinks = [
 /* ── Footer ─────────────────────────────────────────────────────────── */
 export default function Footer() {
   return (
-    <footer className="px-3 pb-4 pt-20 md:px-4 md:pb-8 md:pt-24">
+    <footer className="px-3 pb-4 pt-12 md:px-4 md:pb-8 md:pt-16">
       <div className="mx-auto w-full max-w-[min(1680px,calc(100vw-24px))]">
         <section
-          className="relative overflow-hidden rounded-[28px] px-6 pb-6 pt-12 md:rounded-[40px] md:px-20 md:pb-10 md:pt-[100px]"
+          className="relative overflow-hidden rounded-[28px] px-5 pb-5 pt-10 md:rounded-[40px] md:px-16 md:pb-8 md:pt-16"
           style={{
             background:
               "radial-gradient(ellipse 80% 60% at 50% 30%, #1C0619 0%, #0D0A0C 65%)",
@@ -71,24 +83,24 @@ export default function Footer() {
           {/* ── Desktop atmospheric star (off-screen right) ── */}
           <div
             className="pointer-events-none absolute hidden md:block"
-            style={{ right: -80, top: 60, opacity: 0.9 }}
+            style={{ right: -150, top: 48, opacity: 0.9 }}
           >
-            <ZMStar size={440} spin={26} glow={120} />
+            <ZMStar size={420} spin={26} glow={100} />
           </div>
 
           {/* ── Mobile atmospheric star (top-right, like desktop) ── */}
           <div
             className="pointer-events-none absolute md:hidden"
-            style={{ right: -60, top: 20, opacity: 0.9 }}
+            style={{ right: -78, top: 22, opacity: 0.9 }}
           >
-            <ZMStar size={220} spin={22} glow={80} />
+            <ZMStar size={210} spin={22} glow={70} />
           </div>
 
           {/* ── Mobile: everything centered (wordmark → tagline → CTA) ── */}
-          <div className="relative z-10 flex flex-col items-center gap-6 text-center md:hidden">
+          <div className="relative z-10 flex flex-col items-center gap-5 text-center md:hidden">
 
             <h2
-              className="text-[clamp(54px,14.5vw,80px)] leading-[0.88] tracking-[-0.035em] text-white"
+              className="text-[clamp(52px,14vw,72px)] leading-[0.88] text-white"
               style={{ ...SERIF, fontWeight: 400, fontStyle: "italic" }}
             >
               Zeplin
@@ -103,7 +115,7 @@ export default function Footer() {
               href="https://wa.me/905459407690"
               target="_blank"
               rel="noreferrer"
-              className="mt-1 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#DB2777] px-7 py-[18px] text-[15px] font-semibold text-[#0D0A0C] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#EC4899] active:translate-y-0"
+              className="mt-1 inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#DB2777] px-7 py-4 text-[15px] font-semibold text-[#0D0A0C] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#EC4899] active:translate-y-0"
               style={{ boxShadow: "0 14px 36px -10px rgba(219,39,119,0.6)" }}
             >
               Projeni anlat
@@ -127,7 +139,7 @@ export default function Footer() {
           </div>
 
           {/* ── Desktop content grid ── */}
-          <div className="relative z-10 hidden md:grid md:max-w-[720px] md:grid-cols-[1.1fr_1fr] md:gap-20">
+          <div className="relative z-10 hidden md:grid md:max-w-[720px] md:grid-cols-[1.1fr_1fr] md:gap-16">
             {/* Brand block */}
             <div>
               <div
@@ -138,7 +150,7 @@ export default function Footer() {
               </div>
 
               <h2
-                className="mt-5 text-[112px] leading-[0.88] tracking-[-0.035em] text-white"
+                className="mt-5 text-[96px] leading-[0.88] text-white"
                 style={{ ...SERIF, fontWeight: 400, fontStyle: "italic" }}
               >
                 Zeplin
@@ -146,16 +158,16 @@ export default function Footer() {
                 Media
               </h2>
 
-              <p className="mt-7 max-w-[380px] text-[17px] leading-[1.5] text-white/50">
+              <p className="mt-6 max-w-[360px] text-[16px] leading-[1.5] text-white/50">
                 Old school kaliteyi modern dijital sistemlerle buluşturuyoruz.
               </p>
 
-              <div className="mt-8 flex items-center gap-6">
+              <div className="mt-7 flex items-center gap-6">
                 <a
                   href="https://wa.me/905459407690"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-3 rounded-full bg-[#DB2777] px-7 py-[17px] text-[15px] font-semibold text-[#0D0A0C] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#EC4899] active:translate-y-0"
+                  className="inline-flex items-center gap-3 rounded-full bg-[#DB2777] px-7 py-4 text-[15px] font-semibold text-[#0D0A0C] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#EC4899] active:translate-y-0"
                   style={{ boxShadow: "0 8px 32px -8px rgba(219,39,119,0.55)" }}
                 >
                   Projeni anlat
@@ -262,7 +274,7 @@ export default function Footer() {
           </div>
 
           {/* ── Mobile contact block ── */}
-          <div className="relative z-10 mt-10 border-t border-white/[0.08] pt-7 md:hidden">
+          <div className="relative z-10 mt-8 border-t border-white/[0.08] pt-6 md:hidden">
             <div className="text-center">
               <div
                 className="mb-3 text-[11px] uppercase tracking-[0.14em] text-white/40"
@@ -288,7 +300,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="mt-7 grid grid-cols-2 gap-5 border-t border-white/[0.08] pt-6">
+            <div className="mt-6 grid grid-cols-2 gap-5 border-t border-white/[0.08] pt-5">
               <div>
                 <div
                   className="mb-3 text-[11px] uppercase tracking-[0.14em] text-white/40"
@@ -344,7 +356,7 @@ export default function Footer() {
 
           {/* ── Legal bar (shared) ── */}
           <div
-            className="relative z-10 mt-10 flex flex-col gap-3 border-t border-white/[0.08] pt-5 md:mt-16 md:flex-row md:items-center md:justify-between"
+            className="relative z-10 mt-8 flex flex-col gap-3 border-t border-white/[0.08] pt-5 md:mt-12 md:flex-row md:items-center md:justify-between"
             style={{
               ...MONO,
               fontSize: 11,

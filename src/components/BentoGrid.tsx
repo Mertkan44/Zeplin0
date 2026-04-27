@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback, type CSSProperties } from "re
 import Link from "next/link";
 import { motion, MotionConfig } from "framer-motion";
 import BentoCard from "@/components/BentoCard";
-import { useTheme } from "./ThemeProvider";
 
 interface Project {
   name: string;
@@ -87,94 +86,136 @@ function SocialIcon({ name }: { name: string }) {
   }
 }
 
-/* ── Mobil sosyal medya kartları ── */
-function SocialRowCards({ block }: { block: Block }) {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
-  const socials = (block.socials ?? []).slice(0, 3);
-  const [pulseIdx, setPulseIdx] = useState<number | null>(null);
-  const pulseTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  const triggerPulse = useCallback((idx: number) => {
-    clearTimeout(pulseTimeoutRef.current);
-    setPulseIdx(idx);
-    pulseTimeoutRef.current = setTimeout(() => {
-      setPulseIdx((prev) => (prev === idx ? null : prev));
-    }, 280);
-  }, []);
-
-  useEffect(
-    () => () => {
-      clearTimeout(pulseTimeoutRef.current);
-    },
-    []
-  );
-
-  const getBrandTint = (name: string) => {
-    if (isDark) {
-      switch (name) {
-        case "Instagram":
-          return "linear-gradient(160deg, rgba(24, 10, 18, 0.42) 0%, rgba(157, 23, 77, 0.34) 56%, rgba(244, 114, 182, 0.14) 100%)";
-        case "LinkedIn":
-          return "linear-gradient(160deg, rgba(29, 12, 22, 0.44) 0%, rgba(131, 24, 67, 0.36) 54%, rgba(236, 72, 153, 0.16) 100%)";
-        case "WhatsApp":
-          return "linear-gradient(160deg, rgba(19, 7, 15, 0.42) 0%, rgba(82, 22, 59, 0.34) 54%, rgba(219, 39, 119, 0.16) 100%)";
-        default:
-          return "linear-gradient(160deg, rgba(29, 12, 22, 0.42) 0%, rgba(131, 24, 67, 0.34) 100%)";
-      }
-    }
-
-    switch (name) {
-      case "Instagram":
-        return "linear-gradient(160deg, rgba(244, 114, 182, 0.28) 0%, rgba(236, 72, 153, 0.22) 52%, rgba(219, 39, 119, 0.16) 100%)";
-      case "LinkedIn":
-        return "linear-gradient(160deg, rgba(236, 72, 153, 0.24) 0%, rgba(219, 39, 119, 0.28) 56%, rgba(190, 24, 93, 0.2) 100%)";
-      case "WhatsApp":
-        return "linear-gradient(160deg, rgba(251, 207, 232, 0.22) 0%, rgba(244, 114, 182, 0.24) 54%, rgba(219, 39, 119, 0.2) 100%)";
-      default:
-        return "linear-gradient(160deg, rgba(244, 114, 182, 0.24) 0%, rgba(219, 39, 119, 0.24) 100%)";
-    }
+/* ── Oval asterisk yıldız (uçları yuvarlak pill bar) ── */
+function ZMStar({ size, spin = 22, glow = 80 }: { size: number; spin?: number; glow?: number }) {
+  const w = Math.round(size * 0.15);
+  const barStyle: CSSProperties = {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    width: size,
+    height: w,
+    background: "#DB2777",
+    borderRadius: 9999,
+    transform: "translate(-50%, -50%)",
   };
+  return (
+    <div
+      className="animate-spin"
+      style={{
+        width: size,
+        height: size,
+        flexShrink: 0,
+        position: "relative",
+        animationDuration: `${spin}s`,
+        filter: `drop-shadow(0 0 ${glow}px rgba(219,39,119,0.6))`,
+      }}
+      aria-hidden="true"
+    >
+      <span style={barStyle} />
+      <span style={{ ...barStyle, transform: "translate(-50%, -50%) rotate(90deg)" }} />
+      <span style={{ ...barStyle, transform: "translate(-50%, -50%) rotate(45deg)" }} />
+      <span style={{ ...barStyle, transform: "translate(-50%, -50%) rotate(-45deg)" }} />
+    </div>
+  );
+}
 
-  const flowPositions = ["0% 50%", "50% 50%", "100% 50%"];
-  const flowGradient = isDark
-    ? "linear-gradient(135deg, #9D174D 0%, #BE185D 40%, #DB2777 100%)"
-    : "linear-gradient(135deg, #F472B6 0%, #EC4899 40%, #DB2777 100%)";
+/* ── V6 · Editöryel sosyal medya kartları ── */
+function SocialRowCards({ block }: { block: Block }) {
+  const socials = (block.socials ?? []).slice(0, 3);
+
+  const meta: Record<string, { sub: string; meta: string }> = {
+    Instagram: { sub: "Görsel hikâyemiz", meta: "@zeplin.media" },
+    LinkedIn: { sub: "Profesyonel ağımız", meta: "Zeplin Media" },
+    WhatsApp: { sub: "Doğrudan iletişim", meta: "Yanıt < 2 dk" },
+  };
 
   return (
     <div
-      className="rounded-2xl bg-foreground/[0.04] p-3.5 md:rounded-3xl md:p-5"
+      className="relative overflow-hidden rounded-[24px] px-5 py-6 text-white sm:px-6 sm:py-7 md:rounded-[40px] md:px-12 md:py-12"
+      style={{
+        background:
+          "radial-gradient(ellipse 80% 60% at 50% 30%, #1C0619 0%, #0D0A0C 65%)",
+      }}
     >
-      <div className="grid grid-cols-3 gap-3">
-        {socials.map((social, idx) => (
-          <a
-            key={social.name}
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onPointerDown={() => triggerPulse(idx)}
-            onTouchStart={() => triggerPulse(idx)}
-            className={`social-card group flex h-[112px] items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-300/75 md:h-[160px] md:rounded-3xl ${
-              pulseIdx === idx ? "is-pressed" : ""
-            }`}
-            style={
-              {
-                "--sheen-delay": `${idx * 120}ms`,
-                backgroundImage: `${getBrandTint(social.name)}, ${flowGradient}`,
-                backgroundSize: "100% 100%, 300% 100%",
-                backgroundPosition: `center, ${flowPositions[idx] ?? "50% 50%"}`,
-              } as CSSProperties
-            }
-          >
-            <div
-              className={`social-icon-wrap relative z-[2] flex h-10 w-10 items-center justify-center rounded-full md:h-14 md:w-14 ${
-                isDark ? "bg-black/30" : "bg-pink-900/30"
+      {/* Asterisk star — sağ üstten yarım sarkık, çeyreği görünür */}
+      <div
+        className="pointer-events-none absolute hidden md:block"
+        style={{ right: -110, top: -110, opacity: 0.95 }}
+      >
+        <ZMStar size={220} spin={26} glow={60} />
+      </div>
+      <div
+        className="pointer-events-none absolute md:hidden"
+        style={{ right: -60, top: -60, opacity: 0.95 }}
+      >
+        <ZMStar size={130} spin={22} glow={36} />
+      </div>
+
+      {/* Header */}
+      <div className="relative mb-5 flex items-end justify-between gap-4 md:mb-9">
+        <div>
+          <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60 md:text-[11px] md:tracking-[0.2em]">
+            Bizi takip edin
+          </div>
+          <h2 className="m-0 text-[24px] font-light leading-[1.04] text-white md:text-[38px]">
+            Üç kanal,{" "}
+            <em className="font-normal not-italic" style={{ color: "#F472B6", fontStyle: "italic" }}>
+              tek hikâye
+            </em>
+            .
+          </h2>
+        </div>
+        <div className="hidden font-mono text-[11px] text-white/60 md:block">
+          ZEPLIN/MEDYA · 2026
+        </div>
+      </div>
+
+      {/* 3-column grid */}
+      <div className="relative grid grid-cols-1 border-t border-white/10 md:grid-cols-3">
+        {socials.map((social, i) => {
+          const m = meta[social.name] ?? { sub: "", meta: "" };
+          return (
+            <a
+              key={social.name}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group relative flex flex-col gap-3 px-4 py-5 transition-colors duration-300 hover:bg-pink-500/[0.08] md:gap-4 md:px-6 md:py-7 ${
+                i < socials.length - 1
+                  ? "border-b border-white/10 md:border-b-0 md:border-r"
+                  : ""
               }`}
             >
-              <SocialIcon name={social.name} />
-            </div>
-          </a>
-        ))}
+              <div className="flex items-center justify-between">
+                <div
+                  className="grid h-11 w-11 place-items-center rounded-full md:h-[52px] md:w-[52px]"
+                  style={{
+                    background: "#E91E8C",
+                    boxShadow: "0 0 30px rgba(233,30,140,0.45)",
+                  }}
+                >
+                  <SocialIcon name={social.name} />
+                </div>
+                <span className="grid h-9 w-9 place-items-center rounded-full border border-white/25 text-white/80 transition-all duration-300 group-hover:border-white/60 group-hover:text-white">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7" />
+                    <polyline points="7 7 17 7 17 17" />
+                  </svg>
+                </span>
+              </div>
+              <div>
+                <div className="text-[19px] font-medium md:text-[22px]">
+                  {social.name}
+                </div>
+                <div className="mt-0.5 text-[13px] text-white/70">{m.sub}</div>
+              </div>
+              <div className="mt-auto font-mono text-[10px] uppercase tracking-[0.05em] text-white/50">
+                {m.meta}
+              </div>
+            </a>
+          );
+        })}
       </div>
     </div>
   );
@@ -236,11 +277,11 @@ function ProjectSlider({
   return (
     <div>
       {/* Başlık + kontroller */}
-      <div className="mb-3 flex items-center gap-2.5 md:mb-5">
-        <h3 className="min-w-0 flex-1 text-[clamp(1.65rem,6.2vw,1.95rem)] font-bold text-foreground tracking-tight md:text-[1.95rem]">
+      <div className="mb-3 flex flex-col items-start gap-2 md:mb-5 md:flex-row md:items-center md:gap-2.5">
+        <h3 className="min-w-0 flex-1 text-[1.6rem] font-bold text-foreground md:text-[1.95rem]">
           {title}
         </h3>
-        <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
+        <div className="flex w-full shrink-0 items-center justify-start gap-1.5 md:ml-auto md:w-auto md:justify-end md:gap-2">
           {/* Ok butonları — desktop */}
           <div className="hidden items-center gap-1.5 md:flex">
             <button
@@ -270,7 +311,7 @@ function ProjectSlider({
                 type="button"
                 aria-label={`Proje ${i + 1}`}
                 onClick={() => { scrollTo(i); setActiveIdx(i); }}
-                className="flex h-6 w-6 items-center justify-center rounded-full md:h-8 md:w-8"
+                className="flex h-5 w-5 items-center justify-center rounded-full md:h-8 md:w-8"
               >
                 <span className={`block h-1.5 rounded-full transition-all duration-300 md:h-2 ${
                   activeIdx === i ? "w-4 bg-pink-400 md:w-5" : "w-1.5 bg-foreground/20 md:w-2"
@@ -297,7 +338,7 @@ function ProjectSlider({
             return (
               <div
                 key={i}
-                className="snap-center flex-shrink-0 w-[75vw] h-[220px] rounded-2xl overflow-hidden relative group cursor-pointer md:w-[380px] md:h-[280px] md:rounded-3xl lg:w-[420px] lg:h-[300px]"
+                className="snap-center relative h-[210px] w-[78vw] max-w-[320px] flex-shrink-0 cursor-pointer overflow-hidden rounded-2xl group md:h-[280px] md:w-[380px] md:max-w-none md:rounded-3xl lg:h-[300px] lg:w-[420px]"
                 style={{
                   transform: isActive ? "scale(1)" : "scale(0.97)",
                   opacity: isActive ? 1 : 0.9,
@@ -428,10 +469,10 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
     <MotionConfig reducedMotion="user">
       <section
         id={sectionId}
-        className="px-4 pt-8 pb-10 scroll-mt-28 md:px-12 md:pt-20 md:pb-16 md:scroll-mt-36"
+        className="px-4 pt-8 pb-8 scroll-mt-28 md:px-12 md:pt-16 md:pb-12 md:scroll-mt-36"
       >
         <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col gap-8 md:gap-10" style={{ overflow: "visible" }}>
+          <div className="flex flex-col gap-7 md:gap-9" style={{ overflow: "visible" }}>
             <MobileCard
               block={blocks[0]}
               idx={0}

@@ -527,12 +527,12 @@ export default function ServiceCircleDiagram() {
       style={{
         position: "relative",
         width: "100%",
-        minHeight: isCompact ? "auto" : "100vh",
+        minHeight: isCompact ? "auto" : "min(860px, 92vh)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        paddingTop: isMobile ? 30 : 44,
-        paddingBottom: isMobile ? 84 : 80,
+        paddingTop: isMobile ? 30 : 40,
+        paddingBottom: isMobile ? 64 : 64,
         background: `
           radial-gradient(ellipse 50% 45% at 50% 50%, rgba(255,45,120,0.06) 0%, transparent 70%),
           radial-gradient(ellipse 70% 60% at 50% 45%, rgba(90,20,55,0.35) 0%, transparent 70%),
@@ -602,7 +602,7 @@ export default function ServiceCircleDiagram() {
             fontSize: isMobile ? "14px" : "clamp(14px, 1.6vw, 18px)",
             fontWeight: 400,
             color: "rgba(255,255,255,0.45)",
-            marginBottom: isMobile ? 28 : 42,
+            marginBottom: isMobile ? 24 : 34,
           }}
         >
           İşletmenize özel, yaşayan araçlar geliştiriyoruz.
@@ -1163,7 +1163,7 @@ export default function ServiceCircleDiagram() {
             display: "flex",
             alignItems: "flex-start",
             gap: "clamp(20px, 4vw, 40px)",
-            marginTop: 55,
+            marginTop: 38,
             paddingLeft: sectionPad,
             paddingRight: sectionPad,
             justifyContent: "center",
@@ -1246,7 +1246,7 @@ export default function ServiceCircleDiagram() {
             left: 0,
             right: 0,
             bottom: 0,
-            height: 84,
+            height: 64,
             background:
               "linear-gradient(180deg, rgba(13,6,8,0) 0%, rgba(13,6,8,0.68) 58%, rgba(13,6,8,0.92) 100%)",
           }}
