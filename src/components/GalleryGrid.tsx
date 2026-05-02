@@ -21,6 +21,7 @@ export interface GalleryTile {
   id: string;
   title: string;
   description: string;
+  image: string;
   radiusProfile: string;
   speed: number;
   width: number;
@@ -48,8 +49,8 @@ const ROW_CONFIGS: RowConfig[] = [
   { direction: "right", speed: 0.56, height: 328, hMobile: 218 },
 ];
 
-/** Total rows rendered — gives the vertical-infinite feel */
-const NUM_ROWS = 10;
+/** Total rows rendered — keeps the layered flow without overloading scroll. */
+const NUM_ROWS = 6;
 
 /* ── Constants ─────────────────────────────────────────────────────── */
 
@@ -71,13 +72,6 @@ function buildRows(tiles: GalleryTile[], numRows: number): GalleryTile[][] {
     return [...tiles.slice(offset), ...tiles.slice(0, offset)];
   });
 }
-
-/* No color tint — plain photo with vignette only */
-const PHOTO_BG = {
-  backgroundImage: "url('/images/dag-optimized.webp')",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-};
 
 /* ── Tile Card ─────────────────────────────────────────────────────── */
 
@@ -114,7 +108,6 @@ function TileCard({
           ? "1px solid rgba(255,255,255,0.12)"
           : "1px solid rgba(0,0,0,0.08)",
         transform: hovered ? "scale(1.05)" : "scale(1)",
-        willChange: "transform",
         transition:
           "transform 420ms cubic-bezier(0.22,1,0.36,1), box-shadow 350ms ease",
         boxShadow: hovered
@@ -125,7 +118,9 @@ function TileCard({
             ? "0 4px 18px rgba(0,0,0,0.40)"
             : "0 4px 18px rgba(0,0,0,0.12)",
         zIndex: hovered ? 10 : 1,
-        ...PHOTO_BG,
+        backgroundImage: `url('${tile.image}')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       {/* Bottom vignette for title legibility */}
@@ -310,7 +305,9 @@ function TilePopup({
             style={{
               aspectRatio: "16 / 10",
               borderRadius: tile.radiusProfile,
-              ...PHOTO_BG,
+              backgroundImage: `url('${tile.image}')`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
             }}
           >
             <div

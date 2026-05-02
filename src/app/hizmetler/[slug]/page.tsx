@@ -3,6 +3,9 @@ import { services, getServiceBySlug } from "@/data/services";
 import { ServiceDetailTemplate } from "@/components/services/ServiceDetailTemplate";
 import { AIServicePage } from "@/components/services/AIServicePage";
 import { VideoServicePage } from "@/components/services/VideoServicePage";
+import { ChatbotServicePage } from "@/components/services/ChatbotServicePage";
+import { VoiceServicePage } from "@/components/services/VoiceServicePage";
+import { SoftwareServicePage } from "@/components/services/SoftwareServicePage";
 
 import type { Metadata } from "next";
 
@@ -30,6 +33,18 @@ export default async function ServiceDetailPage({ params }: Props) {
   const service = getServiceBySlug(slug);
 
   if (!service) notFound();
+
+  if (service.customPage === "chatbot") {
+    return <ChatbotServicePage service={service} />;
+  }
+
+  if (service.customPage === "voice") {
+    return <VoiceServicePage service={service} />;
+  }
+
+  if (service.customPage === "software") {
+    return <SoftwareServicePage service={service} />;
+  }
 
   if (service.customPage === "ai") {
     return <AIServicePage service={service} />;

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, type CSSProperties } from "react";
+import { useState, useCallback, type CSSProperties } from "react";
 import Link from "next/link";
-import { motion, MotionConfig } from "framer-motion";
+import { motion, MotionConfig, AnimatePresence } from "framer-motion";
 import BentoCard from "@/components/BentoCard";
 
 interface Project {
@@ -12,6 +12,9 @@ interface Project {
   imagePosition?: string;
   tags?: string[];
   variant?: "image" | "website";
+  slug?: string;
+  year?: string;
+  client?: string;
 }
 
 interface Social {
@@ -39,16 +42,14 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 const revealVariants = {
   hidden: {
-    opacity: 0,
-    y: 30,
-    scale: 0.985,
-    filter: "blur(6px)",
+    opacity: 0.16,
+    y: 24,
+    scale: 0.99,
   },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
-    filter: "blur(0px)",
     transition: {
       duration: 0.52,
       ease: EASE,
@@ -171,21 +172,23 @@ function SocialRowCards({ block }: { block: Block }) {
         </div>
       </div>
 
-      {/* 3-column grid */}
-      <div className="relative grid grid-cols-1 border-t border-white/10 md:grid-cols-3">
+      {/* Mobil: 2 sütun (Instagram+LinkedIn yan yana, WhatsApp altta tam genişlik) | Desktop: 3 sütun */}
+      <div className="relative grid grid-cols-2 border-t border-white/10 md:grid-cols-3">
         {socials.map((social, i) => {
           const m = meta[social.name] ?? { sub: "", meta: "" };
+          const itemClass =
+            i === 0
+              ? "border-r border-white/10"
+              : i === 1
+              ? "md:border-r md:border-white/10"
+              : "col-span-2 border-t border-white/10 md:col-span-1 md:border-t-0";
           return (
             <a
               key={social.name}
               href={social.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group relative flex flex-col gap-3 px-4 py-5 transition-colors duration-300 hover:bg-pink-500/[0.08] md:gap-4 md:px-6 md:py-7 ${
-                i < socials.length - 1
-                  ? "border-b border-white/10 md:border-b-0 md:border-r"
-                  : ""
-              }`}
+              className={`group relative flex flex-col gap-3 px-4 py-5 transition-colors duration-300 hover:bg-pink-500/[0.08] md:gap-4 md:px-6 md:py-7 ${itemClass}`}
             >
               <div className="flex items-center justify-between">
                 <div
@@ -222,213 +225,256 @@ function SocialRowCards({ block }: { block: Block }) {
 }
 
 function ProjectSlider({
-  title,
   projects,
 }: {
   title: string;
   projects: Project[];
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
-  const isProgScrollRef = useRef(false);
-  const progTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const active = projects[activeIdx];
+  const n = projects.length;
+  const isItalic = activeIdx % 2 === 1;
 
-  const scrollTo = useCallback((idx: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const card = el.children[idx] as HTMLElement | undefined;
-    if (!card) return;
-    isProgScrollRef.current = true;
-    clearTimeout(progTimer.current);
-    progTimer.current = setTimeout(() => { isProgScrollRef.current = false; }, 600);
-    const containerCenter = el.offsetWidth / 2;
-    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-    el.scrollTo({ left: cardCenter - containerCenter, behavior: "smooth" });
-  }, []);
+  const goPrev = useCallback(() => setActiveIdx((i) => (i - 1 + n) % n), [n]);
+  const goNext = useCallback(() => setActiveIdx((i) => (i + 1) % n), [n]);
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const onScroll = () => {
-      if (isProgScrollRef.current) return;
-      const child0 = el.children[0] as HTMLElement | undefined;
-      const child1 = el.children[1] as HTMLElement | undefined;
-      if (!child0) return;
-      const cardW = child0.offsetWidth;
-      const gap = child1 ? child1.offsetLeft - child0.offsetLeft - cardW : 0;
-      const idx = Math.round(el.scrollLeft / (cardW + gap));
-      setActiveIdx(idx);
-    };
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const goPrev = () => {
-    const prev = Math.max(0, activeIdx - 1);
-    scrollTo(prev);
-    setActiveIdx(prev);
-  };
-  const goNext = () => {
-    const next = Math.min(projects.length - 1, activeIdx + 1);
-    scrollTo(next);
-    setActiveIdx(next);
+  const monoStyle: CSSProperties = {
+    fontFamily: "var(--font-jost), ui-monospace, monospace",
+    letterSpacing: "0.16em",
+    textTransform: "uppercase" as const,
   };
 
   return (
     <div>
-      {/* Başlık + kontroller */}
-      <div className="mb-3 flex flex-col items-start gap-2 md:mb-5 md:flex-row md:items-center md:gap-2.5">
-        <h3 className="min-w-0 flex-1 text-[1.6rem] font-bold text-foreground md:text-[1.95rem]">
-          {title}
-        </h3>
-        <div className="flex w-full shrink-0 items-center justify-start gap-1.5 md:ml-auto md:w-auto md:justify-end md:gap-2">
-          {/* Ok butonları — desktop */}
-          <div className="hidden items-center gap-1.5 md:flex">
+      {/* ── Başlık bölümü ── */}
+      <div className="mb-5 md:mb-6">
+        {/* Üst bar: etiket sol · sayaç + oklar sağ */}
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[10px] text-foreground/40" style={monoStyle}>
+            ↳ seçili işler
+          </p>
+          <div className="flex items-center gap-2.5">
+            <span
+              style={{
+                fontFamily: "var(--font-instrument), serif",
+                fontSize: "1.3rem",
+                letterSpacing: "-0.01em",
+                color: "var(--foreground)",
+              }}
+            >
+              <span style={{ color: "#EC4899" }}>{String(activeIdx + 1).padStart(2, "0")}</span>
+              <span style={{ opacity: 0.3, margin: "0 3px" }}>/</span>
+              <span style={{ opacity: 0.45 }}>{String(n).padStart(2, "0")}</span>
+            </span>
             <button
               type="button"
               aria-label="Önceki proje"
               onClick={goPrev}
-              disabled={activeIdx === 0}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.04] text-foreground/50 transition-all duration-200 hover:bg-foreground/[0.08] hover:text-foreground/80 hover:border-foreground/20 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-foreground/12 bg-foreground/[0.04] text-foreground/50 transition-all duration-200 hover:border-foreground/22 hover:bg-foreground/[0.08] hover:text-foreground active:scale-95"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 12L6 8L10 4" /></svg>
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M10 12L6 8L10 4" /></svg>
             </button>
             <button
               type="button"
               aria-label="Sonraki proje"
               onClick={goNext}
-              disabled={activeIdx === projects.length - 1}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.04] text-foreground/50 transition-all duration-200 hover:bg-foreground/[0.08] hover:text-foreground/80 hover:border-foreground/20 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-foreground/12 bg-foreground/[0.04] text-foreground/50 transition-all duration-200 hover:border-foreground/22 hover:bg-foreground/[0.08] hover:text-foreground active:scale-95"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 4L10 8L6 12" /></svg>
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M6 4L10 8L6 12" /></svg>
             </button>
           </div>
-          {/* Dot göstergeleri */}
-          <div className="flex items-center gap-1">
-            {projects.map((_, i) => (
+        </div>
+
+        {/* Tam genişlik serif başlık */}
+        <h3
+          className="leading-[0.93] text-foreground"
+          style={{
+            fontFamily: "var(--font-instrument), serif",
+            fontWeight: 400,
+            fontSize: "clamp(2.4rem, 6.5vw, 4.4rem)",
+            letterSpacing: "-0.028em",
+          }}
+        >
+          <em style={{ fontStyle: "italic" }}>Sahne</em> arkası, tek tek.
+        </h3>
+      </div>
+
+      {/* ── Numaralı proje listesi — card'ın üstünde ── */}
+      <div className="mb-3 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+        <div className="flex min-w-max border-b border-foreground/8 md:min-w-0 md:justify-center">
+          {projects.map((p, i) => {
+            const isActive = i === activeIdx;
+            return (
               <button
                 key={i}
                 type="button"
-                aria-label={`Proje ${i + 1}`}
-                onClick={() => { scrollTo(i); setActiveIdx(i); }}
-                className="flex h-5 w-5 items-center justify-center rounded-full md:h-8 md:w-8"
+                onClick={() => setActiveIdx(i)}
+                aria-label={p.name}
+                className="group relative flex shrink-0 items-baseline gap-2 border-r border-foreground/8 px-4 py-3 text-left transition-colors duration-200 last:border-r-0 focus-visible:outline-none md:shrink md:px-5"
               >
-                <span className={`block h-1.5 rounded-full transition-all duration-300 md:h-2 ${
-                  activeIdx === i ? "w-4 bg-pink-400 md:w-5" : "w-1.5 bg-foreground/20 md:w-2"
-                }`} />
+                {/* aktif göstergesi — alt çizgi (card'a doğru) */}
+                <span
+                  className="pointer-events-none absolute inset-x-0 bottom-0 h-[1.5px] transition-all duration-300"
+                  style={{ background: isActive ? "#EC4899" : "transparent" }}
+                />
+                <span
+                  className="text-[9px] transition-colors duration-200"
+                  style={{ ...monoStyle, color: isActive ? "#EC4899" : "rgba(255,255,255,0.22)" }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span
+                  className="whitespace-nowrap text-[12.5px] font-medium transition-colors duration-200 md:text-[13px]"
+                  style={{
+                    color: isActive
+                      ? "var(--foreground)"
+                      : "color-mix(in srgb, var(--foreground) 40%, transparent)",
+                  }}
+                >
+                  {p.name}
+                </span>
               </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Slider — full-width */}
-      <div className="relative -mx-4 md:-mx-12">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-5 md:w-20" style={{ background: "linear-gradient(to right, var(--background) 0%, transparent 100%)" }} />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-5 md:w-20" style={{ background: "linear-gradient(to left, var(--background) 0%, transparent 100%)" }} />
-
-        <div
-          ref={scrollRef}
-          className="flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 md:gap-5 md:px-12"
-          style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
-        >
-          {projects.map((project, i) => {
-            const isActive = activeIdx === i;
-            const isWebsite = project.variant === "website";
-            return (
-              <div
-                key={i}
-                className="snap-center relative h-[210px] w-[78vw] max-w-[320px] flex-shrink-0 cursor-pointer overflow-hidden rounded-2xl group md:h-[280px] md:w-[380px] md:max-w-none md:rounded-3xl lg:h-[300px] lg:w-[420px]"
-                style={{
-                  transform: isActive ? "scale(1)" : "scale(0.97)",
-                  opacity: isActive ? 1 : 0.9,
-                  boxShadow: isActive
-                    ? "0 0 0 1.5px rgba(244,114,182,0.4), 0 8px 28px rgba(219,39,119,0.15)"
-                    : "none",
-                  transition: "transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease, box-shadow 0.4s ease",
-                }}
-              >
-                {isWebsite ? (
-                  <>
-                    <div className="absolute inset-0 bg-[linear-gradient(135deg,#f8fbff_0%,#e8f1ff_48%,#ffffff_100%)]" />
-                    <div className="absolute -right-12 -top-10 h-44 w-44 rounded-full bg-[#2B61B4]/12 blur-2xl md:h-56 md:w-56" />
-                    <div className="absolute left-5 top-5 h-2 w-16 rounded-full bg-[#2B61B4]/45" />
-
-                    <div className="absolute right-4 top-8 h-[118px] w-[230px] overflow-hidden rounded-2xl border border-[#2B61B4]/12 bg-white shadow-[0_18px_46px_rgba(30,64,175,0.18)] transition-transform duration-500 group-hover:-translate-y-1 md:right-6 md:top-9 md:h-[152px] md:w-[292px] lg:w-[312px]">
-                      <div className="flex h-6 items-center gap-1.5 border-b border-slate-200/80 bg-white px-3">
-                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
-                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
-                        <span className="h-1.5 w-1.5 rounded-full bg-slate-300" />
-                        <span className="ml-2 h-2 w-20 rounded-full bg-slate-100" />
-                      </div>
-                      <div
-                        className="h-[calc(100%-1.5rem)] bg-cover"
-                        style={{
-                          backgroundImage: `url(${project.image})`,
-                          backgroundPosition: project.imagePosition ?? "center top",
-                        }}
-                      />
-                    </div>
-
-                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                      {project.tags && (
-                        <div className="mb-3 flex flex-wrap gap-1.5">
-                          {project.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full border border-[#2B61B4]/18 bg-[#2B61B4]/8 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2B61B4]"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <p className="text-lg font-bold leading-tight text-slate-950 md:text-xl">{project.name}</p>
-                      {project.description && (
-                        <p className="mt-1 max-w-[28ch] text-sm font-medium leading-snug text-slate-500 md:text-[15px]">
-                          {project.description}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div
-                      className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105"
-                      style={{
-                        backgroundImage: `url(${project.image})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: project.imagePosition ?? "center",
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/18 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                      {project.tags && (
-                        <div className="mb-3 flex flex-wrap gap-1.5">
-                          {project.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/78 backdrop-blur-sm"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <p className="text-lg font-bold text-white md:text-xl">{project.name}</p>
-                      {project.description && (
-                        <p className="mt-1 max-w-[28ch] text-sm font-medium leading-snug text-white/68 md:text-[15px]">
-                          {project.description}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
             );
           })}
         </div>
       </div>
+
+      {/* ── Featured card ── */}
+      <div
+        className="overflow-hidden rounded-[20px] border border-foreground/8 md:rounded-[28px]"
+        style={{ background: "color-mix(in srgb, var(--background) 93%, white 7%)" }}
+      >
+        {/* Mobile: görsel üstte, metin altta | Desktop: grid 1fr 1.35fr */}
+        <div className="flex flex-col md:grid md:min-h-[520px]" style={{ gridTemplateColumns: "1fr 1.35fr" }}>
+
+          {/* Sol — metin paneli */}
+          <div
+            className="order-last flex flex-col justify-between border-t border-foreground/8 p-6 md:order-first md:border-r md:border-t-0 md:p-10"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeIdx}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="flex h-full flex-col justify-between"
+              >
+                {/* Üst blok */}
+                <div>
+                  {/* Tags — mono */}
+                  {active.tags && active.tags.length > 0 && (
+                    <div className="mb-5 flex flex-wrap gap-1.5">
+                      {active.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full px-2.5 py-1 text-[9px] text-pink-400"
+                          style={{
+                            ...monoStyle,
+                            background: "rgba(236,72,153,0.10)",
+                            letterSpacing: "0.13em",
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Meta — №01 · yıl · müşteri */}
+                  <p className="mb-3 text-[10px] text-foreground/35" style={monoStyle}>
+                    №{String(activeIdx + 1).padStart(2, "0")}
+                    {active.year ? ` · ${active.year}` : ""}
+                    {active.client ? ` · ${active.client.toUpperCase()}` : ""}
+                  </p>
+
+                  {/* Proje adı — büyük Instrument Serif, değişen italic */}
+                  <h4
+                    className="text-foreground"
+                    style={{
+                      fontFamily: "var(--font-instrument), serif",
+                      fontWeight: 400,
+                      fontSize: "clamp(2rem, 4vw, 3.6rem)",
+                      lineHeight: 1,
+                      letterSpacing: "-0.02em",
+                      fontStyle: isItalic ? "italic" : "normal",
+                    }}
+                  >
+                    {active.name}
+                  </h4>
+
+                  {/* Kısa açıklama */}
+                  {active.description && (
+                    <p className="mt-4 max-w-[38ch] text-[13.5px] leading-relaxed text-foreground/55 md:text-[14.5px]">
+                      {active.description}
+                    </p>
+                  )}
+                </div>
+
+                {/* Alt blok — butonlar */}
+                <div className="mt-6 flex flex-wrap items-center gap-2.5">
+                  {active.slug ? (
+                    <Link
+                      href={`/projeler/${active.slug}`}
+                      className="inline-flex items-center gap-2 rounded-full bg-[#EC4899] px-5 py-2.5 text-[12.5px] font-medium text-white transition-all duration-200 hover:bg-[#DB2777] active:scale-95"
+                      style={{ boxShadow: "0 0 22px rgba(236,72,153,0.30)" }}
+                    >
+                      Projeyi incele
+                      <svg width="12" height="12" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 22 L22 6 M14 6 L22 6 L22 14" />
+                      </svg>
+                    </Link>
+                  ) : null}
+                  <Link
+                    href="/projeler"
+                    className="inline-flex items-center rounded-full border border-foreground/12 px-5 py-2.5 text-[12.5px] font-medium text-foreground/60 transition-all duration-200 hover:border-foreground/22 hover:text-foreground/80"
+                  >
+                    Tüm işler
+                  </Link>
+                  {/* Mobil sayaç */}
+                  <span className="ml-auto text-[10px] text-foreground/30 md:hidden" style={monoStyle}>
+                    {String(activeIdx + 1).padStart(2, "0")}&nbsp;/&nbsp;{String(n).padStart(2, "0")}
+                  </span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Sağ — görsel */}
+          <div className="relative order-first h-[220px] md:order-last md:h-auto">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={activeIdx}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url(${active.image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: active.imagePosition ?? "center",
+                }}
+              />
+            </AnimatePresence>
+            {/* Köşe rozeti */}
+            <div
+              className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[9px] text-foreground/80"
+              style={{
+                ...monoStyle,
+                background: "rgba(0,0,0,0.50)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.10)",
+              }}
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-[#EC4899]" style={{ boxShadow: "0 0 6px #EC4899" }} />
+              canlı
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }
@@ -447,7 +493,7 @@ function MobileCard({
       variants={revealVariants}
       initial={idx === 0 ? "visible" : "hidden"}
       whileInView="visible"
-      viewport={{ once: true, margin: "0px" }}
+      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
       custom={idx * 0.08}
       className={heightClass}
     >
@@ -469,14 +515,14 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
     <MotionConfig reducedMotion="user">
       <section
         id={sectionId}
-        className="px-4 pt-8 pb-8 scroll-mt-28 md:px-12 md:pt-16 md:pb-12 md:scroll-mt-36"
+        className="px-5 pt-10 pb-12 scroll-mt-28 md:px-12 md:pt-16 md:pb-12 md:scroll-mt-36"
       >
         <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col gap-7 md:gap-9" style={{ overflow: "visible" }}>
+          <div className="flex flex-col gap-8 md:gap-9" style={{ overflow: "visible" }}>
             <MobileCard
               block={blocks[0]}
               idx={0}
-              heightClass="h-[220px] md:h-[400px]"
+              heightClass="h-[290px] md:h-[420px]"
             />
 
             {blocks[1]?.projects && (
@@ -484,7 +530,7 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, margin: "0px" }}
+                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                 custom={0.1}
               >
                 <ProjectSlider
@@ -498,7 +544,7 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={0.18}
             >
               <SocialRowCards block={blocks[2]} />

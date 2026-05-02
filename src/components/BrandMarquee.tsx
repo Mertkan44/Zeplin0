@@ -103,11 +103,13 @@ function MarqueeRow({
   direction,
   speed,
   isDark,
+  active,
 }: {
   brands: Brand[];
   direction: "left" | "right";
   speed: number;
   isDark: boolean;
+  active: boolean;
 }) {
   const animName = direction === "left" ? "marquee-left" : "marquee-right";
 
@@ -143,8 +145,8 @@ function MarqueeRow({
         style={{
           gap: "clamp(12px, 2vw, 20px)",
           width: "max-content",
-          animation: `${animName} ${speed}s linear infinite`,
-          willChange: "transform",
+          animation: active ? `${animName} ${speed}s linear infinite` : "none",
+          willChange: active ? "transform" : "auto",
         }}
       >
         {[0, 1, 2].map((copy) => (
@@ -174,14 +176,33 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
+
+    const reveal = () => setVisible(true);
+    const checkVisibility = () => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 64 && rect.bottom > -80) {
+        reveal();
+      }
+    };
+
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setVisible(true);
+        if (entry.isIntersecting) reveal();
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
+      { rootMargin: "0px 0px 64px 0px", threshold: 0 },
     );
+
+    const frame = window.requestAnimationFrame(checkVisibility);
+    const timeout = window.setTimeout(checkVisibility, 900);
+    window.addEventListener("scroll", checkVisibility, { passive: true });
     obs.observe(el);
-    return () => obs.disconnect();
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
+      window.removeEventListener("scroll", checkVisibility);
+      obs.disconnect();
+    };
   }, []);
 
   return (
@@ -249,12 +270,13 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
 
       {/* Marquee Rows */}
       <div className="flex flex-col" style={{ gap: "clamp(10px, 1.5vw, 16px)" }}>
-        <MarqueeRow brands={brands} direction="left" speed={28} isDark={isDark} />
+        <MarqueeRow brands={brands} direction="left" speed={28} isDark={isDark} active={visible} />
         <MarqueeRow
           brands={[...brands].reverse()}
           direction="right"
           speed={36}
           isDark={isDark}
+          active={visible}
         />
       </div>
 

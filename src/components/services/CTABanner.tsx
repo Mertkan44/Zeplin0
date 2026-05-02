@@ -10,7 +10,7 @@ export function CTABanner() {
         variants={revealVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+        viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
         custom={0}
         className="mx-auto max-w-[1200px]"
       >

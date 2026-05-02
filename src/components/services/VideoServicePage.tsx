@@ -11,11 +11,11 @@ import { CTABanner } from "./CTABanner";
 
 /* ── Showreel Videos (vertical/portrait) ──────────────────────────── */
 const showreelVideos = [
-  { id: "reel1", title: "Marka Tanıtım", client: "TechStart", img: "/images/wherehavee-optimized.webp" },
-  { id: "reel2", title: "Ürün Lansman", client: "BeautyLine", img: "/images/dag-optimized.webp" },
-  { id: "reel3", title: "Sosyal Reklam", client: "FitClub", img: "/images/wherehavee-optimized.webp" },
-  { id: "reel4", title: "Etkinlik Filmi", client: "ArtFest", img: "/images/dag-optimized.webp" },
-  { id: "reel5", title: "Kurumsal Video", client: "FinTech Co", img: "/images/wherehavee-optimized.webp" },
+  { id: "reel1", title: "Mekan Hikayesi", client: "Babi Restaurant", img: "/images/projects-babi-cover.webp" },
+  { id: "reel2", title: "Menü Ritmi", client: "Milo Restaurant", img: "/images/projects-milo-cover.webp" },
+  { id: "reel3", title: "Set Akışı", client: "Prodüksiyon", img: "/images/generated/service-video-production.webp" },
+  { id: "reel4", title: "Kampanya Filmi", client: "Ritim Jewellery", img: "/images/projects-ritim-jewellery-cover.webp" },
+  { id: "reel5", title: "Kurumsal Kesit", client: "Zeplin Media", img: "/images/generated/gallery-production-wall.webp" },
 ];
 
 /* ── Video Types ──────────────────────────────────────────────────── */
@@ -25,28 +25,28 @@ const videoTypes = [
     title: "Tanıtım Filmi",
     desc: "Markanızın hikayesini güçlü bir anlatımla aktaran profesyonel prodüksiyon. Kurumsal kimliğinizi, değerlerinizi ve vizyonunuzu sinematik bir dille hedef kitlenize ulaştırıyoruz.",
     duration: "2-5 dk",
-    img: "/images/wherehavee-optimized.webp",
+    img: "/images/generated/service-video-production.webp",
   },
   {
     id: "reels",
     title: "Reels & Shorts",
     desc: "Instagram Reels, YouTube Shorts ve TikTok için trend odaklı, viral potansiyelli kısa video içerikleri. Hızlı prodüksiyon, yüksek etki.",
     duration: "15-60 sn",
-    img: "/images/dag-optimized.webp",
+    img: "/images/projects-babi-cover.webp",
   },
   {
     id: "reklam",
     title: "Reklam Spotu",
     desc: "Dijital platformlar için dönüşüm odaklı reklam videoları. Facebook, Instagram, YouTube ve TikTok Ads formatlarına uygun profesyonel içerik.",
     duration: "15-30 sn",
-    img: "/images/wherehavee-optimized.webp",
+    img: "/images/projects-ritim-jewellery-cover.webp",
   },
   {
     id: "motion",
     title: "Motion Graphics",
     desc: "2D/3D animasyon ve hareketli grafiklerle karmaşık konseptleri görsel olarak anlatıyoruz. Logo animasyonlarından explainer videolara kadar.",
     duration: "30sn - 3dk",
-    img: "/images/dag-optimized.webp",
+    img: "/images/generated/service-ai-automation.webp",
   },
 ];
 
@@ -85,7 +85,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -111,7 +111,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={i * 0.07}
               className="group relative w-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[20px] md:w-auto"
               style={{ aspectRatio: "9/16" }}
@@ -157,7 +157,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -183,7 +183,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={i * 0.08}
               className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-transparent transition-[border-color,box-shadow] duration-500 hover:border-[#F472B6]/20 hover:shadow-[0_8px_40px_rgba(219,39,119,0.1)] dark:hover:border-[#9D174D]/30 dark:hover:shadow-[0_8px_40px_rgba(157,23,77,0.12)]"
               style={{ minHeight: "340px" }}
@@ -252,7 +252,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             custom={0}
             className="mb-12 md:mb-16"
           >
@@ -281,7 +281,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                   custom={i * 0.1}
                   className="relative flex flex-col items-start md:items-center md:text-center"
                 >
@@ -320,7 +320,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             custom={0}
             className="relative aspect-[4/5] overflow-hidden rounded-[28px] md:aspect-auto md:min-h-[480px]"
           >
@@ -337,7 +337,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={0}
               className="mb-8"
             >
@@ -362,7 +362,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                   custom={i * 0.06}
                   className="group rounded-[16px] border border-zinc-100 p-5 transition-all duration-400 hover:border-[#F472B6]/20 hover:shadow-[0_4px_20px_rgba(219,39,119,0.05)] dark:border-white/[0.06] dark:hover:border-[#9D174D]/25"
                 >

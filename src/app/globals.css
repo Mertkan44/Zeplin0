@@ -222,7 +222,7 @@ body:where(.dark *) {
   background: linear-gradient(135deg, rgba(244,114,182,0.3) 0%, rgba(219,39,119,0.15) 50%, rgba(244,114,182,0.3) 100%);
   filter: blur(8px);
   opacity: 0.5;
-  animation: navbar-glow-pulse 4s ease-in-out infinite;
+  animation: none;
   z-index: -1;
   pointer-events: none;
 }

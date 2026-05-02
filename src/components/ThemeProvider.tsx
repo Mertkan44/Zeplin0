@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type Theme = "light" | "dark";
 
@@ -19,51 +19,52 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
-  const [isReady, setIsReady] = useState(false);
+  const [theme, setThemeState] = useState<Theme>("dark");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    let secondFrame = 0;
-    const firstFrame = requestAnimationFrame(() => {
-      const initialTheme: Theme = document.documentElement.classList.contains("dark")
-        ? "dark"
-        : "light";
-      setTheme(initialTheme);
-      setIsReady(true);
+    const currentTheme =
+      document.documentElement.dataset.theme === "light" ||
+      localStorage.getItem("theme") === "light"
+        ? "light"
+        : "dark";
 
-      secondFrame = requestAnimationFrame(() => {
-        document.body.classList.add("theme-ready");
-      });
+    const frame = window.requestAnimationFrame(() => {
+      setThemeState(currentTheme);
+      document.body.classList.add("theme-ready");
+      setReady(true);
     });
-    return () => {
-      cancelAnimationFrame(firstFrame);
-      if (secondFrame) cancelAnimationFrame(secondFrame);
-    };
+
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!ready) return;
     document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
-  }, [theme, isReady]);
+  }, [ready, theme]);
+
+  const setTheme = useCallback((nextTheme: Theme) => {
+    setThemeState(nextTheme);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
+  }, []);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
       theme,
       setTheme,
-      toggleTheme: () => setTheme((prev) => (prev === "dark" ? "light" : "dark")),
+      toggleTheme,
     }),
-    [theme]
+    [theme, setTheme, toggleTheme]
   );
 
   return (
     <ThemeContext.Provider value={value}>
-      {isReady ? (
-        children
-      ) : (
-        <div aria-hidden="true" style={{ minHeight: "100vh", background: "var(--background)" }} />
-      )}
+      {children}
     </ThemeContext.Provider>
   );
 }

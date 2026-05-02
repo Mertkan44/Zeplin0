@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { EASE, FONT, revealVariants } from "@/lib/motion";
 import { CountUp } from "@/components/CountUp";
@@ -97,13 +98,115 @@ export function AIServicePage({ service }: { service: ServiceData }) {
         heroImage={service.heroImage}
       />
 
+      {/* ── Bölüm: 3 Alt Hizmet Kartları ─────────────────────────── */}
+      <section className="mx-auto max-w-[1200px] px-6 py-12 md:py-16">
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          custom={0}
+          className="mb-8 md:mb-10"
+        >
+          <span
+            className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-700"
+            style={FONT}
+          >
+            hizmetlerimiz
+          </span>
+          <h2
+            className="mt-4 text-[28px] font-semibold leading-[1.1] tracking-[-0.03em] text-zinc-900 dark:text-white md:text-[38px]"
+            style={FONT}
+          >
+            Hangi Çözümü Arıyorsunuz?
+          </h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {[
+            {
+              href: "/hizmetler/akilli-chatbot",
+              title: "Akıllı Chatbot",
+              desc: "WhatsApp ve web üzerinden 7/24 müşteri iletişimi ve otomatik yanıt sistemi.",
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.4"/>
+                  <circle cx="7.5" cy="10.5" r="1.5" fill="currentColor"/>
+                  <circle cx="14.5" cy="10.5" r="1.5" fill="currentColor"/>
+                  <path d="M7 14.5c1 1.2 7 1.2 8 0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                </svg>
+              ),
+            },
+            {
+              href: "/hizmetler/ozel-yazilim",
+              title: "Özel Yazılım",
+              desc: "Tüm AI kanallarını tek merkezde birleştiren özel platform ve yönetim paneli.",
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <rect x="2" y="4" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M7 11l2 2 4-4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M14 9h2M14 12h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                </svg>
+              ),
+            },
+            {
+              href: "/hizmetler/sesli-asistan",
+              title: "Sesli Asistan",
+              desc: "Telefon görüşmelerinde rezervasyon, yönlendirme ve doğal dil etkileşimi.",
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <path d="M6 4.5C6 3.7 6.7 3 7.5 3h1C9.3 3 10 3.7 10 4.5v3C10 8.3 9.3 9 8.5 9h-1C6.7 9 6 8.3 6 7.5v-3z" stroke="currentColor" strokeWidth="1.4"/>
+                  <path d="M4 7c0 3.3 2.7 6 6 6s6-2.7 6-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                  <path d="M10 15v3M8 18h4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+                </svg>
+              ),
+            },
+          ].map((item, i) => (
+            <motion.div
+              key={item.href}
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              custom={i * 0.08}
+            >
+              <Link href={item.href} className="group block h-full">
+                <div className="flex h-full flex-col gap-4 rounded-[20px] border border-zinc-100 bg-white p-6 transition-all duration-300 hover:border-[#F472B6]/30 hover:shadow-[0_8px_32px_rgba(219,39,119,0.06)] dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-[#9D174D]/40 dark:hover:bg-white/[0.04] md:p-7">
+                  <div className="flex items-center justify-between">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full border border-[#F472B6]/20 bg-[#DB2777]/6 text-[#DB2777] dark:border-[#9D174D]/30 dark:bg-[#9D174D]/10 dark:text-[#F472B6]">
+                      {item.icon}
+                    </span>
+                    <motion.span
+                      className="text-zinc-300 transition-all duration-300 group-hover:translate-x-1 group-hover:text-[#DB2777] dark:text-zinc-700 dark:group-hover:text-[#F472B6]"
+                      aria-hidden
+                    >
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M3.75 9h10.5M9.75 4.5L14.25 9l-4.5 4.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </motion.span>
+                  </div>
+                  <div>
+                    <h3 className="text-[17px] font-semibold tracking-[-0.01em] text-zinc-900 dark:text-white md:text-[19px]" style={FONT}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-[13px] leading-[1.7] text-zinc-500 dark:text-zinc-400" style={FONT}>
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Bölüm 2: İnteraktif Chatbot Demo ──────────────────────── */}
       <section className="mx-auto max-w-[1200px] px-6 py-16 md:py-24">
         <motion.div
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -125,7 +228,7 @@ export function AIServicePage({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0.1}
         >
           <ChatDemo />
@@ -138,7 +241,7 @@ export function AIServicePage({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -163,7 +266,7 @@ export function AIServicePage({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={i * 0.06}
             >
               <button
@@ -278,7 +381,7 @@ export function AIServicePage({ service }: { service: ServiceData }) {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             custom={0}
             className="mb-12 md:mb-16"
           >
@@ -306,7 +409,7 @@ export function AIServicePage({ service }: { service: ServiceData }) {
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                   custom={i * 0.1}
                   className="relative flex flex-col items-start md:items-center md:text-center"
                 >
@@ -343,7 +446,7 @@ export function AIServicePage({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="border-y border-zinc-200/80 py-2 dark:border-white/10 md:py-4"
         >
@@ -386,7 +489,7 @@ export function AIServicePage({ service }: { service: ServiceData }) {
 
 function ChatDemo() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -15% 0px" });
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
   const [visibleMessages, setVisibleMessages] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
 

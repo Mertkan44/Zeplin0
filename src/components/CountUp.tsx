@@ -13,7 +13,7 @@ export function CountUp({
   delay: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -20% 0px" });
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");

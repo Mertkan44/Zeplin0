@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
   motion,
@@ -33,7 +32,7 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FONT = { fontFamily: "var(--font-jost), sans-serif" } as const;
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.985 },
+  hidden: { opacity: 0.16, y: 24, scale: 0.99 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
@@ -74,6 +73,20 @@ const zeplinMetrics = [
 ];
 
 const [primaryMetric, ...supportingMetrics] = zeplinMetrics;
+
+function restartVideo(video: HTMLVideoElement | null) {
+  if (!video) return;
+
+  try {
+    video.currentTime = 0;
+  } catch {
+    video.load();
+  }
+
+  void video.play().catch(() => {
+    // Browsers can block autoplay with sound; controls remain available.
+  });
+}
 
 /* ── Impact card helpers ──────────────────────────────────────────── */
 function CountUp({
@@ -161,10 +174,12 @@ function VideoCard({
   testimonial,
   index,
   onClick,
+  setVideoRef,
 }: {
   testimonial: VideoTestimonial;
   index: number;
   onClick: () => void;
+  setVideoRef: (video: HTMLVideoElement | null) => void;
 }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -174,7 +189,7 @@ function VideoCard({
       variants={revealVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "0px" }}
+      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
       custom={index * 0.1}
       className={index === 1 ? "flex-shrink-0 md:mt-10" : "flex-shrink-0"}
     >
@@ -184,14 +199,19 @@ function VideoCard({
         className="video-card group relative block w-full overflow-hidden rounded-[24px] shadow-[0_22px_58px_rgba(15,10,13,0.18)] transition-transform duration-300 hover:-translate-y-1 md:rounded-[30px]"
         style={{ aspectRatio: "9 / 16" }}
       >
-        {/* Poster */}
-        <Image
-          src={testimonial.posterSrc}
-          alt={`${testimonial.brandName} video`}
-          fill
-          sizes="(min-width: 1024px) 300px, 50vw"
+        <video
+          ref={setVideoRef}
           className="absolute inset-0 h-full w-full object-cover"
-        />
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster={testimonial.posterSrc}
+          aria-label={`${testimonial.brandName} video`}
+        >
+          <source src={testimonial.videoSrc} type="video/mp4" />
+        </video>
 
         {/* Gradient overlay */}
         <div
@@ -265,7 +285,7 @@ function VideoOverlay({
 
   /* Autoplay when overlay opens */
   useEffect(() => {
-    videoRef.current?.play();
+    restartVideo(videoRef.current);
   }, []);
 
   return (
@@ -284,14 +304,17 @@ function VideoOverlay({
 
       {/* Centered panel */}
       <motion.div
-        className="fixed inset-0 z-[73] flex items-center justify-center p-4"
+        className="fixed inset-0 z-[73] flex items-center justify-center px-4 py-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="relative w-full max-w-[420px]"
-          style={{ aspectRatio: "9 / 16" }}
+          className="relative flex w-full flex-col items-center"
+          style={{
+            maxWidth:
+              "min(420px, calc(56.25dvh - 4.5rem), calc(100vw - 2rem))",
+          }}
           initial={{ scale: 0.88, y: 32, opacity: 0 }}
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.92, y: 20, opacity: 0 }}
@@ -305,29 +328,31 @@ function VideoOverlay({
             type="button"
             onClick={onClose}
             aria-label="Kapat"
-            className="absolute -top-12 right-0 z-10 grid h-9 w-9
+            className="absolute right-3 top-3 z-10 grid h-9 w-9
                        place-items-center rounded-full border border-white/20
-                       bg-white/10 text-white text-sm
-                       hover:bg-white/20 transition-colors"
+                       bg-black/45 text-white text-sm shadow-[0_8px_24px_rgba(0,0,0,0.35)]
+                       hover:bg-black/60 transition-colors"
           >
             &#x2715;
           </button>
 
-          {/* Video */}
-          <video
-            ref={videoRef}
-            className="h-full w-full rounded-2xl object-cover"
-            playsInline
-            controls
-            poster={testimonial.posterSrc}
-          >
-            <source src={testimonial.videoSrc} type="video/mp4" />
-          </video>
+          <div className="w-full overflow-hidden rounded-2xl" style={{ aspectRatio: "9 / 16" }}>
+            <video
+              ref={videoRef}
+              className="h-full w-full object-cover"
+              autoPlay
+              playsInline
+              preload="auto"
+              controls
+            >
+              <source src={testimonial.videoSrc} type="video/mp4" />
+            </video>
+          </div>
 
           {/* Brand info below */}
           <motion.div
             className="mt-3 text-center"
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, ease: EASE, delay: 0.09 }}
           >
@@ -357,15 +382,21 @@ export default function VideoTestimonials({
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [selected, setSelected] = useState<VideoTestimonial | null>(null);
+  const previewVideoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
   const visibleTestimonials = testimonials.slice(0, 2);
 
   const impactRef = useRef<HTMLDivElement>(null);
   const impactInView = useInView(impactRef, {
     once: true,
-    margin: "0px 0px -10% 0px",
+    margin: "0px 0px 64px 0px",
   });
 
   const handleClose = useCallback(() => setSelected(null), []);
+
+  const handleOpen = useCallback((testimonial: VideoTestimonial) => {
+    restartVideo(previewVideoRefs.current[testimonial.id] ?? null);
+    setSelected(testimonial);
+  }, []);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -383,7 +414,7 @@ export default function VideoTestimonials({
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={0}
               className="mb-6 md:mb-7"
             >
@@ -407,7 +438,10 @@ export default function VideoTestimonials({
                   key={t.id}
                   testimonial={t}
                   index={i}
-                  onClick={() => setSelected(t)}
+                  onClick={() => handleOpen(t)}
+                  setVideoRef={(video) => {
+                    previewVideoRefs.current[t.id] = video;
+                  }}
                 />
               ))}
             </div>
@@ -418,7 +452,7 @@ export default function VideoTestimonials({
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             custom={0.08}
             className="relative w-full max-w-[600px] lg:pl-6 xl:pl-10"
           >
@@ -452,7 +486,7 @@ export default function VideoTestimonials({
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                   custom={0.12}
                   className="relative"
                 >
@@ -545,7 +579,7 @@ export default function VideoTestimonials({
                       variants={revealVariants}
                       initial="hidden"
                       whileInView="visible"
-                      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                       custom={0.2 + i * 0.07}
                       className="min-w-0"
                     >

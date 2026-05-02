@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { motion, useMotionValue, useTransform, useSpring, useInView } from "framer-motion";
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
@@ -279,29 +280,93 @@ function WaveformBars({ bright, isVisible }: { bright: boolean; isVisible: boole
   );
 }
 
-/* ── Merge Icon (Özel Yazılım — two lines becoming one) ────────────────── */
+/* ── Robot Face SVG ────────────────────────────────────────────────────── */
 
-function MergeIcon({ bright, isVisible }: { bright: boolean; isVisible: boolean }) {
+function RobotFace({ bright, isVisible }: { bright: boolean; isVisible: boolean }) {
+  const eyeColor = bright ? "rgba(255,45,120,0.9)" : "rgba(255,45,120,0.55)";
+  const ringColor = bright ? "rgba(255,45,120,0.55)" : "rgba(255,45,120,0.28)";
+  const ledColor = bright ? "rgba(255,45,120,0.8)" : "rgba(255,45,120,0.35)";
+
   return (
     <motion.svg
-      width={44}
-      height={22}
-      viewBox="0 0 44 22"
-      style={{ display: "block", margin: "14px auto 0" }}
-      animate={{ opacity: bright ? [0.4, 0.6, 0.4] : [0.15, 0.4, 0.15] }}
-      transition={{ duration: 3, repeat: isVisible ? Infinity : 0, ease: "easeInOut" }}
+      width={88}
+      height={68}
+      viewBox="0 0 88 68"
+      style={{ display: "block", margin: "0 auto" }}
     >
-      <motion.line
-        x1={4} y1={2} x2={22} y2={20}
-        stroke="rgba(255,255,255,0.5)"
-        strokeWidth={1.5}
-        strokeLinecap="round"
+      {/* Antenna dots */}
+      <motion.circle cx={28} cy={5} r={2.5} fill={ringColor}
+        animate={{ opacity: [0.35, 1, 0.35] }}
+        transition={{ duration: 2, repeat: isVisible ? Infinity : 0, ease: "easeInOut" }}
       />
-      <motion.line
-        x1={40} y1={2} x2={22} y2={20}
-        stroke="rgba(255,255,255,0.5)"
-        strokeWidth={1.5}
+      <motion.circle cx={60} cy={5} r={2.5} fill={ringColor}
+        animate={{ opacity: [0.35, 1, 0.35] }}
+        transition={{ duration: 2, repeat: isVisible ? Infinity : 0, delay: 0.5, ease: "easeInOut" }}
+      />
+      <line x1={28} y1={7.5} x2={28} y2={13} stroke={ringColor} strokeWidth={1} />
+      <line x1={60} y1={7.5} x2={60} y2={13} stroke={ringColor} strokeWidth={1} />
+
+      {/* Left eye outer ring */}
+      <motion.circle cx={25} cy={28} r={13}
+        fill="rgba(255,45,120,0.05)"
+        stroke={ringColor} strokeWidth={1}
+        animate={{ r: [13, 13.6, 13] }}
+        transition={{ duration: 3.2, repeat: isVisible ? Infinity : 0, ease: "easeInOut" }}
+      />
+      {/* Left eye inner ring */}
+      <circle cx={25} cy={28} r={8} fill="rgba(255,45,120,0.07)" stroke={ringColor} strokeWidth={0.5} />
+      {/* Left pupil — blinks */}
+      <motion.ellipse cx={25} cy={28} rx={5} ry={5} fill={eyeColor}
+        animate={{ ry: [5, 5, 0.08, 5] }}
+        transition={{ duration: 3, repeat: isVisible ? Infinity : 0, times: [0, 0.78, 0.83, 1], ease: ["linear", "easeIn", "easeOut"] }}
+      />
+      {/* Left highlight */}
+      <circle cx={29} cy={24} r={2} fill="rgba(255,255,255,0.55)" />
+
+      {/* Right eye outer ring */}
+      <motion.circle cx={63} cy={28} r={13}
+        fill="rgba(255,45,120,0.05)"
+        stroke={ringColor} strokeWidth={1}
+        animate={{ r: [13, 13.6, 13] }}
+        transition={{ duration: 3.2, repeat: isVisible ? Infinity : 0, ease: "easeInOut", delay: 0.9 }}
+      />
+      {/* Right eye inner ring */}
+      <circle cx={63} cy={28} r={8} fill="rgba(255,45,120,0.07)" stroke={ringColor} strokeWidth={0.5} />
+      {/* Right pupil — blinks */}
+      <motion.ellipse cx={63} cy={28} rx={5} ry={5} fill={eyeColor}
+        animate={{ ry: [5, 5, 0.08, 5] }}
+        transition={{ duration: 3, repeat: isVisible ? Infinity : 0, times: [0, 0.78, 0.83, 1], ease: ["linear", "easeIn", "easeOut"], delay: 0.12 }}
+      />
+      {/* Right highlight */}
+      <circle cx={67} cy={24} r={2} fill="rgba(255,255,255,0.55)" />
+
+      {/* Mouth — smile arc that breathes */}
+      <motion.path
+        d="M18,57 Q44,68 70,57"
+        stroke={ledColor}
+        strokeWidth={2}
+        fill="none"
         strokeLinecap="round"
+        animate={{
+          d: [
+            "M18,57 Q44,68 70,57",
+            "M18,56 Q44,63 70,56",
+            "M18,57 Q44,68 70,57",
+            "M18,57 Q44,70 70,57",
+            "M18,57 Q44,68 70,57",
+          ],
+          opacity: bright ? [0.7, 1, 0.7] : [0.35, 0.75, 0.35],
+        }}
+        transition={{ duration: 2.2, repeat: isVisible ? Infinity : 0, ease: "easeInOut" }}
+      />
+      {/* Corner dots */}
+      <motion.circle cx={18} cy={57} r={2.5} fill={ledColor}
+        animate={{ r: [2, 2.8, 2], opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 2.2, repeat: isVisible ? Infinity : 0, ease: "easeInOut" }}
+      />
+      <motion.circle cx={70} cy={57} r={2.5} fill={ledColor}
+        animate={{ r: [2, 2.8, 2], opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 2.2, repeat: isVisible ? Infinity : 0, ease: "easeInOut", delay: 0.3 }}
       />
     </motion.svg>
   );
@@ -341,16 +406,23 @@ const SERVICE_CONTENT_MAP = {
 
 /* ── Component ──────────────────────────────────────────────────────────── */
 
+const NAV_MAP = {
+  chatbot: "/hizmetler/akilli-chatbot",
+  yazilim: "/hizmetler/ozel-yazilim",
+  sesli: "/hizmetler/sesli-asistan",
+} as const;
+
 export default function ServiceCircleDiagram() {
+  const router = useRouter();
   const circleRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useInView(sectionRef as React.RefObject<Element>, { margin: "0px 0px -15% 0px" });
+  const isVisible = useInView(sectionRef as React.RefObject<Element>, { margin: "0px 0px 64px 0px" });
   const [circleCw, setCircleCw] = useState(CIRCLE_W);
   const [gridW, setGridW] = useState(1200);
-  const [activeTab, setActiveTab] = useState(0);
+  const activeTab = 0;
   const [expandedDetail, setExpandedDetail] = useState(false);
-  const [pulsingLabel, setPulsingLabel] = useState<string | null>(null);
+  const pulsingLabel: string | null = null;
   const [hoveredCircle, setHoveredCircle] = useState<string | null>(null);
   const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
   const [startAnimations, setStartAnimations] = useState(false);
@@ -418,6 +490,17 @@ export default function ServiceCircleDiagram() {
     setHoveredCircle(null);
   }, []);
 
+  const handleDiagramClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      if (nx < -0.08) router.push(NAV_MAP.chatbot);
+      else if (nx > 0.08) router.push(NAV_MAP.sesli);
+      else router.push(NAV_MAP.yazilim);
+    },
+    [router]
+  );
+
   /* ── ResizeObservers ─────────────────────────────────────────── */
   useEffect(() => {
     const observers: ResizeObserver[] = [];
@@ -449,8 +532,8 @@ export default function ServiceCircleDiagram() {
       },
       {
         root: null,
-        rootMargin: "0px 0px -18% 0px",
-        threshold: 0.22,
+        rootMargin: "0px 0px 64px 0px",
+        threshold: 0.01,
       }
     );
 
@@ -464,7 +547,6 @@ export default function ServiceCircleDiagram() {
   const sectionPad = isMobile ? 16 : 24;
   const labelTitleSize = isMobile ? 18 : 20;
   const labelBodySize = isMobile ? 13.5 : 14.5;
-  const centerLabelSize = isMobile ? 18 : isCompact ? 20 : 22;
   const activeTabBarW = isMobile ? 86 : 110;
   const idleTabBarW = isMobile ? 52 : 65;
   const hoverTabBarW = isMobile ? 78 : 100;
@@ -477,13 +559,6 @@ export default function ServiceCircleDiagram() {
 
   function isHighlighted(id: string) {
     return activeHover === id || pulsingLabel === id;
-  }
-
-  function handleTabClick(i: number, nodeId: string) {
-    setActiveTab(i);
-    setExpandedDetail(false);
-    setPulsingLabel(nodeId);
-    setTimeout(() => setPulsingLabel(null), 750);
   }
 
   /* ── SVG line coordinates (in grid-wide pixel space) ────────── */
@@ -708,9 +783,10 @@ export default function ServiceCircleDiagram() {
             }
             onMouseEnter={() => setHoveredLabel("chatbot")}
             onMouseLeave={() => setHoveredLabel(null)}
+            onClick={() => router.push(NAV_MAP.chatbot)}
             style={{
               maxWidth: isCompact ? "100%" : 260,
-              cursor: "default",
+              cursor: "pointer",
               paddingTop: isCompact ? 0 : 20,
             }}
           >
@@ -766,9 +842,10 @@ export default function ServiceCircleDiagram() {
             }
             onMouseEnter={() => setHoveredLabel("yazilim")}
             onMouseLeave={() => setHoveredLabel(null)}
+            onClick={() => router.push(NAV_MAP.yazilim)}
             style={{
               maxWidth: isCompact ? "100%" : 260,
-              cursor: "default",
+              cursor: "pointer",
               paddingBottom: isCompact ? 0 : 20,
             }}
           >
@@ -814,6 +891,7 @@ export default function ServiceCircleDiagram() {
           ref={circleRef}
           onMouseMove={isMobile ? undefined : handleDiagramMouseMove}
           onMouseLeave={isMobile ? undefined : handleDiagramMouseLeave}
+          onClick={handleDiagramClick}
           style={{
             gridArea: "center",
             position: "relative",
@@ -825,13 +903,13 @@ export default function ServiceCircleDiagram() {
             overflow: "visible",
             x: isMobile || isCompact ? 0 : parallaxX,
             y: isMobile || isCompact ? 0 : parallaxY,
-            cursor: "default",
+            cursor: hoveredCircle ? "pointer" : "default",
           }}
         >
           {/* Elips 3 — center circle, BACK layer */}
           <AnimatedLayer
             src="/circles/elips3.png"
-            start={startAnimations}
+            start={startAnimations && isVisible}
             entranceDelay={0.5}
             breatheScale={[1, 1.06, 1]}
             breatheOpacity={[0.92, 1, 0.92]}
@@ -846,7 +924,7 @@ export default function ServiceCircleDiagram() {
           {/* Elips 2 — right crescent, MIDDLE layer */}
           <AnimatedLayer
             src="/circles/elips2.png"
-            start={startAnimations}
+            start={startAnimations && isVisible}
             entranceDelay={0.8}
             breatheScale={[1, 1.045, 1]}
             breatheOpacity={[0.85, 1, 0.85]}
@@ -863,7 +941,7 @@ export default function ServiceCircleDiagram() {
           {/* Elips 1 — left crescent, FRONT layer */}
           <AnimatedLayer
             src="/circles/elips1.png"
-            start={startAnimations}
+            start={startAnimations && isVisible}
             entranceDelay={0.7}
             breatheScale={[1, 1.045, 1]}
             breatheOpacity={[0.85, 1, 0.85]}
@@ -877,7 +955,7 @@ export default function ServiceCircleDiagram() {
             isVisible={isVisible}
           />
 
-          {/* CENTER LABEL — Özel Yazılım */}
+          {/* CENTER LABEL — Robot Face */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: startAnimations ? 1 : 0 }}
@@ -888,32 +966,18 @@ export default function ServiceCircleDiagram() {
               left: "50%",
               transform: "translate(-50%, -50%)",
               textAlign: "center",
-              whiteSpace: "pre-line",
               zIndex: 16,
               pointerEvents: "none",
-              fontFamily: FONT,
-              fontSize: centerLabelSize,
-              fontWeight: 500,
-              color: isHighlighted("yazilim")
-                ? "#fff"
-                : "rgba(255,255,255,0.9)",
-              letterSpacing: isMobile ? "0.08em" : "0.1em",
-              lineHeight: 1.6,
-              textShadow: isHighlighted("yazilim")
-                ? "0 0 15px rgba(255, 45, 120, 0.3)"
-                : "0 0 20px rgba(255, 45, 120, 0.15)",
-              transition: "color 0.4s ease, text-shadow 0.4s ease",
             }}
           >
-            {"Özel\nYazılım"}
-            <MergeIcon bright={isHighlighted("yazilim")} isVisible={isVisible} />
+            <RobotFace bright={isHighlighted("yazilim")} isVisible={isVisible} />
           </motion.div>
 
           {/* Orbital particles */}
-          <OrbitalParticle start={startAnimations} animName="svc-orbit-1" duration={18} delay={2.5} />
-          <OrbitalParticle start={startAnimations} animName="svc-orbit-2" duration={22} delay={2.8} />
-          <OrbitalParticle start={startAnimations} animName="svc-orbit-3" duration={16} delay={3.0} />
-          <OrbitalParticle start={startAnimations} animName="svc-orbit-4" duration={25} delay={3.3} />
+          <OrbitalParticle start={startAnimations && isVisible} animName="svc-orbit-1" duration={18} delay={2.5} />
+          <OrbitalParticle start={startAnimations && isVisible} animName="svc-orbit-2" duration={22} delay={2.8} />
+          <OrbitalParticle start={startAnimations && isVisible} animName="svc-orbit-3" duration={16} delay={3.0} />
+          <OrbitalParticle start={startAnimations && isVisible} animName="svc-orbit-4" duration={25} delay={3.3} />
         </motion.div>
 
         {/* ── RIGHT COLUMN — Label 2 ─────────────────────────────── */}
@@ -945,10 +1009,11 @@ export default function ServiceCircleDiagram() {
             }
             onMouseEnter={() => setHoveredLabel("sesli")}
             onMouseLeave={() => setHoveredLabel(null)}
+            onClick={() => router.push(NAV_MAP.sesli)}
             style={{
               maxWidth: isCompact ? "100%" : 260,
               textAlign: "left",
-              cursor: "default",
+              cursor: "pointer",
             }}
           >
             <p
@@ -1020,7 +1085,7 @@ export default function ServiceCircleDiagram() {
                   key={tab.nodeId}
                   type="button"
                   aria-pressed={isActive}
-                  onClick={() => handleTabClick(i, tab.nodeId)}
+                  onClick={() => router.push(NAV_MAP[tab.nodeId])}
                   style={{
                     border: "none",
                     background: "transparent",
@@ -1192,7 +1257,7 @@ export default function ServiceCircleDiagram() {
                   fontFamily: FONT,
                   flex: "0 0 auto",
                 }}
-                onClick={() => handleTabClick(i, tab.nodeId)}
+                onClick={() => router.push(NAV_MAP[tab.nodeId])}
               >
                 <motion.div
                   variants={{

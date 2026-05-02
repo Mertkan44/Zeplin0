@@ -204,7 +204,7 @@ export default function HeroBanner() {
               backgroundImage: `url('${crtHeroImage}')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              animation: "hero-pan 18s ease-in-out infinite alternate",
+              animation: activeSlide === 0 ? "hero-pan 18s ease-in-out infinite alternate" : "none",
             }}
           />
           <div className="absolute inset-0 z-[7] bg-[linear-gradient(to_left,rgba(0,0,0,0.62)_0%,rgba(0,0,0,0.26)_34%,rgba(0,0,0,0.08)_56%,transparent_72%)]" />
@@ -218,7 +218,7 @@ export default function HeroBanner() {
               backgroundImage: "url('/images/hero-foto-optimized.webp')",
               backgroundSize: "cover",
               backgroundPosition: "left 40%",
-              animation: "hero-pan 16s ease-in-out infinite alternate",
+              animation: activeSlide === 1 ? "hero-pan 16s ease-in-out infinite alternate" : "none",
             }}
           />
           <div className="absolute inset-0 z-[5] bg-black/28" />

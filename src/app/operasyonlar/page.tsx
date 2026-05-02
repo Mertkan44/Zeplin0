@@ -15,12 +15,12 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FONT = { fontFamily: "var(--font-jost), sans-serif" } as const;
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.985 },
+  hidden: { opacity: 0.16, y: 24, scale: 0.99 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.52, ease: EASE, delay },
+    transition: { duration: 0.54, ease: EASE, delay },
   }),
 };
 
@@ -35,7 +35,7 @@ function CountUp({
   delay: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -20% 0px" });
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");
@@ -187,18 +187,18 @@ function ExpandingCard({
 /* ── Data ─────────────────────────────────────────────────────────── */
 const operationMetrics = [
   { value: 360, suffix: "°", label: "Dijital Operasyon" },
-  { value: 6, suffix: "", label: "Operasyon Alanı" },
+  { value: 7, suffix: "", label: "Operasyon Alanı" },
   { value: 24, suffix: "/7", label: "Kesintisiz İzleme" },
-  { value: 50, suffix: "+", label: "Aktif Marka" },
+  { value: 38, suffix: "+", label: "Aktif Marka" },
 ];
 
 const operations = [
   {
     title: "Sosyal Medya Yönetimi",
     subtitle: "Social Media Management",
-    desc: "İçerik takvimi, topluluk yönetimi ve marka sesinin tüm platformlarda tutarlı yönetimi.",
-    features: ["İçerik Takvimi", "Topluluk Yönetimi", "Kriz İletişimi", "Influencer"],
-    metric: { value: 12, suffix: "M+", label: "Aylık Erişim" },
+    desc: "İçerik takvimi, marka tonu, yayın ritmi ve topluluk iletişimini tek plan üzerinden yönetiyoruz.",
+    features: ["İçerik Takvimi", "Yayın Planı", "Topluluk Yönetimi", "Raporlama"],
+    metric: { value: 1, suffix: ".8M+", label: "Aylık Erişim" },
     color: "#EC4899",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
@@ -209,8 +209,8 @@ const operations = [
   {
     title: "İçerik Üretimi",
     subtitle: "Content Production",
-    desc: "Video, grafik, metin — her formatta marka dilinize uygun özgün içerik üretimi.",
-    features: ["Video Prodüksiyon", "Grafik Tasarım", "Copywriting", "Fotoğraf"],
+    desc: "Fotoğraf, video, grafik ve metni aynı kampanya fikrinin parçaları olarak üretiyoruz.",
+    features: ["Video", "Fotoğraf", "Grafik Tasarım", "Copywriting"],
     metric: { value: 500, suffix: "+", label: "Aylık İçerik" },
     color: "#F472B6",
     icon: (
@@ -222,7 +222,7 @@ const operations = [
   {
     title: "Dijital Reklam & Performans",
     subtitle: "Performance Marketing",
-    desc: "Google, Meta, TikTok ve LinkedIn'de veri odaklı reklam kampanyaları yönetimi.",
+    desc: "Meta, Google, TikTok ve LinkedIn kampanyalarını kreatif üretimle birlikte optimize ediyoruz.",
     features: ["Google Ads", "Meta Ads", "TikTok Ads", "Programmatic"],
     metric: { value: 4, suffix: "x", label: "Ort. ROAS" },
     color: "#DB2777",
@@ -235,7 +235,7 @@ const operations = [
   {
     title: "SEO & Analitik",
     subtitle: "Search & Analytics",
-    desc: "Organik görünürlüğü artıran teknik SEO, içerik SEO ve kapsamlı analitik raporlama.",
+    desc: "Organik görünürlük, teknik sağlık ve içerik performansını okunabilir raporlara çeviriyoruz.",
     features: ["Teknik SEO", "İçerik SEO", "Backlink", "GA4 & GTM"],
     metric: { value: 180, suffix: "%", label: "Ort. Trafik Artışı" },
     color: "#9D174D",
@@ -248,7 +248,7 @@ const operations = [
   {
     title: "Yapay Zeka Entegrasyonu",
     subtitle: "AI Integration",
-    desc: "Chatbot, callbot, otomasyon akışları ve AI destekli içerik üretim süreçleri.",
+    desc: "Chatbot, callbot ve otomasyon akışlarını günlük operasyonun yükünü azaltacak şekilde kuruyoruz.",
     features: ["AI Chatbot", "AI Callbot", "Otomasyon", "AI İçerik"],
     metric: { value: 7, suffix: "/24", label: "Kesintisiz Hizmet" },
     color: "#BE185D",
@@ -261,7 +261,7 @@ const operations = [
   {
     title: "Raporlama & Analiz",
     subtitle: "Reporting & Analytics",
-    desc: "Haftalık ve aylık detaylı performans raporları, dashboard erişimi ve aksiyon önerileri.",
+    desc: "Haftalık ve aylık raporlarda sadece sayı değil, bir sonraki aksiyonu da görünür kılıyoruz.",
     features: ["Haftalık Rapor", "Dashboard", "Rakip Analizi", "Aksiyon"],
     metric: { value: 100, suffix: "%", label: "Şeffaf Veri" },
     color: "#FBCFE8",
@@ -357,7 +357,7 @@ export default function OperasyonlarPage() {
       {/* ── SECTION 1: Hero ───────────────────────────────────────── */}
       <section
         className="relative overflow-hidden bg-center bg-no-repeat bg-[length:auto_100%] px-6 pb-12 pt-[46svh] md:bg-cover md:pb-24 md:pt-56"
-        style={{ backgroundImage: "url('/images/dag-optimized.webp')" }}
+        style={{ backgroundImage: "url('/images/generated/operations-command-center.webp')" }}
       >
         <div className="absolute inset-0 bg-linear-to-b from-white/30 via-white/70 to-white dark:from-[#0a0a0a]/20 dark:via-[#0a0a0a]/70 dark:to-[#0a0a0a]" />
 
@@ -380,7 +380,7 @@ export default function OperasyonlarPage() {
             className="mt-2 max-w-[600px] text-base font-light text-zinc-400 dark:text-zinc-500 sm:text-lg"
             style={FONT}
           >
-            360° dijital operasyonlarla markanızı yönetiyoruz
+            Takvim, üretim, yayın ve raporlamayı tek merkezde topluyoruz
             <span className="ml-1 inline-block h-[1em] w-[2px] animate-[blink_1s_step-end_infinite] bg-[#DB2777] align-middle dark:bg-[#F472B6]" />
           </motion.p>
         </div>
@@ -397,14 +397,14 @@ export default function OperasyonlarPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
         >
           {/* Animated gradient top border */}
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
             className="mb-4 h-px origin-left md:mb-6"
             style={{
@@ -420,7 +420,7 @@ export default function OperasyonlarPage() {
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                 custom={i * 0.1}
                 className={`text-center ${
                   i < operationMetrics.length - 1
@@ -452,24 +452,24 @@ export default function OperasyonlarPage() {
       <section className="mx-auto max-w-[1200px] px-6 py-16 md:py-24">
         <div className="mb-10 md:mb-14">
           <motion.span
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
             style={FONT}
           >
             Operasyon Alanları
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-900 dark:text-white md:text-[30px]"
             style={FONT}
           >
-            Her kanalda, tek merkezden.
+            Her kanalın ritmi ayrı, kontrol noktası tek.
           </motion.h2>
         </div>
 
@@ -480,7 +480,7 @@ export default function OperasyonlarPage() {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -8% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={i * 0.08}
             >
               <GradientBorderCard color={op.color} className="h-full">
@@ -564,20 +564,20 @@ export default function OperasyonlarPage() {
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
           >
             İş Akışımız
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-white md:text-[30px]"
             style={FONT}
           >
@@ -599,7 +599,7 @@ export default function OperasyonlarPage() {
                 strokeDasharray="6 4"
                 initial={{ pathLength: 0 }}
                 whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                 transition={{ duration: 1.5, ease: EASE, delay: 0.5 }}
               />
               <motion.line
@@ -609,7 +609,7 @@ export default function OperasyonlarPage() {
                 strokeDasharray="6 4"
                 initial={{ pathLength: 0 }}
                 whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                 transition={{ duration: 1.5, ease: EASE, delay: 0.8 }}
               />
             </svg>
@@ -618,17 +618,17 @@ export default function OperasyonlarPage() {
               {workflowSteps.map((step, i) => (
                 <motion.div
                   key={step.num}
-                  initial={{ opacity: 0, y: 25 }}
+                  initial={{ opacity: 0.12, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-                  transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  transition={{ duration: 0.54, ease: EASE, delay: i * 0.08 }}
                   className="group flex gap-4"
                 >
                   {/* Step circle */}
                   <motion.div
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                     transition={{
                       type: "spring",
                       stiffness: 300,
@@ -674,20 +674,20 @@ export default function OperasyonlarPage() {
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
           >
             Neden 360°
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-white md:text-[30px]"
             style={FONT}
           >
@@ -698,10 +698,10 @@ export default function OperasyonlarPage() {
             {advantages.map((adv, i) => (
               <motion.div
                 key={adv.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0.12, y: 22 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, ease: EASE, delay: i * 0.1 }}
+                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                transition={{ duration: 0.54, ease: EASE, delay: i * 0.1 }}
               >
                 <ExpandingCard
                   title={adv.title}
@@ -742,20 +742,20 @@ export default function OperasyonlarPage() {
         {/* Testimonials */}
         <div className="mx-auto max-w-[1200px] px-6">
           <motion.span
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
             style={FONT}
           >
             Müşteri Görüşleri
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-900 dark:text-white md:text-[30px]"
             style={FONT}
           >
@@ -769,7 +769,7 @@ export default function OperasyonlarPage() {
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                 custom={i * 0.1}
                 className="rounded-[24px] border border-zinc-100 bg-white p-6 dark:border-white/[0.06] dark:bg-white/[0.02] md:p-8"
               >
@@ -814,10 +814,10 @@ export default function OperasyonlarPage() {
       {/* ── SECTION 7: CTA Banner ─────────────────────────────────── */}
       <section className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.98 }}
+          initial={{ opacity: 0.12, y: 22, scale: 0.99 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-          transition={{ duration: 0.6, ease: EASE }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          transition={{ duration: 0.56, ease: EASE }}
           className="relative overflow-hidden rounded-[34px] bg-[linear-gradient(135deg,#DB2777_0%,#9D174D_50%,#831843_100%)] p-10 md:p-16"
         >
           <div className="pointer-events-none absolute -right-20 -top-20 h-[200px] w-[200px] rounded-full bg-white/10 blur-[60px]" />

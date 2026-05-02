@@ -3,6 +3,7 @@ import BentoGrid from "@/components/BentoGrid";
 import FirstScrollSnap from "@/components/FirstScrollSnap";
 import HomeScrollReset from "@/components/HomeScrollReset";
 import dynamic from "next/dynamic";
+import { projects } from "@/data/projects";
 
 const ServiceCircleDiagram = dynamic(() => import("@/components/ServiceCircleDiagram"));
 const VideoTestimonials = dynamic(() => import("@/components/VideoTestimonials"));
@@ -10,20 +11,20 @@ const BrandMarquee = dynamic(() => import("@/components/BrandMarquee"));
 
 const videoTestimonials = [
   {
-    id: "brand-a",
-    videoSrc: "/videos/testimonial-a.mp4",
-    posterSrc: "/images/dag-optimized.webp",
-    brandName: "Marka A",
-    personName: "Ahmet Yılmaz",
-    personRole: "Pazarlama Direktörü",
+    id: "emma",
+    videoSrc: "/videos/emma.mp4",
+    posterSrc: "/videos/posters/emma-poster.png",
+    brandName: "Emma",
+    personName: "Referans Video",
+    personRole: "Zeplin Media",
   },
   {
-    id: "brand-b",
-    videoSrc: "/videos/testimonial-b.mp4",
-    posterSrc: "/images/dag-optimized.webp",
-    brandName: "Marka B",
-    personName: "Elif Demir",
-    personRole: "Kurucu Ortak",
+    id: "oguz-abi",
+    videoSrc: "/videos/oguz-abi.mp4",
+    posterSrc: "/videos/posters/oguz-abi-poster.png",
+    brandName: "Oğuz Abi",
+    personName: "Referans Video",
+    personRole: "Zeplin Media",
   },
 ];
 
@@ -42,44 +43,17 @@ const blocks = [
     items: ["UI/UX Tasarım", "Web Geliştirme", "AI İçerik", "Video Prodüksiyon"],
     href: "/projeler",
     projects: [
-      {
-        name: "Milo Restaurant",
-        description: "Menü, Reels ve Fotoğraf Çekimi",
-        image: "/images/projects-milo-cover.webp",
-        imagePosition: "center 46%",
-        tags: ["Menü Çekimi", "Reels", "Fotoğraf"],
-      },
-      {
-        name: "Babi Restaurant",
-        description: "Fotoğraf ve Video Çekimi",
-        image: "/images/projects-babi-cover.webp",
-        imagePosition: "center 45%",
-        tags: ["Fotoğraf", "Video", "Restaurant"],
-      },
-      {
-        name: "Ritim Jewellery",
-        description: "Yapay Zeka Reklam Filmi",
-        image: "/images/projects-ritim-jewellery-cover.webp",
-        imagePosition: "center 58%",
-        tags: ["Yapay Zeka", "Reklam Filmi", "Jewellery"],
-      },
-      {
-        name: "Pam Akademi",
-        description: "Kimlik İnşası, Web Sitesi ve Sosyal Medya Tasarımları",
-        image: "/images/projects-pam-akademi-cover.webp",
-        imagePosition: "center 62%",
-        tags: ["Kimlik İnşası", "Web Sitesi", "Sosyal Medya"],
-      },
-      {
-        name: "Foton Sağlık Çözümleri",
-        description: "Kurumsal Web Sitesi Tasarımı ve Geliştirme",
-        image: "/images/projects-foton-medical-cover.webp",
-        imagePosition: "center",
-        tags: ["Web Sitesi", "UI/UX", "Kurumsal"],
-      },
-      { name: "Sosyal Medya Kampanya", image: "/images/dag-optimized.webp" },
-      { name: "Video Prodüksiyon", image: "/images/dag-optimized.webp" },
-      { name: "AI İçerik Projesi", image: "/images/dag-optimized.webp" },
+      ...projects.map((p) => ({
+        slug: p.slug,
+        name: p.name,
+        description: p.shortDesc,
+        image: p.image,
+        imagePosition: p.imagePosition,
+        tags: p.tags,
+        variant: p.variant,
+        year: p.year,
+        client: p.client,
+      })),
     ],
   },
   {

@@ -15,12 +15,12 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const FONT = { fontFamily: "var(--font-jost), sans-serif" } as const;
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.985 },
+  hidden: { opacity: 0.16, y: 24, scale: 0.99 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.52, ease: EASE, delay },
+    transition: { duration: 0.54, ease: EASE, delay },
   }),
 };
 
@@ -35,24 +35,32 @@ function WordReveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -15% 0px" });
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const [shouldReveal, setShouldReveal] = useState(false);
   const words = text.split(" ");
+
+  useEffect(() => {
+    if (!isInView) return;
+    const frame = window.requestAnimationFrame(() => setShouldReveal(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, [isInView]);
+
+  useEffect(() => {
+    const fallback = window.setTimeout(() => setShouldReveal(true), 900);
+    return () => window.clearTimeout(fallback);
+  }, []);
 
   return (
     <span ref={ref} className={className}>
       {words.map((word, i) => (
         <motion.span
           key={`${word}-${i}`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={
-            isInView
-              ? { opacity: 1, y: 0 }
-              : { opacity: 0, y: 20 }
-          }
+          initial={{ opacity: 0.12, y: 22 }}
+          animate={shouldReveal ? { opacity: 1, y: 0 } : { opacity: 0.12, y: 22 }}
           transition={{
-            duration: 0.5,
+            duration: 0.34,
             ease: EASE,
-            delay: delay + i * 0.06,
+            delay: shouldReveal ? delay + i * 0.035 : 0,
           }}
           className="inline-block"
         >
@@ -74,7 +82,7 @@ function CountUp({
   delay: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -20% 0px" });
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");
@@ -103,60 +111,60 @@ function CountUp({
 
 /* ── Data ─────────────────────────────────────────────────────────── */
 const metrics = [
-  { value: 5, suffix: "+", label: "Yıllık Deneyim" },
-  { value: 50, suffix: "+", label: "Mutlu Marka" },
-  { value: 15, suffix: "", label: "Uzman Ekip" },
-  { value: 360, suffix: "°", label: "Dijital Operasyon" },
+  { value: 38, suffix: "+", label: "Aktif Marka Operasyonu" },
+  { value: 4, suffix: "", label: "Üretim Disiplini" },
+  { value: 92, suffix: "%", label: "Zamanında Teslim Ritmi" },
+  { value: 360, suffix: "°", label: "Dijital Bakış" },
 ];
 
 const processSteps = [
   {
     num: "01",
-    title: "Briefing",
-    desc: "İhtiyaçlarınızı dinliyor, markanızı ve hedeflerinizi derinlemesine tanıyoruz.",
+    title: "Dinleme",
+    desc: "Markanın mevcut sesini, hedefini ve ekip içi ritmini anlamakla başlarız.",
   },
   {
     num: "02",
-    title: "Brainstorm",
-    desc: "Yaratıcı ekibimizle fikirler üretiyor, konseptleri şekillendiriyoruz.",
+    title: "Yön Bulma",
+    desc: "Tasarım, içerik ve operasyon tarafında tek bir ana yön belirleriz.",
   },
   {
     num: "03",
     title: "Strateji",
-    desc: "Veriye dayalı yol haritası çiziyor, KPI'ları ve hedefleri belirliyoruz.",
+    desc: "Kanal, format, takvim ve ölçüm mantığını uygulanabilir bir plana çeviririz.",
   },
   {
     num: "04",
-    title: "Tasarım & Üretim",
-    desc: "Görsel dili oluşturuyor, içerikleri titizlikle üretiyoruz.",
+    title: "Üretim",
+    desc: "Görsel, video, metin ve web parçalarını aynı marka diliyle üretiriz.",
   },
   {
     num: "05",
-    title: "Lansman & Analiz",
-    desc: "Kampanyaları hayata geçiriyor, ölçüyor ve sürekli optimize ediyoruz.",
+    title: "Yayın & Takip",
+    desc: "İşi yayına alır, metrikleri okur ve sonraki hamleyi veriye göre netleştiririz.",
   },
 ];
 
 const milestones = [
   {
-    year: "2019",
-    label: "Kuruluş",
-    desc: "Zeplin Media İstanbul'da kuruldu. Dijital pazarlama alanında ilk adımlarımızı attık.",
+    year: "01",
+    label: "Strateji Masası",
+    desc: "Her işte önce problemi sadeleştiririz. Hedef netleşmeden tasarım ya da içerik üretmeyiz.",
   },
   {
-    year: "2021",
-    label: "Büyüme",
-    desc: "50+ marka ile çalışmaya başladık. Ekibimiz 15 kişiye ulaştı.",
+    year: "02",
+    label: "Üretim Hattı",
+    desc: "Fotoğraf, video, sosyal medya, web ve yapay zeka işlerini birbirinden koparmadan planlarız.",
   },
   {
-    year: "2023",
-    label: "AI Dönüşümü",
-    desc: "Yapay zeka hizmetlerini portföyümüze ekledik. Chatbot ve callbot çözümleri sunduk.",
+    year: "03",
+    label: "Operasyon Takibi",
+    desc: "Takvim, revizyon, yayın ve rapor akışını görünür tutarız. İşin kaybolmasına izin vermeyiz.",
   },
   {
-    year: "2025",
-    label: "360° Operasyon",
-    desc: "Uçtan uca dijital operasyon modeline geçtik. Her şey tek çatı altında.",
+    year: "04",
+    label: "Ölçülebilir Sonuç",
+    desc: "Beğeni kadar teslim ritmine, erişim kadar iş akışına da bakarız. Büyüme ölçülebilir olmalı.",
   },
 ];
 
@@ -164,17 +172,17 @@ const quotes = [
   {
     name: "Kurucu Ortak",
     role: "Zeplin Media",
-    text: "Her markanın kendine has bir dijital sesi olduğuna inanıyoruz. Bizim işimiz o sesi bulmak ve güçlendirmek.",
+    text: "Bir markayı büyütmek sadece güzel görünen içerik üretmek değil; doğru ritmi, doğru kanalı ve doğru operasyon disiplinini kurmak.",
   },
   {
     name: "Kreatif Direktör",
     role: "Zeplin Media",
-    text: "Tasarımda sadelik, stratejide derinlik. Bu ikisini buluşturmak en büyük motivasyonumuz.",
+    text: "Tasarımda gösterişten çok karakter arıyoruz. Markanın sesini boğmayan, ama ona sahne açan işler üretmek önemli.",
   },
   {
     name: "Teknoloji Lideri",
     role: "Zeplin Media",
-    text: "Yapay zeka bir araç, asıl güç onu doğru kullanan insan zekasında. Teknolojiyi insanla birleştiriyoruz.",
+    text: "Yapay zeka bizim için vitrin efekti değil; tekrar eden işleri hafifleten, ekibin daha iyi karar almasını sağlayan bir katman.",
   },
 ];
 
@@ -196,7 +204,7 @@ export default function HakkimizdaPage() {
       {/* ── Hero — hizmetler ile aynı stil ───────────────────────── */}
       <section
         className="relative overflow-hidden px-6 pb-12 pt-[46svh] md:pb-24 md:pt-56 bg-center bg-no-repeat bg-[length:auto_100%] md:bg-cover"
-        style={{ backgroundImage: "url('/images/hakkimizda-optimized.webp')" }}
+        style={{ backgroundImage: "url('/images/generated/about-agency-studio.webp')" }}
       >
         <div className="absolute inset-0 bg-linear-to-b from-white/30 via-white/70 to-white dark:from-[#0a0a0a]/20 dark:via-[#0a0a0a]/70 dark:to-[#0a0a0a]" />
 
@@ -219,7 +227,7 @@ export default function HakkimizdaPage() {
             className="mt-2 max-w-[600px] text-base font-light text-zinc-400 dark:text-zinc-500 sm:text-lg"
             style={FONT}
           >
-            Dijitalde fark yaratan bir ekibin hikayesi.
+            Strateji, üretim ve operasyonu aynı masada buluşturan yaratıcı ekip.
           </motion.p>
         </div>
 
@@ -233,7 +241,7 @@ export default function HakkimizdaPage() {
           style={FONT}
         >
           <WordReveal
-            text="Markanızın dijital dünyada yalnızca var olmasını değil, fark yaratmasını sağlıyoruz."
+            text="Markanızın dijitalde yalnızca görünmesini değil, düzenli ve ölçülebilir bir ritim yakalamasını sağlıyoruz."
             delay={0}
           />
           <br />
@@ -280,14 +288,14 @@ export default function HakkimizdaPage() {
         <div className="grid items-center gap-10 md:grid-cols-[1fr_1.2fr] md:gap-16">
           {/* Left — Image with clip-path reveal */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-            transition={{ duration: 0.7, ease: EASE }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.56, ease: EASE }}
             className="relative aspect-[4/5] overflow-hidden rounded-[28px]"
           >
             <Image
-              src="/images/hakkimizda-optimized.webp"
+              src="/images/generated/about-agency-studio.webp"
               alt="Zeplin Media Hikayemiz"
               fill
               className="object-cover"
@@ -299,10 +307,10 @@ export default function HakkimizdaPage() {
           {/* Right — Text */}
           <div>
             <motion.span
-              initial={{ opacity: 0, x: -10 }}
+              initial={{ opacity: 0.12, x: -10 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: EASE }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              transition={{ duration: 0.54, ease: EASE }}
               className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
               style={FONT}
             >
@@ -310,10 +318,10 @@ export default function HakkimizdaPage() {
             </motion.span>
 
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              transition={{ duration: 0.56, ease: EASE, delay: 0.1 }}
               className="mt-4 text-[26px] font-semibold leading-[1.1] tracking-[-0.03em] text-zinc-900 dark:text-white md:text-[34px]"
               style={FONT}
             >
@@ -325,38 +333,39 @@ export default function HakkimizdaPage() {
             </motion.h2>
 
             <motion.p
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              transition={{ duration: 0.54, ease: EASE, delay: 0.2 }}
               className="mt-6 text-[16px] leading-[1.8] text-zinc-500 dark:text-zinc-400 md:text-[17px]"
               style={FONT}
             >
-              2019 yılında İstanbul&apos;da kurulan Zeplin Media, markaların
-              dijital varlığını stratejiden tasarıma, içerik üretiminden yapay
-              zeka otomasyonuna kadar uçtan uca yöneten bir dijital ajans.
+              Zeplin Media; markaların dijital dünyadaki görünürlüğünü,
+              üretim temposunu ve operasyon akışını aynı çatı altında yöneten
+              yaratıcı bir ekip. Bir işi sadece güzel göstermekle yetinmeyip,
+              onun nasıl yayınlanacağını, nasıl ölçüleceğini ve nasıl
+              sürdürüleceğini de düşünürüz.
             </motion.p>
 
             <motion.p
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.3 }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              transition={{ duration: 0.54, ease: EASE, delay: 0.3 }}
               className="mt-4 text-[16px] leading-[1.8] text-zinc-500 dark:text-zinc-400 md:text-[17px]"
               style={FONT}
             >
-              Geleneksel kaliteyi modern teknoloji ile birleştirerek her
-              markayı kendi benzersiz sesini bulması için güçlendiriyoruz.
-              Tasarımcılar, stratejistler, yazılımcılar ve içerik
-              üreticilerinden oluşan multidisipliner ekibimizle her projede
-              birlikte düşünür, birlikte üretiriz.
+              Fotoğraf ve video çekiminden sosyal medya tasarımına, kurumsal
+              web sitelerinden yapay zeka destekli akışlara kadar her parçada
+              aynı soruya bakarız: Bu marka daha net, daha tutarlı ve daha
+              güçlü nasıl görünür?
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
+              initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.4 }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              transition={{ duration: 0.54, ease: EASE, delay: 0.4 }}
               className="mt-8 flex gap-3"
             >
               <a
@@ -396,20 +405,20 @@ export default function HakkimizdaPage() {
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
           >
             Sürecimiz
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-white md:text-[30px]"
             style={FONT}
           >
@@ -422,7 +431,7 @@ export default function HakkimizdaPage() {
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               transition={{ duration: 1.5, ease: EASE, delay: 0.4 }}
               className="absolute left-[24px] right-[24px] top-[24px] hidden h-px origin-left md:block"
               style={{
@@ -435,7 +444,7 @@ export default function HakkimizdaPage() {
             <motion.div
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
-              viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}
               className="absolute bottom-[24px] left-[23px] top-[48px] w-px origin-top md:hidden"
               style={{
@@ -448,17 +457,17 @@ export default function HakkimizdaPage() {
               {processSteps.map((step, i) => (
                 <motion.div
                   key={step.num}
-                  initial={{ opacity: 0, y: 25 }}
+                  initial={{ opacity: 0.12, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-                  transition={{ duration: 0.5, ease: EASE, delay: i * 0.1 }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  transition={{ duration: 0.54, ease: EASE, delay: i * 0.1 }}
                   className="group relative flex gap-5 md:flex-col md:items-center md:gap-0 md:text-center"
                 >
                   {/* Step circle */}
                   <motion.div
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                     transition={{
                       type: "spring",
                       stiffness: 300,
@@ -502,20 +511,20 @@ export default function HakkimizdaPage() {
       <section className="mx-auto max-w-[1200px] px-6 py-16 md:py-24">
         <div className="mb-12 md:mb-16">
           <motion.span
-            initial={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
             style={FONT}
           >
             Yolculuğumuz
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: EASE, delay: 0.08 }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-900 dark:text-white md:text-[30px]"
             style={FONT}
           >
@@ -528,7 +537,7 @@ export default function HakkimizdaPage() {
           <motion.div
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
-            viewport={{ once: true, margin: "0px 0px -20% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             transition={{ duration: 1.2, ease: EASE }}
             className="absolute left-[19px] top-0 h-full w-px origin-top bg-linear-to-b from-[#DB2777] via-[#EC4899] to-[#F9A8D4] dark:from-[#9D174D] dark:via-[#DB2777] dark:to-[#F472B6] md:left-1/2 md:-translate-x-px"
           />
@@ -539,11 +548,11 @@ export default function HakkimizdaPage() {
               return (
                 <motion.div
                   key={m.year}
-                  initial={{ opacity: 0, x: isEven ? -30 : 30 }}
+                  initial={{ opacity: 0.12, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                   transition={{
-                    duration: 0.6,
+                    duration: 0.56,
                     ease: EASE,
                     delay: 0.1,
                   }}
@@ -558,7 +567,7 @@ export default function HakkimizdaPage() {
                     <motion.div
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
+                      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                       transition={{
                         type: "spring",
                         stiffness: 300,
@@ -608,9 +617,10 @@ export default function HakkimizdaPage() {
 
         <div className="relative mx-auto max-w-[1200px] px-6">
           <motion.span
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            transition={{ duration: 0.4, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
           >
@@ -622,10 +632,10 @@ export default function HakkimizdaPage() {
             <AnimatePresence mode="wait">
               <motion.blockquote
                 key={activeQuote}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0.12, y: 22 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, ease: EASE }}
+                transition={{ duration: 0.54, ease: EASE }}
               >
                 {/* Large decorative quote */}
                 <span
@@ -683,10 +693,10 @@ export default function HakkimizdaPage() {
       {/* ── CTA — Full-width Banner ───────────────────────────────── */}
       <section className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.98 }}
+          initial={{ opacity: 0.12, y: 22, scale: 0.99 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-          transition={{ duration: 0.6, ease: EASE }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          transition={{ duration: 0.56, ease: EASE }}
           className="relative overflow-hidden rounded-[34px] bg-[linear-gradient(135deg,#DB2777_0%,#9D174D_50%,#831843_100%)] p-10 md:p-16"
         >
           {/* Decorative elements */}

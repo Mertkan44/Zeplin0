@@ -28,7 +28,7 @@ export function ServiceHero({
       <div className="relative mx-auto flex max-w-[1200px] flex-col items-start">
         {/* Breadcrumb */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: EASE, delay: 0 }}
           className="mb-6"
@@ -42,7 +42,7 @@ export function ServiceHero({
 
         {/* Category badge */}
         <motion.span
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.44, ease: EASE, delay: 0.06 }}
           className="mb-4 inline-block rounded-full bg-[linear-gradient(135deg,#DB2777_0%,#9D174D_100%)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white"

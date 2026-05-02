@@ -15,15 +15,15 @@ import FirstScrollSnap from "@/components/FirstScrollSnap";
 
 /* ── Metrics ──────────────────────────────────────────────────────── */
 const metrics = [
-  { value: 50, suffix: "+", label: "Marka Bize Güvendi" },
-  { value: 70, suffix: "+", label: "Proje Teslim Edildi" },
-  { value: 3, suffix: "M+", label: "Toplam Etkileşim" },
-  { value: 12, suffix: "+", label: "Sektörde Deneyim" },
+  { value: 38, suffix: "+", label: "Aktif Marka Operasyonu" },
+  { value: 92, suffix: "%", label: "Zamanında Teslim" },
+  { value: 4, suffix: ".7x", label: "Ortalama Etkileşim Artışı" },
+  { value: 360, suffix: "°", label: "Üretim ve Operasyon" },
 ];
 
 function CountUp({ value, suffix, delay }: { value: number; suffix: string; delay: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px -20% 0px" });
+  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");
@@ -53,9 +53,9 @@ function CountUp({ value, suffix, delay }: { value: number; suffix: string; dela
 
 /* ── Testimonials ─────────────────────────────────────────────────── */
 const testimonials = [
-  { name: "Ayşe K.", role: "Marka Yöneticisi", text: "Sosyal medya stratejimizi tamamen dönüştürdüler. Etkileşimimiz 3 ayda %400 arttı." },
-  { name: "Burak T.", role: "CEO, TechStart", text: "AI chatbot çözümleri müşteri memnuniyetimizi inanılmaz ölçüde artırdı." },
-  { name: "Elif M.", role: "Pazarlama Direktörü", text: "Tasarım kaliteleri ve hızlı teslimatları ile sektörde fark yaratıyorlar." },
+  { name: "Milo Restaurant", role: "Fotoğraf ve Reels", text: "Menü çekimi, reels akışı ve sosyal medya görselleri aynı görsel dilde toplandı." },
+  { name: "Foton Sağlık Çözümleri", role: "Kurumsal Web Sitesi", text: "Teknik ürün gamını sade, güven veren ve uluslararası kullanıma uygun bir web yapısına taşıdık." },
+  { name: "Pam Akademi", role: "Kimlik ve Sosyal Medya", text: "Kimlik inşası, web sitesi, takvim ve sosyal medya tasarımlarını tek marka sistemi altında birleştirdik." },
 ];
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -94,7 +94,7 @@ export default function HizmetlerPage() {
             className="mt-2 max-w-[600px] text-base font-light text-zinc-400 dark:text-zinc-500 sm:text-lg"
             style={FONT}
           >
-            Dijital dünyada markanızı bir adım öne taşıyacak çözümler.
+            Markanızın görünümünü, içeriğini ve operasyon ritmini aynı masada kuran çözümler.
           </motion.p>
         </div>
 
@@ -109,8 +109,7 @@ export default function HizmetlerPage() {
         <motion.div
           variants={revealVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "0px" }}
+          animate="visible"
           custom={0}
           className="border-y border-zinc-200/80 py-2 dark:border-white/10 md:py-4"
         >
@@ -139,8 +138,7 @@ export default function HizmetlerPage() {
         <motion.div
           variants={revealVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "0px" }}
+          animate="visible"
           custom={0.08}
         >
           <div className="overflow-hidden rounded-[34px] border border-[#F9A8D4]/50 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] shadow-[0_24px_70px_rgba(219,39,119,0.14)] dark:border-[#9D174D]/30 dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] dark:shadow-[0_24px_70px_rgba(157,23,77,0.25)]">
@@ -156,7 +154,7 @@ export default function HizmetlerPage() {
                   <span className="text-[#EC4899] dark:text-[#F472B6]">Hizmetlerimiz.</span>
                 </h2>
                 <p className="mt-8 max-w-[28ch] text-[15px] leading-[1.72] text-white/62 md:text-[17px]">
-                  Chatbot, callbot ve otomasyon akışlarını markanızın günlük operasyonuna sade ama güçlü bir katman olarak yerleştiriyoruz.
+                  Chatbot, callbot ve otomasyon akışlarını; sosyal medya, web ve içerik operasyonunuzla aynı ritimde çalışacak şekilde kurguluyoruz.
                 </p>
               </div>
 
@@ -164,7 +162,7 @@ export default function HizmetlerPage() {
               <div className="relative min-h-[260px] overflow-hidden border-t border-white/8 bg-[#160812] md:min-h-full md:border-l md:border-t-0 md:border-white/8">
                 <div
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: "url('/images/services-digital-premium-optimized.webp')" }}
+                  style={{ backgroundImage: "url('/images/generated/service-ai-automation.webp')" }}
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,12,24,0.82)_0%,rgba(31,12,24,0.18)_52%,rgba(31,12,24,0)_100%)]" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_74%_46%,rgba(236,72,153,0.32),transparent_38%)]" />
@@ -180,7 +178,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
         >
           {/* Tab bar */}
@@ -213,9 +211,9 @@ export default function HizmetlerPage() {
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 16, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.36, ease: EASE }}
               className="grid grid-cols-1 gap-4 sm:grid-cols-2"
             >
@@ -224,7 +222,7 @@ export default function HizmetlerPage() {
                   key={card.title}
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.42, ease: EASE, delay: ci * 0.08 }}
+                  transition={{ duration: 0.46, ease: EASE, delay: ci * 0.08 }}
                 >
                   <Link
                     href={`/hizmetler/${card.slug}`}
@@ -276,7 +274,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -319,7 +317,7 @@ export default function HizmetlerPage() {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             custom={0.05}
             className="group relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,#2a1525_0%,#1f0c18_100%)] p-8 transition-shadow duration-500 hover:shadow-[0_16px_60px_rgba(219,39,119,0.12)] dark:bg-[linear-gradient(180deg,#1a0e17_0%,#120a10_100%)] dark:hover:shadow-[0_16px_60px_rgba(157,23,77,0.18)] md:min-h-[320px] md:p-12"
           >
@@ -367,7 +365,7 @@ export default function HizmetlerPage() {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             custom={0.12}
             className="group relative overflow-hidden rounded-[28px] border border-[#F9A8D4]/40 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] p-8 transition-shadow duration-500 hover:shadow-[0_16px_60px_rgba(219,39,119,0.14)] dark:border-[#9D174D]/30 dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] dark:hover:shadow-[0_16px_60px_rgba(157,23,77,0.2)] md:p-12"
           >
@@ -411,7 +409,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -427,7 +425,7 @@ export default function HizmetlerPage() {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={i * 0.1}
               className="relative flex flex-col justify-between"
             >

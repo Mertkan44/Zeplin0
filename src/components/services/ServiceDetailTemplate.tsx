@@ -14,6 +14,12 @@ import { CTABanner } from "./CTABanner";
 
 export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
   const related = getRelatedServices(service.relatedSlugs);
+  const portfolioItems = [
+    { img: service.heroImage, label: `${service.title} / Ana konsept` },
+    { img: "/images/generated/service-design-system.webp", label: "Görsel sistem" },
+    { img: "/images/generated/service-content-studio.webp", label: "İçerik ritmi" },
+    { img: "/images/generated/gallery-production-wall.webp", label: "Teslim paketi" },
+  ];
 
   return (
     <main className="min-h-screen bg-white text-zinc-900 dark:bg-[#0a0a0a] dark:text-zinc-100">
@@ -32,7 +38,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -57,7 +63,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={i * 0.08}
               className="group relative overflow-hidden rounded-[24px] border border-zinc-100 bg-zinc-50/80 p-7 transition-all duration-500 hover:border-[#F472B6]/20 hover:shadow-[0_8px_40px_rgba(219,39,119,0.06)] dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-[#9D174D]/30 dark:hover:shadow-[0_8px_40px_rgba(157,23,77,0.08)] md:p-9"
             >
@@ -102,7 +108,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
             custom={0}
             className="mb-12 md:mb-16"
           >
@@ -125,14 +131,14 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
             {/* Connecting line — desktop */}
             <div className="pointer-events-none absolute left-0 right-0 top-[28px] hidden h-[1px] bg-gradient-to-r from-transparent via-[#DB2777]/20 to-transparent md:block" />
 
-            <div className={`grid grid-cols-1 gap-8 md:grid-cols-${Math.min(service.process.length, 5)} md:gap-6`}>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-4 md:gap-6">
               {service.process.map((step, i) => (
                 <motion.div
                   key={step.step}
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
                   custom={i * 0.1}
                   className="relative flex flex-col items-start md:items-center md:text-center"
                 >
@@ -171,7 +177,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -179,29 +185,24 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
             className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-700"
             style={FONT}
           >
-            örnek çalışmalar
+            uygulama alanları
           </span>
           <h2
             className="mt-4 text-[28px] font-semibold leading-[1.1] tracking-[-0.03em] text-zinc-900 dark:text-white md:text-[38px]"
             style={FONT}
           >
-            Portfolyo
+            Bu hizmet nerede görünür?
           </h2>
         </motion.div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {[
-            { img: "/images/dag-optimized.webp", label: "Proje 01" },
-            { img: "/images/wherehavee-optimized.webp", label: "Proje 02" },
-            { img: "/images/wherehavee-optimized.webp", label: "Proje 03" },
-            { img: "/images/dag-optimized.webp", label: "Proje 04" },
-          ].map((item, i) => (
+          {portfolioItems.map((item, i) => (
             <motion.div
               key={item.label}
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
               custom={i * 0.08}
               className="group relative aspect-[4/3] overflow-hidden rounded-[24px]"
             >
@@ -212,7 +213,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
               <div className="absolute inset-0 bg-black/20 transition-all duration-500 group-hover:bg-black/40" />
               <div className="absolute inset-x-0 bottom-0 flex items-end p-6">
                 <span
-                  className="text-[14px] font-semibold text-white opacity-0 transition-all duration-400 group-hover:opacity-100"
+                  className="text-[14px] font-semibold text-white opacity-100 transition-all duration-400 md:opacity-0 md:group-hover:opacity-100"
                   style={FONT}
                 >
                   {item.label}
@@ -229,7 +230,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
           custom={0}
         >
           <div className="overflow-hidden rounded-[28px] border border-[#F9A8D4]/50 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] shadow-[0_24px_70px_rgba(219,39,119,0.14)] dark:border-[#9D174D]/30 dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] dark:shadow-[0_24px_70px_rgba(157,23,77,0.25)]">
@@ -285,9 +286,14 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
                 </a>
               </div>
 
-              {/* Right gradient visual */}
-              <div className="min-h-[200px] border-t border-white/8 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] md:min-h-full md:border-l md:border-t-0 md:border-white/8">
-                <div className="h-full w-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.32),transparent_34%),linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.08)_100%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_34%),linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.02)_100%)]" />
+              {/* Right visual */}
+              <div className="relative min-h-[240px] overflow-hidden border-t border-white/8 md:min-h-full md:border-l md:border-t-0 md:border-white/8">
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: `url('${service.heroImage}')` }}
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(31,12,24,0.72)_0%,rgba(31,12,24,0.12)_55%,rgba(31,12,24,0)_100%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.22),transparent_34%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_34%)]" />
               </div>
             </div>
           </div>
