@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import GalleryGrid, { type GalleryTile } from "@/components/GalleryGrid";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Galeri | Zeplin Media",
-  description: "Zeplin Media üretim, tasarım, web ve sosyal medya çalışmalarından seçili görsel akış.",
-};
+export const metadata: Metadata = createPageMetadata({
+  title: "Galeri",
+  description: "Zeplin Media üretim, tasarım, web, video ve sosyal medya çalışmalarından seçili görsel akış.",
+  path: "/galeri",
+  image: "/images/projects-milo-gallery-3.jpg",
+});
 
 const galleryTiles: GalleryTile[] = [
   {

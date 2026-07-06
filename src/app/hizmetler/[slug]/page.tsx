@@ -6,6 +6,13 @@ import { VideoServicePage } from "@/components/services/VideoServicePage";
 import { ChatbotServicePage } from "@/components/services/ChatbotServicePage";
 import { VoiceServicePage } from "@/components/services/VoiceServicePage";
 import { SoftwareServicePage } from "@/components/services/SoftwareServicePage";
+import {
+  breadcrumbJsonLd,
+  createPageMetadata,
+  jsonLdScript,
+  serviceJsonLd,
+  siteConfig,
+} from "@/lib/seo";
 
 import type { Metadata } from "next";
 
@@ -20,12 +27,21 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const service = getServiceBySlug(slug);
-  if (!service) return { title: "Hizmet Bulunamadı | Zeplin" };
+  if (!service) {
+    return createPageMetadata({
+      title: "Hizmet Bulunamadı",
+      description: siteConfig.shortDescription,
+      path: `/hizmetler/${slug}`,
+      noIndex: true,
+    });
+  }
 
-  return {
-    title: `${service.title} | Zeplin Ajans`,
-    description: service.longDesc,
-  };
+  return createPageMetadata({
+    title: `${service.title} Hizmeti`,
+    description: `${service.shortDesc}. ${service.longDesc}`,
+    path: `/hizmetler/${service.slug}`,
+    image: service.heroImage,
+  });
 }
 
 export default async function ServiceDetailPage({ params }: Props) {
@@ -34,25 +50,34 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   if (!service) notFound();
 
-  if (service.customPage === "chatbot") {
-    return <ChatbotServicePage service={service} />;
-  }
+  const structuredData = [
+    breadcrumbJsonLd([
+      { name: "Ana sayfa", path: "/" },
+      { name: "Hizmetler", path: "/hizmetler" },
+      { name: service.title, path: `/hizmetler/${service.slug}` },
+    ]),
+    serviceJsonLd(service),
+  ];
 
-  if (service.customPage === "voice") {
-    return <VoiceServicePage service={service} />;
-  }
+  const content =
+    service.customPage === "chatbot" ? (
+      <ChatbotServicePage service={service} />
+    ) : service.customPage === "voice" ? (
+      <VoiceServicePage service={service} />
+    ) : service.customPage === "software" ? (
+      <SoftwareServicePage service={service} />
+    ) : service.customPage === "ai" ? (
+      <AIServicePage service={service} />
+    ) : service.customPage === "video" ? (
+      <VideoServicePage service={service} />
+    ) : (
+      <ServiceDetailTemplate service={service} />
+    );
 
-  if (service.customPage === "software") {
-    return <SoftwareServicePage service={service} />;
-  }
-
-  if (service.customPage === "ai") {
-    return <AIServicePage service={service} />;
-  }
-
-  if (service.customPage === "video") {
-    return <VideoServicePage service={service} />;
-  }
-
-  return <ServiceDetailTemplate service={service} />;
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLdScript(structuredData)} />
+      {content}
+    </>
+  );
 }

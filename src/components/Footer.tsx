@@ -57,15 +57,16 @@ function ZMStar({
 const siteLinks = [
   { href: "/",             label: "Ana sayfa" },
   { href: "/hizmetler",    label: "Hizmetler" },
+  { href: "/projeler",     label: "Projeler" },
   { href: "/operasyonlar", label: "Operasyonlar" },
+  { href: "/hakkimizda",   label: "Hakkımızda" },
   { href: "/galeri",       label: "Galeri" },
 ];
 
-const socialLinks = [
+const socialLinks: { href: string; label: string; internal?: boolean }[] = [
   { href: "https://www.instagram.com/zeplin.media/",         label: "Instagram" },
   { href: "https://www.linkedin.com/company/zeplin-media/",  label: "LinkedIn" },
   { href: "https://wa.me/905459407690",                       label: "WhatsApp" },
-  { href: "/blog",                                            label: "Blog", internal: true },
 ];
 
 /* ── Footer ─────────────────────────────────────────────────────────── */

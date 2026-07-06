@@ -1,9 +1,17 @@
+import type { Metadata } from "next";
 import HeroBanner from "@/components/HeroBanner";
 import BentoGrid from "@/components/BentoGrid";
 import FirstScrollSnap from "@/components/FirstScrollSnap";
 import HomeScrollReset from "@/components/HomeScrollReset";
 import dynamic from "next/dynamic";
 import { projects } from "@/data/projects";
+import { createPageMetadata, siteConfig } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "Zeplin Media | İstanbul Dijital Ajans",
+  description: siteConfig.description,
+  path: "/",
+});
 
 const ServiceCircleDiagram = dynamic(() => import("@/components/ServiceCircleDiagram"));
 const VideoTestimonials = dynamic(() => import("@/components/VideoTestimonials"));

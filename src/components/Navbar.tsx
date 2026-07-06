@@ -14,7 +14,7 @@ const leftLinks = [
 ];
 
 const rightLinks = [
-  { href: "/blog", label: "zeplin blog" },
+  { href: "/projeler", label: "projeler" },
   { href: "/hakkimizda", label: "hakkımızda" },
   { href: "/galeri", label: "galeri" },
 ];
