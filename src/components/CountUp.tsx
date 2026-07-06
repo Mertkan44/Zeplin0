@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useInView, useMotionValue, useSpring } from "framer-motion";
+import { useMotionValue, useSpring } from "framer-motion";
+import { useReliableInView } from "@/lib/motion";
 
 export function CountUp({
   value,
@@ -13,7 +14,7 @@ export function CountUp({
   delay: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const isInView = useReliableInView(ref);
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");

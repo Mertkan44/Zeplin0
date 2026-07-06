@@ -72,7 +72,7 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="px-3 pb-4 pt-12 md:px-4 md:pb-8 md:pt-16">
-      <div className="mx-auto w-full max-w-[min(1680px,calc(100vw-24px))]">
+      <div className="mx-auto w-full max-w-[min(1280px,calc(100vw-24px))]">
         <section
           className="relative overflow-hidden rounded-[28px] px-5 pb-5 pt-10 md:rounded-[40px] md:px-16 md:pb-8 md:pt-16"
           style={{

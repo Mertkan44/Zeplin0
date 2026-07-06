@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
+import ScrollRevealRescue from "@/components/ScrollRevealRescue";
 
 const jost = Jost({
   subsets: ["latin"],
@@ -45,7 +46,7 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://use.typekit.net/psq5rwo.css" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("theme");var d=t==="light"?!1:!0;document.documentElement.classList.toggle("dark",d);document.documentElement.dataset.theme=d?"dark":"light"}catch(e){document.documentElement.classList.add("dark");document.documentElement.dataset.theme="dark"}})()`,
+            __html: `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark";document.documentElement.classList.toggle("dark",d);document.documentElement.dataset.theme=d?"dark":"light"}catch(e){document.documentElement.classList.remove("dark");document.documentElement.dataset.theme="light"}})()`,
           }}
         />
       </head>
@@ -54,6 +55,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <ScrollRevealRescue />
         </ThemeProvider>
       </body>
     </html>

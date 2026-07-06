@@ -9,6 +9,7 @@ import {
   useSpring,
   AnimatePresence,
 } from "framer-motion";
+import { useReliableInView } from "@/lib/motion";
 
 /* ── Constants ────────────────────────────────────────────────────── */
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -35,7 +36,7 @@ function WordReveal({
   delay?: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const isInView = useInView(ref, { once: true, margin: "15% 0px 15% 0px" });
   const [shouldReveal, setShouldReveal] = useState(false);
   const words = text.split(" ");
 
@@ -82,7 +83,7 @@ function CountUp({
   delay: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const isInView = useReliableInView(ref);
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");
@@ -290,9 +291,9 @@ export default function HakkimizdaPage() {
           <motion.div
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.56, ease: EASE }}
-            className="relative aspect-[4/5] overflow-hidden rounded-[28px]"
+            className="relative hidden aspect-[4/5] overflow-hidden rounded-[28px] md:block"
           >
             <Image
               src="/images/generated/about-agency-studio.webp"
@@ -305,11 +306,11 @@ export default function HakkimizdaPage() {
           </motion.div>
 
           {/* Right — Text */}
-          <div>
+          <div className="text-center md:text-left">
             <motion.span
               initial={{ opacity: 0.12, x: -10 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               transition={{ duration: 0.54, ease: EASE }}
               className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
               style={FONT}
@@ -320,7 +321,7 @@ export default function HakkimizdaPage() {
             <motion.h2
               initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               transition={{ duration: 0.56, ease: EASE, delay: 0.1 }}
               className="mt-4 text-[26px] font-semibold leading-[1.1] tracking-[-0.03em] text-zinc-900 dark:text-white md:text-[34px]"
               style={FONT}
@@ -335,7 +336,7 @@ export default function HakkimizdaPage() {
             <motion.p
               initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               transition={{ duration: 0.54, ease: EASE, delay: 0.2 }}
               className="mt-6 text-[16px] leading-[1.8] text-zinc-500 dark:text-zinc-400 md:text-[17px]"
               style={FONT}
@@ -350,7 +351,7 @@ export default function HakkimizdaPage() {
             <motion.p
               initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               transition={{ duration: 0.54, ease: EASE, delay: 0.3 }}
               className="mt-4 text-[16px] leading-[1.8] text-zinc-500 dark:text-zinc-400 md:text-[17px]"
               style={FONT}
@@ -364,9 +365,9 @@ export default function HakkimizdaPage() {
             <motion.div
               initial={{ opacity: 0.12, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               transition={{ duration: 0.54, ease: EASE, delay: 0.4 }}
-              className="mt-8 flex gap-3"
+              className="mt-8 flex justify-center gap-3 md:justify-start"
             >
               <a
                 href="https://wa.me/905459407690"
@@ -407,7 +408,7 @@ export default function HakkimizdaPage() {
           <motion.span
             initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
@@ -417,7 +418,7 @@ export default function HakkimizdaPage() {
           <motion.h2
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-white md:text-[30px]"
             style={FONT}
@@ -431,7 +432,7 @@ export default function HakkimizdaPage() {
             <motion.div
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               transition={{ duration: 1.5, ease: EASE, delay: 0.4 }}
               className="absolute left-[24px] right-[24px] top-[24px] hidden h-px origin-left md:block"
               style={{
@@ -444,7 +445,7 @@ export default function HakkimizdaPage() {
             <motion.div
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               transition={{ duration: 1.2, ease: EASE, delay: 0.3 }}
               className="absolute bottom-[24px] left-[23px] top-[48px] w-px origin-top md:hidden"
               style={{
@@ -459,7 +460,7 @@ export default function HakkimizdaPage() {
                   key={step.num}
                   initial={{ opacity: 0.12, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                   transition={{ duration: 0.54, ease: EASE, delay: i * 0.1 }}
                   className="group relative flex gap-5 md:flex-col md:items-center md:gap-0 md:text-center"
                 >
@@ -467,7 +468,7 @@ export default function HakkimizdaPage() {
                   <motion.div
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
-                    viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                    viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                     transition={{
                       type: "spring",
                       stiffness: 300,
@@ -513,7 +514,7 @@ export default function HakkimizdaPage() {
           <motion.span
             initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
             style={FONT}
@@ -523,7 +524,7 @@ export default function HakkimizdaPage() {
           <motion.h2
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-900 dark:text-white md:text-[30px]"
             style={FONT}
@@ -537,7 +538,7 @@ export default function HakkimizdaPage() {
           <motion.div
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 1.2, ease: EASE }}
             className="absolute left-[19px] top-0 h-full w-px origin-top bg-linear-to-b from-[#DB2777] via-[#EC4899] to-[#F9A8D4] dark:from-[#9D174D] dark:via-[#DB2777] dark:to-[#F472B6] md:left-1/2 md:-translate-x-px"
           />
@@ -550,7 +551,7 @@ export default function HakkimizdaPage() {
                   key={m.year}
                   initial={{ opacity: 0.12, x: -10 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                   transition={{
                     duration: 0.56,
                     ease: EASE,
@@ -567,7 +568,7 @@ export default function HakkimizdaPage() {
                     <motion.div
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
-                      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                      viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                       transition={{
                         type: "spring",
                         stiffness: 300,
@@ -619,7 +620,7 @@ export default function HakkimizdaPage() {
           <motion.span
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.4, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
@@ -695,7 +696,7 @@ export default function HakkimizdaPage() {
         <motion.div
           initial={{ opacity: 0.12, y: 22, scale: 0.99 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           transition={{ duration: 0.56, ease: EASE }}
           className="relative overflow-hidden rounded-[34px] bg-[linear-gradient(135deg,#DB2777_0%,#9D174D_50%,#831843_100%)] p-10 md:p-16"
         >

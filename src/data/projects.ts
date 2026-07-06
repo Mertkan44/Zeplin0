@@ -7,6 +7,7 @@ export interface ProjectData {
   imagePosition?: string;
   tags: string[];
   variant?: "image" | "website";
+  websiteUrl?: string;
   shortDesc: string;
   challenge: string;
   solution: string;
@@ -30,7 +31,13 @@ export const projects: ProjectData[] = [
       "Restoranın atmosferini ve mutfağını en iyi şekilde yansıtan stüdyo kalitesinde menü fotoğrafları çektik. Sosyal medya için dinamik Reels içerikleri ürettik ve tüm görsel dili markanın kimliğiyle uyumlu hale getirdik.",
     services: ["Menü Fotoğrafçılığı", "Reels Prodüksiyon", "Ürün Çekimi", "Sosyal Medya İçeriği"],
     gallery: [
-      "/images/projects-milo-cover.webp",
+      "/videos/milo-kokteyl.mp4",
+      "/videos/milo-smash.mp4",
+      "/images/projects-milo-gallery-1.jpg",
+      "/images/projects-milo-gallery-2.jpg",
+      "/images/projects-milo-gallery-3.jpg",
+      "/images/projects-milo-gallery-4.jpg",
+      "/images/projects-milo-gallery-5.jpg",
     ],
   },
   {
@@ -66,7 +73,9 @@ export const projects: ProjectData[] = [
       "Yapay zeka destekli görsel üretim teknolojilerini kullanarak koleksiyonun özünü yansıtan sinematik bir reklam filmi ürettik. AI araçları sayesinde lüks markalara yakışır bir estetik, geleneksel prodüksiyonun çok altında bir maliyetle elde edildi.",
     services: ["AI Video Prodüksiyon", "Senaryo", "Ses Tasarımı", "Renk Gradıng"],
     gallery: [
-      "/images/projects-ritim-jewellery-cover.webp",
+      "/videos/ritim-anneler-gunu.mp4",
+      "/videos/ritim-bitti.mp4",
+      "/videos/ritim-kisa1.mp4",
     ],
   },
   {
@@ -84,7 +93,13 @@ export const projects: ProjectData[] = [
       "Logo ve renk paletinden web sitesi tasarımına, sosyal medya şablonlarına kadar bütüncül bir marka kimliği oluşturduk. Kurumsal web sitesini ve sosyal medya görsel sistemini baştan sona tasarlayıp geliştirdik.",
     services: ["Marka Kimliği", "Logo Tasarımı", "Web Sitesi Tasarımı", "Sosyal Medya Tasarımı"],
     gallery: [
-      "/images/projects-pam-akademi-cover.webp",
+      "/images/projects-pam-akademi-gallery-1.jpg",
+      "/images/projects-pam-akademi-gallery-2.jpg",
+      "/images/projects-pam-akademi-gallery-3.jpg",
+      "/images/projects-pam-akademi-gallery-4.jpg",
+      "/images/projects-pam-akademi-gallery-5.jpg",
+      "/images/projects-pam-akademi-gallery-6.jpg",
+      "/images/projects-pam-akademi-gallery-7.jpg",
     ],
   },
   {
@@ -95,6 +110,8 @@ export const projects: ProjectData[] = [
     image: "/images/projects-foton-medical-cover.webp",
     imagePosition: "center",
     tags: ["Web Sitesi", "UI/UX", "Kurumsal"],
+    variant: "website",
+    websiteUrl: "https://www.fotonsc.com",
     shortDesc: "Kurumsal Web Sitesi Tasarımı ve Geliştirme",
     challenge:
       "Foton Sağlık Çözümleri, sağlık teknolojileri alanında güven veren ve kurumsal kimliğini yansıtan, kullanımı kolay bir web sitesine ihtiyaç duyuyordu. Mevcut dijital varlıkları sektördeki konumlarını yeterince ifade etmiyordu.",

@@ -74,12 +74,12 @@ const galleryTiles: GalleryTile[] = [
   },
   {
     id: "tile-6",
-    title: "Tasarım Sistemi",
-    description: "Sosyal medya, baskı ve kampanya materyallerini tek görsel omurga altında toplama.",
-    image: "/images/generated/service-design-system.webp",
+    title: "Milo Restaurant",
+    description: "Menü çekiminden bir kare — ışık ve dokunun ön planda olduğu ürün fotoğrafçılığı.",
+    image: "/images/projects-milo-gallery-2.jpg",
     radiusProfile: "24px",
     speed: 0.8,
-    width: 280,
+    width: 320,
     colors: {
       light: { from: "#F9A8D4", to: "#EC4899", accent: "rgba(255,255,255,0.2)" },
       dark: { from: "#5B1A40", to: "#A21CAF", accent: "rgba(244,114,182,0.2)" },
@@ -87,12 +87,12 @@ const galleryTiles: GalleryTile[] = [
   },
   {
     id: "tile-7",
-    title: "İçerik Masası",
-    description: "Blog, caption, script ve yayın planı için editöryel üretim düzeni.",
-    image: "/images/generated/service-content-studio.webp",
+    title: "Pam Akademi",
+    description: "Kütüphane Kulübü sosyal medya görseli — marka maskotu ve tipografik kimlik.",
+    image: "/images/projects-pam-akademi-gallery-2.jpg",
     radiusProfile: "24px",
     speed: 0.6,
-    width: 360,
+    width: 340,
     colors: {
       light: { from: "#F472B6", to: "#BE185D", accent: "rgba(255,255,255,0.18)" },
       dark: { from: "#4A1531", to: "#831843", accent: "rgba(244,114,182,0.2)" },
@@ -100,9 +100,9 @@ const galleryTiles: GalleryTile[] = [
   },
   {
     id: "tile-8",
-    title: "Video Prodüksiyon",
-    description: "Set, ışık, kamera ve kurgu akışını platform temposuna göre hazırlama.",
-    image: "/images/generated/service-video-production.webp",
+    title: "Milo Restaurant",
+    description: "Servis anından bir kare — atmosferi ve sunumu birlikte anlatan içerik üretimi.",
+    image: "/images/projects-milo-gallery-4.jpg",
     radiusProfile: "24px",
     speed: 1.0,
     width: 400,
@@ -113,12 +113,12 @@ const galleryTiles: GalleryTile[] = [
   },
   {
     id: "tile-9",
-    title: "Yapay Zeka Akışları",
-    description: "Chatbot, callbot ve otomasyon yapılarını günlük operasyona bağlayan sistem.",
-    image: "/images/generated/service-ai-automation.webp",
+    title: "Pam Akademi",
+    description: "Bursluluk & Kabul Sınavı kampanya afişi — kampanya bazlı sosyal medya üretimi.",
+    image: "/images/projects-pam-akademi-gallery-5.jpg",
     radiusProfile: "24px",
     speed: 0.4,
-    width: 320,
+    width: 300,
     colors: {
       light: { from: "#FBCFE8", to: "#F43F5E", accent: "rgba(253,186,116,0.28)" },
       dark: { from: "#4B162C", to: "#9F1239", accent: "rgba(251,146,60,0.14)" },
@@ -126,12 +126,12 @@ const galleryTiles: GalleryTile[] = [
   },
   {
     id: "tile-10",
-    title: "Üretim Panosu",
-    description: "Fotoğraf, web, sosyal medya ve kampanya materyallerinin aynı üretim masasında buluşması.",
-    image: "/images/generated/gallery-production-wall.webp",
+    title: "Milo Restaurant",
+    description: "Menü fotoğrafçılığından bir diğer üretim — sıcak ve iştah açan bir görsel dil.",
+    image: "/images/projects-milo-gallery-1.jpg",
     radiusProfile: "24px",
     speed: 0.7,
-    width: 480,
+    width: 360,
     colors: {
       light: { from: "#FB7185", to: "#DB2777", accent: "rgba(255,255,255,0.18)" },
       dark: { from: "#651D38", to: "#BE185D", accent: "rgba(255,255,255,0.12)" },
@@ -139,28 +139,15 @@ const galleryTiles: GalleryTile[] = [
   },
   {
     id: "tile-11",
-    title: "Operasyon Kontrol",
-    description: "Takvim, yayın, revizyon ve rapor adımlarını tek kontrol yüzeyinde izleme.",
-    image: "/images/generated/operations-command-center.webp",
+    title: "Pam Akademi",
+    description: "Web sitesi lansman duyurusu — kimlikten dijitale uzanan bütüncül üretim.",
+    image: "/images/projects-pam-akademi-gallery-1.jpg",
     radiusProfile: "24px",
     speed: 1.0,
     width: 300,
     colors: {
       light: { from: "#F9A8D4", to: "#FB7185", accent: "rgba(255,255,255,0.2)" },
       dark: { from: "#58223A", to: "#A21CAF", accent: "rgba(244,114,182,0.2)" },
-    },
-  },
-  {
-    id: "tile-12",
-    title: "Ajans Stüdyosu",
-    description: "Strateji, yaratıcı üretim ve teknoloji fikirlerinin aynı masa etrafında şekillenmesi.",
-    image: "/images/generated/about-agency-studio.webp",
-    radiusProfile: "24px",
-    speed: 0.5,
-    width: 380,
-    colors: {
-      light: { from: "#F472B6", to: "#E11D48", accent: "rgba(255,255,255,0.18)" },
-      dark: { from: "#5B1E35", to: "#9D174D", accent: "rgba(253,164,175,0.14)" },
     },
   },
 ];
@@ -170,7 +157,7 @@ export default function GaleriPage() {
     <main className="min-h-screen overflow-hidden bg-white pt-28 text-zinc-950 dark:bg-[#0a0a0a] dark:text-white md:pt-32">
       <section
         className="relative mx-auto mb-8 flex min-h-[420px] max-w-[1200px] overflow-hidden rounded-[28px] bg-cover bg-center px-6 py-12 md:mb-12 md:min-h-[520px] md:px-12 md:py-16"
-        style={{ backgroundImage: "url('/images/generated/gallery-production-wall.webp')" }}
+        style={{ backgroundImage: "url('/images/projects-milo-gallery-3.jpg')" }}
       >
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,10,10,0.86)_0%,rgba(10,10,10,0.54)_46%,rgba(10,10,10,0.16)_100%)]" />
         <div className="relative mt-auto max-w-[620px]">

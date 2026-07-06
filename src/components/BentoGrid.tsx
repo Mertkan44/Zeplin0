@@ -493,7 +493,7 @@ function MobileCard({
       variants={revealVariants}
       initial={idx === 0 ? "visible" : "hidden"}
       whileInView="visible"
-      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+      viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
       custom={idx * 0.08}
       className={heightClass}
     >
@@ -530,7 +530,7 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                 custom={0.1}
               >
                 <ProjectSlider
@@ -544,7 +544,7 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={0.18}
             >
               <SocialRowCards block={blocks[2]} />

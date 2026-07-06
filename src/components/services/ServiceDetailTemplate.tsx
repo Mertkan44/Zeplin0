@@ -38,7 +38,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -63,7 +63,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={i * 0.08}
               className="group relative overflow-hidden rounded-[24px] border border-zinc-100 bg-zinc-50/80 p-7 transition-all duration-500 hover:border-[#F472B6]/20 hover:shadow-[0_8px_40px_rgba(219,39,119,0.06)] dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:border-[#9D174D]/30 dark:hover:shadow-[0_8px_40px_rgba(157,23,77,0.08)] md:p-9"
             >
@@ -108,7 +108,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             custom={0}
             className="mb-12 md:mb-16"
           >
@@ -138,7 +138,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                   custom={i * 0.1}
                   className="relative flex flex-col items-start md:items-center md:text-center"
                 >
@@ -177,7 +177,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -202,7 +202,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={i * 0.08}
               className="group relative aspect-[4/3] overflow-hidden rounded-[24px]"
             >
@@ -230,7 +230,7 @@ export function ServiceDetailTemplate({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
         >
           <div className="overflow-hidden rounded-[28px] border border-[#F9A8D4]/50 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] shadow-[0_24px_70px_rgba(219,39,119,0.14)] dark:border-[#9D174D]/30 dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] dark:shadow-[0_24px_70px_rgba(157,23,77,0.25)]">

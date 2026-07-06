@@ -14,17 +14,17 @@ const videoTestimonials = [
     id: "emma",
     videoSrc: "/videos/emma.mp4",
     posterSrc: "/videos/posters/emma-poster.png",
-    brandName: "Emma",
+    brandName: "Emma Hanım",
     personName: "Referans Video",
-    personRole: "Zeplin Media",
+    personRole: "Eren Kozan Premium Cut",
   },
   {
     id: "oguz-abi",
     videoSrc: "/videos/oguz-abi.mp4",
     posterSrc: "/videos/posters/oguz-abi-poster.png",
-    brandName: "Oğuz Abi",
+    brandName: "Oğuz Bey",
     personName: "Referans Video",
-    personRole: "Zeplin Media",
+    personRole: "Cherry Plus",
   },
 ];
 

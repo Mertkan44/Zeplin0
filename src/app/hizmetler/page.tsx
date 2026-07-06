@@ -3,13 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import {
   motion,
-  useInView,
   useMotionValue,
   useSpring,
   AnimatePresence,
 } from "framer-motion";
 import Link from "next/link";
-import { EASE, FONT, revealVariants } from "@/lib/motion";
+import { EASE, FONT, revealVariants, useReliableInView } from "@/lib/motion";
 import { serviceTabs } from "@/data/services";
 import FirstScrollSnap from "@/components/FirstScrollSnap";
 
@@ -23,7 +22,7 @@ const metrics = [
 
 function CountUp({ value, suffix, delay }: { value: number; suffix: string; delay: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const isInView = useReliableInView(ref);
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");
@@ -178,7 +177,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
         >
           {/* Tab bar */}
@@ -274,7 +273,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -317,7 +316,7 @@ export default function HizmetlerPage() {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             custom={0.05}
             className="group relative overflow-hidden rounded-[28px] bg-[linear-gradient(180deg,#2a1525_0%,#1f0c18_100%)] p-8 transition-shadow duration-500 hover:shadow-[0_16px_60px_rgba(219,39,119,0.12)] dark:bg-[linear-gradient(180deg,#1a0e17_0%,#120a10_100%)] dark:hover:shadow-[0_16px_60px_rgba(157,23,77,0.18)] md:min-h-[320px] md:p-12"
           >
@@ -365,7 +364,7 @@ export default function HizmetlerPage() {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             custom={0.12}
             className="group relative overflow-hidden rounded-[28px] border border-[#F9A8D4]/40 bg-[linear-gradient(180deg,#FBCFE8_0%,#F9A8D4_100%)] p-8 transition-shadow duration-500 hover:shadow-[0_16px_60px_rgba(219,39,119,0.14)] dark:border-[#9D174D]/30 dark:bg-[linear-gradient(180deg,#9D174D_0%,#831843_100%)] dark:hover:shadow-[0_16px_60px_rgba(157,23,77,0.2)] md:p-12"
           >
@@ -409,7 +408,7 @@ export default function HizmetlerPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -425,7 +424,7 @@ export default function HizmetlerPage() {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={i * 0.1}
               className="relative flex flex-col justify-between"
             >

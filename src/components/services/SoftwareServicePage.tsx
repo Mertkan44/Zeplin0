@@ -304,8 +304,8 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
   const related  = getRelatedServices(service.relatedSlugs);
   const hubRef   = useRef<HTMLDivElement>(null);
   const dashRef  = useRef<HTMLDivElement>(null);
-  const hubInView  = useInView(hubRef,  { once: true, margin: "0px 0px 64px 0px" });
-  const dashInView = useInView(dashRef, { once: true, margin: "0px 0px 64px 0px" });
+  const hubInView  = useInView(hubRef,  { once: true, margin: "15% 0px 15% 0px" });
+  const dashInView = useInView(dashRef, { once: true, margin: "15% 0px 15% 0px" });
 
   return (
     <main className="min-h-screen bg-white text-zinc-900 dark:bg-[#0a0a0a] dark:text-zinc-100">
@@ -319,7 +319,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
           <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-16">
             <motion.div
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
             >
               <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/30" style={FONT}>
                 entegrasyon merkezi
@@ -341,7 +341,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
                   <motion.div
                     key={item}
                     variants={revealVariants} initial="hidden" whileInView="visible"
-                    viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0.1 + i * 0.06}
+                    viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0.1 + i * 0.06}
                     className="flex items-center gap-3"
                   >
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#DB2777]/15">
@@ -357,7 +357,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
 
             <motion.div
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0.12}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0.12}
             >
               <HubDiagram isActive={hubInView} />
             </motion.div>
@@ -369,7 +369,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
       <section className="mx-auto max-w-[1200px] px-6 py-14 md:py-20" ref={dashRef}>
         <motion.div
           variants={revealVariants} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
           className="mb-10"
         >
           <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-600" style={FONT}>
@@ -385,7 +385,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
 
         <motion.div
           variants={revealVariants} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0.08}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0.08}
         >
           <DashboardMockup isActive={dashInView} />
         </motion.div>
@@ -400,7 +400,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
         <div className="relative mx-auto max-w-[1200px] px-6 py-16 md:py-24">
           <motion.div
             variants={revealVariants} initial="hidden" whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
             className="mb-12"
           >
             <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/30" style={FONT}>özellikler</span>
@@ -414,7 +414,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
               <motion.div
                 key={f.title}
                 variants={revealVariants} initial="hidden" whileInView="visible"
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.08}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.08}
                 className="group relative overflow-hidden rounded-[22px] border border-white/[0.06] bg-white/[0.02] p-6 transition-colors duration-300 hover:border-[#DB2777]/20 hover:bg-white/[0.04] md:p-7"
               >
                 {/* Glow on hover */}
@@ -438,7 +438,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
       <section className="mx-auto max-w-[1200px] px-6 py-14 md:py-20">
         <motion.div
           variants={revealVariants} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
           className="mb-12"
         >
           <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-600" style={FONT}>çalışma süreci</span>
@@ -452,7 +452,7 @@ export function SoftwareServicePage({ service }: { service: ServiceData }) {
             <motion.div
               key={step.step}
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.1}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.1}
               className="relative flex flex-col items-start"
             >
               {i < service.process.length - 1 && (

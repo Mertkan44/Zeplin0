@@ -5,13 +5,13 @@ import {
   motion,
   AnimatePresence,
   MotionConfig,
-  useInView,
   useMotionValue,
   useTransform,
   animate,
   useReducedMotion,
 } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
+import { useReliableInView } from "@/lib/motion";
 
 /* ── Types ────────────────────────────────────────────────────────── */
 interface VideoTestimonial {
@@ -189,7 +189,7 @@ function VideoCard({
       variants={revealVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+      viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
       custom={index * 0.1}
       className={index === 1 ? "flex-shrink-0 md:mt-10" : "flex-shrink-0"}
     >
@@ -386,10 +386,7 @@ export default function VideoTestimonials({
   const visibleTestimonials = testimonials.slice(0, 2);
 
   const impactRef = useRef<HTMLDivElement>(null);
-  const impactInView = useInView(impactRef, {
-    once: true,
-    margin: "0px 0px 64px 0px",
-  });
+  const impactInView = useReliableInView(impactRef);
 
   const handleClose = useCallback(() => setSelected(null), []);
 
@@ -414,9 +411,9 @@ export default function VideoTestimonials({
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={0}
-              className="mb-6 md:mb-7"
+              className="mb-6 text-center md:mb-7 md:text-left"
             >
               <span
                 className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#DB2777] dark:text-[#F472B6] md:text-[12px] md:tracking-[0.26em]"
@@ -452,7 +449,7 @@ export default function VideoTestimonials({
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             custom={0.08}
             className="relative w-full max-w-[600px] lg:pl-6 xl:pl-10"
           >
@@ -486,9 +483,9 @@ export default function VideoTestimonials({
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                   custom={0.12}
-                  className="relative"
+                  className="relative text-center md:text-left"
                 >
                   <div className="flex items-center justify-between">
                     <span
@@ -508,7 +505,7 @@ export default function VideoTestimonials({
                     </span>
                   </div>
 
-                  <div className="mt-5 flex items-end gap-4 sm:mt-7 sm:gap-5">
+                  <div className="mt-5 flex items-end justify-center gap-4 sm:mt-7 sm:gap-5 md:justify-start">
                     <p
                       className="text-[58px] font-semibold leading-[0.88] tabular-nums sm:text-[84px] md:text-[104px]"
                       style={{
@@ -543,7 +540,7 @@ export default function VideoTestimonials({
                   </div>
 
                   <h3
-                    className="mt-5 max-w-[18ch] text-[20px] font-semibold leading-[1.08] text-white sm:text-[24px] md:text-[28px]"
+                    className="mx-auto mt-5 max-w-[18ch] text-[20px] font-semibold leading-[1.08] text-white sm:text-[24px] md:mx-0 md:text-[28px]"
                     style={FONT}
                   >
                     markayla{" "}
@@ -564,9 +561,9 @@ export default function VideoTestimonials({
               </div>
 
               {/* LIGHT CONTENT */}
-              <div className="relative bg-white px-5 py-6 sm:px-7 sm:py-7 md:px-9 md:py-8 dark:bg-[#160510]">
+              <div className="relative bg-white px-5 py-6 text-center sm:px-7 sm:py-7 md:px-9 md:py-8 md:text-left dark:bg-[#160510]">
                 <p
-                  className="max-w-[46ch] text-[12.5px] leading-relaxed text-zinc-600 sm:text-[13px] dark:text-white/55"
+                  className="mx-auto max-w-[46ch] text-[12.5px] leading-relaxed text-zinc-600 sm:text-[13px] md:mx-0 dark:text-white/55"
                   style={FONT}
                 >
                   Strateji, üretim, revizyon ve yayın akışını tek bir ekip içinde sakin bir düzende topluyoruz.
@@ -579,7 +576,7 @@ export default function VideoTestimonials({
                       variants={revealVariants}
                       initial="hidden"
                       whileInView="visible"
-                      viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                      viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                       custom={0.2 + i * 0.07}
                       className="min-w-0"
                     >

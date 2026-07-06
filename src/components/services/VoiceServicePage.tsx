@@ -113,7 +113,7 @@ function WaveformVisual({ isActive }: { isActive: boolean }) {
 /* ── PhoneCallMockup ──────────────────────────────────────────────── */
 function PhoneCallMockup() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const isInView = useInView(ref, { once: true, margin: "15% 0px 15% 0px" });
 
   return (
     <div
@@ -215,7 +215,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
             {/* Phone mockup */}
             <motion.div
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
               className="order-2 md:order-1"
             >
               <PhoneCallMockup />
@@ -224,7 +224,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
             {/* Stats + description */}
             <motion.div
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0.1}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0.1}
               className="order-1 md:order-2"
             >
               <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/30" style={FONT}>
@@ -242,7 +242,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
                   <motion.div
                     key={m.label}
                     variants={revealVariants} initial="hidden" whileInView="visible"
-                    viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0.15 + i * 0.06}
+                    viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0.15 + i * 0.06}
                     className="rounded-[16px] border border-white/[0.08] bg-white/[0.03] p-5"
                   >
                     <span className="block text-[26px] font-semibold leading-none tracking-[-0.04em] text-white" style={FONT}>
@@ -263,7 +263,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
       <section className="mx-auto max-w-[1200px] px-6 py-14 md:py-20">
         <motion.div
           variants={revealVariants} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
           className="mb-10"
         >
           <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-600" style={FONT}>
@@ -282,7 +282,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
             <motion.div
               key={uc.title}
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.08}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.08}
               className="relative overflow-hidden rounded-[22px] border border-zinc-100 bg-zinc-50 p-6 dark:border-white/[0.06] dark:bg-white/[0.02] md:p-7"
             >
               <div className="mb-4 flex items-center gap-3">
@@ -319,7 +319,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
         <div className="relative mx-auto max-w-[1200px] px-6 py-16 md:py-24">
           <motion.div
             variants={revealVariants} initial="hidden" whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
             className="mb-12"
           >
             <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/30" style={FONT}>özellikler</span>
@@ -333,7 +333,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
               <motion.div
                 key={f.title}
                 variants={revealVariants} initial="hidden" whileInView="visible"
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.08}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.08}
                 className="flex items-start gap-5 bg-white/[0.025] px-6 py-5 transition-colors duration-300 hover:bg-white/[0.04] md:px-8 md:py-6"
               >
                 <div className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#9D174D]/30 bg-[#9D174D]/10">
@@ -353,7 +353,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
       <section className="mx-auto max-w-[1200px] px-6 py-14 md:py-20">
         <motion.div
           variants={revealVariants} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
           className="mb-12"
         >
           <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-600" style={FONT}>çalışma süreci</span>
@@ -368,7 +368,7 @@ export function VoiceServicePage({ service }: { service: ServiceData }) {
               <motion.div
                 key={step.step}
                 variants={revealVariants} initial="hidden" whileInView="visible"
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.1}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.1}
                 className="relative flex flex-col items-start"
               >
                 {/* Connector line */}

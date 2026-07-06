@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import {
   motion,
-  useInView,
   useMotionValue,
   useSpring,
   AnimatePresence,
 } from "framer-motion";
 import FirstScrollSnap from "@/components/FirstScrollSnap";
+import { useReliableInView } from "@/lib/motion";
 
 /* ── Constants ────────────────────────────────────────────────────── */
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -35,7 +35,7 @@ function CountUp({
   delay: number;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const isInView = useReliableInView(ref);
   const motionVal = useMotionValue(0);
   const spring = useSpring(motionVal, { stiffness: 50, damping: 20, mass: 1 });
   const [display, setDisplay] = useState("0");
@@ -397,14 +397,14 @@ export default function OperasyonlarPage() {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
         >
           {/* Animated gradient top border */}
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
             className="mb-4 h-px origin-left md:mb-6"
             style={{
@@ -420,7 +420,7 @@ export default function OperasyonlarPage() {
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                 custom={i * 0.1}
                 className={`text-center ${
                   i < operationMetrics.length - 1
@@ -454,7 +454,7 @@ export default function OperasyonlarPage() {
           <motion.span
             initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
             style={FONT}
@@ -464,7 +464,7 @@ export default function OperasyonlarPage() {
           <motion.h2
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-900 dark:text-white md:text-[30px]"
             style={FONT}
@@ -480,7 +480,7 @@ export default function OperasyonlarPage() {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={i * 0.08}
             >
               <GradientBorderCard color={op.color} className="h-full">
@@ -566,7 +566,7 @@ export default function OperasyonlarPage() {
           <motion.span
             initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
@@ -576,7 +576,7 @@ export default function OperasyonlarPage() {
           <motion.h2
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-white md:text-[30px]"
             style={FONT}
@@ -599,7 +599,7 @@ export default function OperasyonlarPage() {
                 strokeDasharray="6 4"
                 initial={{ pathLength: 0 }}
                 whileInView={{ pathLength: 1 }}
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                 transition={{ duration: 1.5, ease: EASE, delay: 0.5 }}
               />
               <motion.line
@@ -609,7 +609,7 @@ export default function OperasyonlarPage() {
                 strokeDasharray="6 4"
                 initial={{ pathLength: 0 }}
                 whileInView={{ pathLength: 1 }}
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                 transition={{ duration: 1.5, ease: EASE, delay: 0.8 }}
               />
             </svg>
@@ -620,7 +620,7 @@ export default function OperasyonlarPage() {
                   key={step.num}
                   initial={{ opacity: 0.12, y: 22 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                   transition={{ duration: 0.54, ease: EASE, delay: i * 0.08 }}
                   className="group flex gap-4"
                 >
@@ -628,7 +628,7 @@ export default function OperasyonlarPage() {
                   <motion.div
                     initial={{ scale: 0 }}
                     whileInView={{ scale: 1 }}
-                    viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                    viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                     transition={{
                       type: "spring",
                       stiffness: 300,
@@ -676,7 +676,7 @@ export default function OperasyonlarPage() {
           <motion.span
             initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-white/30"
             style={FONT}
@@ -686,7 +686,7 @@ export default function OperasyonlarPage() {
           <motion.h2
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-white md:text-[30px]"
             style={FONT}
@@ -700,7 +700,7 @@ export default function OperasyonlarPage() {
                 key={adv.title}
                 initial={{ opacity: 0.12, y: 22 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                 transition={{ duration: 0.54, ease: EASE, delay: i * 0.1 }}
               >
                 <ExpandingCard
@@ -744,7 +744,7 @@ export default function OperasyonlarPage() {
           <motion.span
             initial={{ opacity: 0.12, x: -10 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE }}
             className="text-[12px] font-medium uppercase tracking-[0.26em] text-[#DB2777] dark:text-[#F472B6]"
             style={FONT}
@@ -754,7 +754,7 @@ export default function OperasyonlarPage() {
           <motion.h2
             initial={{ opacity: 0.12, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             transition={{ duration: 0.54, ease: EASE, delay: 0.08 }}
             className="mt-3 text-[24px] font-semibold leading-[1.1] tracking-[-0.02em] text-zinc-900 dark:text-white md:text-[30px]"
             style={FONT}
@@ -769,7 +769,7 @@ export default function OperasyonlarPage() {
                 variants={revealVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                 custom={i * 0.1}
                 className="rounded-[24px] border border-zinc-100 bg-white p-6 dark:border-white/[0.06] dark:bg-white/[0.02] md:p-8"
               >
@@ -816,7 +816,7 @@ export default function OperasyonlarPage() {
         <motion.div
           initial={{ opacity: 0.12, y: 22, scale: 0.99 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           transition={{ duration: 0.56, ease: EASE }}
           className="relative overflow-hidden rounded-[34px] bg-[linear-gradient(135deg,#DB2777_0%,#9D174D_50%,#831843_100%)] p-10 md:p-16"
         >

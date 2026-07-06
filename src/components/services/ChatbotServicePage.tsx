@@ -95,7 +95,7 @@ function TypingDots() {
 /* ── Chat Mockup ──────────────────────────────────────────────────── */
 function ChatMockup() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "0px 0px 64px 0px" });
+  const isInView = useInView(ref, { once: true, margin: "15% 0px 15% 0px" });
   const [visibleMessages, setVisibleMessages] = useState(0);
   const [showTyping, setShowTyping] = useState(false);
 
@@ -217,7 +217,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
       <section className="mx-auto max-w-[1200px] px-6 py-14 md:py-20">
         <motion.div
           variants={revealVariants} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
           className="mb-10"
         >
           <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-600" style={FONT}>
@@ -236,7 +236,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
             <motion.div
               key={ch.name}
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.07}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.07}
             >
               <div className="group flex flex-col gap-4 rounded-[20px] border border-zinc-100 bg-zinc-50 p-5 transition-all duration-300 hover:border-[#F472B6]/30 hover:bg-white hover:shadow-[0_8px_32px_rgba(219,39,119,0.06)] dark:border-white/[0.06] dark:bg-white/[0.02] dark:hover:bg-white/[0.04]">
                 <span
@@ -266,7 +266,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
             {/* Left: stats */}
             <motion.div
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
             >
               <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/30" style={FONT}>
                 performans
@@ -283,7 +283,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
                   <motion.div
                     key={m.label}
                     variants={revealVariants} initial="hidden" whileInView="visible"
-                    viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0.1 + i * 0.06}
+                    viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0.1 + i * 0.06}
                     className="rounded-[16px] border border-white/[0.08] bg-white/[0.03] p-5"
                   >
                     <span className="block text-[28px] font-semibold leading-none tracking-[-0.04em] text-white" style={FONT}>
@@ -300,7 +300,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
             {/* Right: chat mockup */}
             <motion.div
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0.15}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0.15}
             >
               <ChatMockup />
             </motion.div>
@@ -312,7 +312,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
       <section className="mx-auto max-w-[1200px] px-6 py-14 md:py-20">
         <motion.div
           variants={revealVariants} initial="hidden" whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
           className="mb-10"
         >
           <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-600" style={FONT}>
@@ -328,7 +328,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
             <motion.div
               key={f.title}
               variants={revealVariants} initial="hidden" whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.08}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.08}
               className="flex gap-5 rounded-[20px] border border-zinc-100 bg-white p-6 dark:border-white/[0.06] dark:bg-white/[0.02] md:p-7"
             >
               <span className="mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-[#F472B6]/20 bg-[#DB2777]/6 text-[#DB2777] dark:border-[#9D174D]/30 dark:bg-[#9D174D]/10 dark:text-[#F472B6]">
@@ -353,7 +353,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
         <div className="relative mx-auto max-w-[1200px] px-6 py-16 md:py-24">
           <motion.div
             variants={revealVariants} initial="hidden" whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={0}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={0}
             className="mb-14"
           >
             <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/30" style={FONT}>çalışma süreci</span>
@@ -369,7 +369,7 @@ export function ChatbotServicePage({ service }: { service: ServiceData }) {
                 <motion.div
                   key={step.step}
                   variants={revealVariants} initial="hidden" whileInView="visible"
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }} custom={i * 0.1}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }} custom={i * 0.1}
                   className="relative flex flex-col items-start md:items-center md:text-center"
                 >
                   <div className="relative z-10 mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-[#DB2777]/30 bg-[#DB2777]/10">

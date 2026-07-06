@@ -85,7 +85,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -111,7 +111,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={i * 0.07}
               className="group relative w-[200px] flex-shrink-0 cursor-pointer overflow-hidden rounded-[20px] md:w-auto"
               style={{ aspectRatio: "9/16" }}
@@ -157,7 +157,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+          viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
           custom={0}
           className="mb-10 md:mb-14"
         >
@@ -183,7 +183,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={i * 0.08}
               className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-transparent transition-[border-color,box-shadow] duration-500 hover:border-[#F472B6]/20 hover:shadow-[0_8px_40px_rgba(219,39,119,0.1)] dark:hover:border-[#9D174D]/30 dark:hover:shadow-[0_8px_40px_rgba(157,23,77,0.12)]"
               style={{ minHeight: "340px" }}
@@ -252,7 +252,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             custom={0}
             className="mb-12 md:mb-16"
           >
@@ -281,7 +281,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                   custom={i * 0.1}
                   className="relative flex flex-col items-start md:items-center md:text-center"
                 >
@@ -320,7 +320,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
             variants={revealVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+            viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
             custom={0}
             className="relative aspect-[4/5] overflow-hidden rounded-[28px] md:aspect-auto md:min-h-[480px]"
           >
@@ -337,7 +337,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
               variants={revealVariants}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+              viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
               custom={0}
               className="mb-8"
             >
@@ -362,7 +362,7 @@ export function VideoServicePage({ service }: { service: ServiceData }) {
                   variants={revealVariants}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: true, amount: 0.01, margin: "0px 0px 64px 0px" }}
+                  viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
                   custom={i * 0.06}
                   className="group rounded-[16px] border border-zinc-100 p-5 transition-all duration-400 hover:border-[#F472B6]/20 hover:shadow-[0_4px_20px_rgba(219,39,119,0.05)] dark:border-white/[0.06] dark:hover:border-[#9D174D]/25"
                 >

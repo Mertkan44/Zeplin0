@@ -189,7 +189,7 @@ export default function BrandMarquee({ brands }: BrandMarqueeProps) {
       ([entry]) => {
         if (entry.isIntersecting) reveal();
       },
-      { rootMargin: "0px 0px 64px 0px", threshold: 0 },
+      { rootMargin: "15% 0px 15% 0px", threshold: 0 },
     );
 
     const frame = window.requestAnimationFrame(checkVisibility);

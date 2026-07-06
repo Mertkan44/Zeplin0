@@ -181,6 +181,7 @@ function GalleryRow({
   reducedMotion,
   scrollY,
   onSelect,
+  rowIndex,
 }: {
   tiles: GalleryTile[];
   config: RowConfig;
@@ -189,6 +190,7 @@ function GalleryRow({
   reducedMotion: boolean;
   scrollY: MotionValue<number>;
   onSelect: (t: GalleryTile) => void;
+  rowIndex: number;
 }) {
   const h   = mobile ? config.hMobile : config.height;
   const gap = mobile ? GAP_M : GAP_D;
@@ -201,21 +203,26 @@ function GalleryRow({
   );
 
   /**
-   * ALL rows start at x = -setWidth so they display identically
-   * (showing copy #2 of 3 copies at scroll = 0).
+   * Each row gets its own starting phase (a fraction of setWidth, unique
+   * per row index) so rows never line up on the same photo in the same
+   * column — without this every row sat at the exact same x and, with a
+   * limited tile pool, duplicate images stacked directly on top of each
+   * other.
    *
-   * LEFT  rows move further left: -setWidth → -2·setWidth, then wrap
-   * RIGHT rows move back toward 0: -setWidth → 0, then wrap
+   * LEFT  rows move further left: -phase → -setWidth-phase, then wrap
+   * RIGHT rows move back toward 0: -phase → 0, then wrap
    *
    * The modulo keeps the travel within one copy-period so the
    * wrap is visually seamless.
    */
+  const phase = (rowIndex * setWidth * 0.37) % setWidth;
+
   const x = useTransform(scrollY, (sy) => {
-    if (reducedMotion) return -setWidth;
+    if (reducedMotion) return -setWidth - phase;
     const traveled = (sy * config.speed) % setWidth;
     return config.direction === "left"
-      ? -(setWidth + traveled)          // -W → -2W, wraps back to -W
-      : -(setWidth - traveled);         // -W → 0,  wraps back to -W
+      ? -(setWidth + phase + traveled)  // wraps every setWidth
+      : -(phase + (setWidth - traveled)); // wraps every setWidth
   });
 
   // 3 copies → always enough content no matter scroll depth
@@ -377,6 +384,7 @@ export default function GalleryGrid({ tiles }: GalleryGridProps) {
               reducedMotion={reducedMotion}
               scrollY={scrollY}
               onSelect={setSelected}
+              rowIndex={i}
             />
           ))}
         </div>
@@ -393,6 +401,7 @@ export default function GalleryGrid({ tiles }: GalleryGridProps) {
               reducedMotion={reducedMotion}
               scrollY={scrollY}
               onSelect={setSelected}
+              rowIndex={i}
             />
           ))}
         </div>

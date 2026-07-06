@@ -19,15 +19,15 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const currentTheme =
-      document.documentElement.dataset.theme === "light" ||
-      localStorage.getItem("theme") === "light"
-        ? "light"
-        : "dark";
+      document.documentElement.dataset.theme === "dark" ||
+      localStorage.getItem("theme") === "dark"
+        ? "dark"
+        : "light";
 
     const frame = window.requestAnimationFrame(() => {
       setThemeState(currentTheme);

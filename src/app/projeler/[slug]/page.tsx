@@ -1,14 +1,40 @@
 "use client";
 
-import { notFound, useRouter } from "next/navigation";
-import { use } from "react";
+import { notFound } from "next/navigation";
+import { use, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { projects, getProjectBySlug } from "@/data/projects";
-import { EASE, revealVariants, revealViewport } from "@/lib/motion";
+import { EASE, revealVariants, revealViewport, useReliableInView } from "@/lib/motion";
 
 const WHATSAPP_URL = "https://wa.me/905459407690";
+
+/** Only starts loading/playing once scrolled into view, so heavy gallery videos never block page load. */
+function LazyGalleryVideo({
+  src,
+  style,
+}: {
+  src: string;
+  style: React.CSSProperties;
+}) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const inView = useReliableInView(ref);
+
+  return (
+    <video
+      ref={ref}
+      src={inView ? src : undefined}
+      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+      style={style}
+      autoPlay={inView}
+      loop
+      muted
+      playsInline
+      preload="none"
+    />
+  );
+}
 
 export default function ProjectCaseStudyPage({
   params,
@@ -134,6 +160,32 @@ export default function ProjectCaseStudyPage({
               ))}
             </div>
           </div>
+
+          {project.variant === "website" && project.websiteUrl && (
+            <div className="flex items-end md:ml-auto">
+              <a
+                href={project.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-pink-600 px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-pink-700 active:scale-95"
+              >
+                Siteyi Ziyaret Et
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="4" y1="12" x2="12" y2="4" />
+                  <polyline points="5 4 12 4 12 11" />
+                </svg>
+              </a>
+            </div>
+          )}
         </div>
       </motion.section>
 
@@ -174,7 +226,7 @@ export default function ProjectCaseStudyPage({
         </div>
       </section>
 
-      {/* ── Galeri ─────────────────────────────────────────────── */}
+      {/* ── Galeri / Site Vitrini ──────────────────────────────── */}
       <section className="bg-foreground/[0.02] px-5 py-14 md:px-12 md:py-20">
         <div className="mx-auto max-w-5xl">
           <motion.div
@@ -188,66 +240,78 @@ export default function ProjectCaseStudyPage({
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-pink-400">
               Çalışmalar
             </p>
-            <h2 className="text-2xl font-bold text-foreground md:text-3xl">Galeri</h2>
+            <h2 className="text-2xl font-bold text-foreground md:text-3xl">
+              {project.variant === "website" ? "Canlı Site" : "Galeri"}
+            </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-5">
-            {project.gallery.length > 0
-              ? project.gallery.map((src, i) => (
-                  <motion.div
-                    key={i}
-                    variants={revealVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={revealViewport}
-                    custom={i * 0.06}
-                    className="group relative aspect-[4/3] overflow-hidden rounded-2xl"
-                  >
-                    <Image
-                      src={src}
-                      alt={`${project.name} görsel ${i + 1}`}
-                      fill
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                      style={{ objectPosition: project.imagePosition ?? "center" }}
-                    />
-                  </motion.div>
-                ))
-              : null}
+          {project.variant === "website" && project.websiteUrl ? (
+            <motion.a
+              href={project.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={revealViewport}
+              custom={0}
+              className="group relative flex min-h-[420px] w-full items-end overflow-hidden rounded-[28px] md:min-h-[560px]"
+            >
+              <Image
+                src={project.image}
+                alt={project.name}
+                fill
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                style={{ objectPosition: project.imagePosition ?? "center" }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/5" />
 
-            {/* Placeholder kartlar — görsel eklenecek alanlar */}
-            {Array.from({ length: Math.max(0, 6 - project.gallery.length) }).map((_, i) => (
-              <motion.div
-                key={`placeholder-${i}`}
-                variants={revealVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={revealViewport}
-                custom={(project.gallery.length + i) * 0.06}
-                className="flex aspect-[4/3] items-center justify-center rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03]"
-              >
-                <div className="text-center">
-                  <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-foreground/6">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-foreground/30"
-                    >
-                      <rect x="3" y="3" width="18" height="18" rx="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <polyline points="21 15 16 10 5 21" />
-                    </svg>
-                  </div>
-                  <p className="text-[11px] text-foreground/30">Görsel eklenecek</p>
+              <div className="relative z-10 flex w-full flex-col items-start gap-5 p-6 md:flex-row md:items-end md:justify-between md:p-12">
+                <div>
+                  <p className="text-sm font-medium text-white/60">{project.name} için tasarlayıp geliştirdiğimiz kurumsal web sitesi.</p>
+                  <p className="mt-1 text-2xl font-bold text-white md:text-3xl">www.fotonsc.com</p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
+                <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-pink-600 px-7 py-3.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(219,39,119,0.4)] transition-all duration-200 group-hover:bg-pink-700 group-hover:shadow-[0_12px_32px_rgba(219,39,119,0.5)] active:scale-95">
+                  Siteyi Gör
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="4" y1="12" x2="12" y2="4" />
+                    <polyline points="5 4 12 4 12 11" />
+                  </svg>
+                </span>
+              </div>
+            </motion.a>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 md:gap-5">
+              {project.gallery.length > 0
+                ? project.gallery.map((src, i) => (
+                    <motion.div
+                      key={i}
+                      variants={revealVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={revealViewport}
+                      custom={i * 0.06}
+                      className="group relative aspect-[4/3] overflow-hidden rounded-2xl"
+                    >
+                      {src.endsWith(".mp4") ? (
+                        <LazyGalleryVideo
+                          src={src}
+                          style={{ objectPosition: project.imagePosition ?? "center" }}
+                        />
+                      ) : (
+                        <Image
+                          src={src}
+                          alt={`${project.name} görsel ${i + 1}`}
+                          fill
+                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                          style={{ objectPosition: project.imagePosition ?? "center" }}
+                        />
+                      )}
+                    </motion.div>
+                  ))
+                : null}
+            </div>
+          )}
         </div>
       </section>
 

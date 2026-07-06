@@ -417,7 +417,7 @@ export default function ServiceCircleDiagram() {
   const circleRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useInView(sectionRef as React.RefObject<Element>, { margin: "0px 0px 64px 0px" });
+  const isVisible = useInView(sectionRef as React.RefObject<Element>, { margin: "15% 0px 15% 0px" });
   const [circleCw, setCircleCw] = useState(CIRCLE_W);
   const [gridW, setGridW] = useState(1200);
   const activeTab = 0;
@@ -532,7 +532,7 @@ export default function ServiceCircleDiagram() {
       },
       {
         root: null,
-        rootMargin: "0px 0px 64px 0px",
+        rootMargin: "15% 0px 15% 0px",
         threshold: 0.01,
       }
     );
