@@ -3,7 +3,6 @@
 import { useState, useCallback, type CSSProperties } from "react";
 import Link from "next/link";
 import { motion, MotionConfig, AnimatePresence } from "framer-motion";
-import BentoCard from "@/components/BentoCard";
 
 interface Project {
   name: string;
@@ -479,37 +478,6 @@ function ProjectSlider({
   );
 }
 
-function MobileCard({
-  block,
-  idx,
-  heightClass,
-}: {
-  block: Block;
-  idx: number;
-  heightClass: string;
-}) {
-  const inner = (
-    <motion.div
-      variants={revealVariants}
-      initial={idx === 0 ? "visible" : "hidden"}
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
-      custom={idx * 0.08}
-      className={heightClass}
-    >
-      <BentoCard {...block} mobile />
-    </motion.div>
-  );
-
-  return block.href ? (
-    <Link href={block.href} className="block">
-      {inner}
-    </Link>
-  ) : (
-    inner
-  );
-}
-
 export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
   return (
     <MotionConfig reducedMotion="user">
@@ -519,23 +487,17 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
       >
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col gap-8 md:gap-9" style={{ overflow: "visible" }}>
-            <MobileCard
-              block={blocks[0]}
-              idx={0}
-              heightClass="h-[290px] md:h-[420px]"
-            />
-
-            {blocks[1]?.projects && (
+            {blocks[0]?.projects && (
               <motion.div
                 variants={revealVariants}
-                initial="hidden"
+                initial="visible"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
-                custom={0.1}
+                custom={0}
               >
                 <ProjectSlider
-                  title={blocks[1].title}
-                  projects={blocks[1].projects}
+                  title={blocks[0].title}
+                  projects={blocks[0].projects}
                 />
               </motion.div>
             )}
@@ -545,9 +507,9 @@ export default function BentoGrid({ blocks, sectionId }: BentoGridProps) {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.01, margin: "15% 0px 15% 0px" }}
-              custom={0.18}
+              custom={0.1}
             >
-              <SocialRowCards block={blocks[2]} />
+              <SocialRowCards block={blocks[1]} />
             </motion.div>
           </div>
         </div>
